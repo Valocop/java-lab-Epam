@@ -1,5 +1,4 @@
 -- PostgreSQL 10.11
-
 -- Create schema news
 CREATE SCHEMA news
 
@@ -33,9 +32,6 @@ WITH (
     OIDS = FALSE
 );
 
-ALTER TABLE news.news
-    OWNER to secure;
-
 -- Create table news_author
 CREATE TABLE news.news_author
 (
@@ -56,9 +52,6 @@ WITH (
     OIDS = FALSE
 );
 
-ALTER TABLE news.news_author
-    OWNER to secure;
-
 -- Create table tag
 CREATE TABLE news.tag
 (
@@ -69,9 +62,6 @@ CREATE TABLE news.tag
 WITH (
     OIDS = FALSE
 );
-
-ALTER TABLE news.tag
-    OWNER to secure;
 
 -- Create table news_tag
 CREATE TABLE news.news_tag
@@ -93,9 +83,6 @@ WITH (
     OIDS = FALSE
 );
 
-ALTER TABLE news.news_tag
-    OWNER to secure;
-
 -- Create table user
 CREATE TABLE news."user"
 (
@@ -109,9 +96,6 @@ CREATE TABLE news."user"
 WITH (
     OIDS = FALSE
 );
-
-ALTER TABLE news."user"
-    OWNER to secure;
 
 -- Create table roles
 CREATE TABLE news.roles
@@ -127,6 +111,3 @@ CREATE TABLE news.roles
 WITH (
     OIDS = FALSE
 );
-
-ALTER TABLE news.roles
-    OWNER to secure;
