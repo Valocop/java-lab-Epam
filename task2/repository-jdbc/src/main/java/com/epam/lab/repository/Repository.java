@@ -1,11 +1,11 @@
-package com.epam.lab.dao;
+package com.epam.lab.repository;
 
 import java.util.List;
 
-public interface CRUDDao<ENTITY, KEY> {
+public interface Repository<ENTITY, KEY> {
     KEY save(ENTITY entity);
     boolean update(ENTITY entity);
     boolean delete(ENTITY entity);
-    ENTITY getById(KEY id);
+    List<ENTITY> find(QuerySpecification spec);
     List<ENTITY> findAll();
 }

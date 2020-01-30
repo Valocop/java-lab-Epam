@@ -1,11 +1,10 @@
 package com.epam.lab.configuration;
 
-import com.epam.lab.dao.AuthorDaoImpl;
+import com.epam.lab.repository.AuthorRepoImpl;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -26,12 +25,7 @@ public class SpringRepoConfig {
     }
 
     @Bean
-    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-
-    @Bean
-    public AuthorDaoImpl authorDao(JdbcTemplate jdbcTemplate) {
-        return new AuthorDaoImpl(jdbcTemplate);
+    public AuthorRepoImpl authorDao(DataSource jdbcTemplate) {
+        return new AuthorRepoImpl(jdbcTemplate);
     }
 }

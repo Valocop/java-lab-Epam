@@ -1,4 +1,4 @@
-package com.epam.lab.dao;
+package com.epam.lab.repository;
 
 import com.epam.lab.model.Author;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -6,14 +6,15 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
-public class AuthorDaoImpl implements AuthorDao {
+public class AuthorRepoImpl implements AuthorRepo {
     private static final String INSERT = "insert into news.author (name, surname) values (?, ?)";
     private static final String SELECT_ALL = "select id, name, surname from news.author";
-    private static final String SELECT_BY_ID = "select id, name, surname from news.author where id = ?";
     private static final String UPDATE = "update news.author set name = ?, surname = ? where id = ?";
     private static final String DELETE = "delete from news.author where id = ?";
     private static final RowMapper<Author> authorMapper = (resultSet, i) -> {
@@ -24,8 +25,8 @@ public class AuthorDaoImpl implements AuthorDao {
     };
     private JdbcTemplate jdbcTemplate;
 
-    public AuthorDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public AuthorRepoImpl(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override
@@ -42,31 +43,23 @@ public class AuthorDaoImpl implements AuthorDao {
 
     @Override
     public boolean update(Author author) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setLong(1, author.getId());
-            return preparedStatement;
-        }, keyHolder);
-        int result = (int) keyHolder.getKey();
-        return result > 0;
+        return jdbcTemplate.update(UPDATE, author.getName(), author.getSurname(), author.getId()) == 1;
     }
 
     @Override
     public boolean delete(Author author) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setLong(1, author.getId());
-            return preparedStatement;
-        }, keyHolder);
-        int result = (int) keyHolder.getKey();
-        return result > 0;
+        return jdbcTemplate.update(DELETE, author.getId()) == 1;
     }
 
     @Override
-    public Author getById(Long id) {
-        return jdbcTemplate.queryForObject(SELECT_BY_ID, authorMapper, id);
+    public List<Author> find(QuerySpecification spec) {
+        List<Author> authorList = new ArrayList<>();
+
+        if (spec == null) {
+            return authorList;
+        } else {
+            return jdbcTemplate.query(spec.query(), authorMapper);
+        }
     }
 
     @Override
