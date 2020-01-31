@@ -1,1 +1,3 @@
 /task2/news.iml
+*.iml
+*/target
