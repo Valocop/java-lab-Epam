@@ -1,6 +1,7 @@
 package com.epam.lab.model;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 public class News {
@@ -16,32 +17,56 @@ public class News {
         this.title = title;
         this.shortText = shortText;
         this.fullText = fullText;
-        this.creationDate = creationDate;
-        this.modificationDate = modificationDate;
+        this.creationDate = Date.valueOf(creationDate.toString());
+        this.modificationDate = Date.valueOf(modificationDate.toString());
     }
 
     public long getId() {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getShortText() {
         return shortText;
     }
 
+    public void setShortText(String shortText) {
+        this.shortText = shortText;
+    }
+
     public String getFullText() {
         return fullText;
     }
 
+    public void setFullText(String fullText) {
+        this.fullText = fullText;
+    }
+
     public Date getCreationDate() {
-        return creationDate;
+        return new Date(creationDate.getTime());
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public Date getModificationDate() {
-        return modificationDate;
+        return new Date(modificationDate.getTime());
+    }
+
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = modificationDate;
     }
 
     @Override
@@ -54,7 +79,7 @@ public class News {
                 shortText.equals(news.shortText) &&
                 fullText.equals(news.fullText) &&
                 creationDate.equals(news.creationDate) &&
-                Objects.equals(modificationDate, news.modificationDate);
+                modificationDate.equals(news.modificationDate);
     }
 
     @Override

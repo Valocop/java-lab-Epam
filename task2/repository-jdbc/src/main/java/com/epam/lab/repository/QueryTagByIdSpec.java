@@ -1,11 +1,11 @@
 package com.epam.lab.repository;
 
-public class QueryAuthorByIdSpec implements QuerySpecification {
-    private String SELECT_BY_ID = "select id, name, surname from %s where id = %d";
+public class QueryTagByIdSpec implements QuerySpecification {
+    private String SELECT_BY_ID = "select id, name from %s where id = %d";
     private long id;
     private String table;
 
-    public QueryAuthorByIdSpec(long id, String table) {
+    public QueryTagByIdSpec(long id, String table) {
         this.id = id;
         this.table = table;
     }
