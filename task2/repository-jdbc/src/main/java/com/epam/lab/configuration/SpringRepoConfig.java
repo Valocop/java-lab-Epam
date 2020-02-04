@@ -25,7 +25,7 @@ public class SpringRepoConfig {
     }
 
     @Bean
-    public AuthorRepoImpl authorDao(DataSource jdbcTemplate) {
+    public AuthorRepoImpl authorRepo(DataSource jdbcTemplate) {
         return new AuthorRepoImpl(jdbcTemplate);
     }
 }

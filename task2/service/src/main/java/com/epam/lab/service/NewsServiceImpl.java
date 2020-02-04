@@ -1,6 +1,6 @@
 package com.epam.lab.service;
 
-import com.epam.lab.model.News;
+import com.epam.lab.dto.NewsDto;
 import com.epam.lab.repository.NewsRepo;
 import com.epam.lab.repository.QuerySpecification;
 
@@ -14,22 +14,22 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public List<News> read(QuerySpecification spec) {
-        return newsRepo.find(spec);
+    public List<NewsDto> read(QuerySpecification spec) {
+        return null;
     }
 
     @Override
-    public long create(News entity) {
-        return newsRepo.save(entity);
+    public long create(NewsDto entity) {
+        return 0;
     }
 
     @Override
-    public boolean update(News entity) {
-        return newsRepo.update(entity);
+    public boolean update(NewsDto entity) {
+        return false;
     }
 
     @Override
-    public boolean remove(News entity) {
-        return newsRepo.delete(entity);
+    public boolean remove(NewsDto entity) {
+        return false;
     }
 }
