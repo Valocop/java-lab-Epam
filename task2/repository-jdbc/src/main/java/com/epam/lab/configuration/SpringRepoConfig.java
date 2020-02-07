@@ -1,6 +1,6 @@
 package com.epam.lab.configuration;
 
-import com.epam.lab.repository.AuthorRepoImpl;
+import com.epam.lab.repository.*;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +16,7 @@ public class SpringRepoConfig {
 
     @Bean
     public DataSource dataSource() throws IOException {
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("database.properties")) {
+        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("database.properties")) {
             Properties properties = new Properties();
             properties.load(inputStream);
             HikariConfig hikariConfig = new HikariConfig(properties);
@@ -25,7 +25,17 @@ public class SpringRepoConfig {
     }
 
     @Bean
-    public AuthorRepoImpl authorRepo(DataSource jdbcTemplate) {
-        return new AuthorRepoImpl(jdbcTemplate);
+    public AuthorRepo authorRepo(DataSource dataSource) {
+        return new AuthorRepoImpl(dataSource);
+    }
+
+    @Bean
+    public NewsRepo newsRepo(DataSource dataSource) {
+        return new NewsRepoImpl(dataSource);
+    }
+
+    @Bean
+    public TagRepo tagRepo(DataSource dataSource) {
+        return new TagRepoImpl(dataSource);
     }
 }

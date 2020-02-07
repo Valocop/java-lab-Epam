@@ -1,6 +1,7 @@
 package com.epam.lab.repository;
 
 import com.epam.lab.model.Author;
+import com.epam.lab.specification.QueryAuthorByIdSpec;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @RunWith(JUnit4.class)
 public class AuthorRepoImplTest {
-    private static final String DELETE_FROM_AUTHOR = "delete from news.author";
+    private static final String DELETE_FROM_AUTHOR = "delete from author";
     private static final String CREATE_DB = "createDB.sql";
     private static EmbeddedDatabase embeddedDatabase;
     private static AuthorRepo authorRepo;
@@ -76,7 +77,7 @@ public class AuthorRepoImplTest {
         expectedAuthor.setId(id);
         boolean isUpdated = authorRepo.update(expectedAuthor);
         Assert.assertTrue(isUpdated);
-        List<Author> authorList = authorRepo.find(new QueryAuthorByIdSpec(id, "news.author"));
+        List<Author> authorList = authorRepo.find(new QueryAuthorByIdSpec(id, "author"));
         Assert.assertEquals(1, authorList.size());
         Assert.assertEquals(expectedAuthor, authorList.get(0));
     }
@@ -113,7 +114,7 @@ public class AuthorRepoImplTest {
         Long id = authorRepo.save(expectedAuthor);
         Assert.assertNotNull(id);
         expectedAuthor.setId(id);
-        List<Author> authorList = authorRepo.find(new QueryAuthorByIdSpec(id, "news.author"));
+        List<Author> authorList = authorRepo.find(new QueryAuthorByIdSpec(id, "author"));
         Assert.assertEquals(1, authorList.size());
         Assert.assertEquals(expectedAuthor, authorList.get(0));
     }
@@ -128,7 +129,7 @@ public class AuthorRepoImplTest {
     @Test
     public void shouldReturnEmptyListByGetNotExistAuthorById() {
         Author expectedAuthor = new Author(1, "Test", "Test Test");
-        List<Author> authorList = authorRepo.find(new QueryAuthorByIdSpec(expectedAuthor.getId(), "news.author"));
+        List<Author> authorList = authorRepo.find(new QueryAuthorByIdSpec(expectedAuthor.getId(), "author"));
         Assert.assertNotNull(authorList);
         Assert.assertTrue(authorList.isEmpty());
     }

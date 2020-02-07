@@ -1,6 +1,7 @@
 package com.epam.lab.repository;
 
 import com.epam.lab.model.Tag;
+import com.epam.lab.specification.QuerySpecification;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -13,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TagRepoImpl implements TagRepo {
-    private static final String INSERT = "insert into news.tag (name) values (?)";
-    private static final String SELECT_ALL = "select id, name from news.tag";
-    private static final String UPDATE = "update news.tag set name = ?";
-    private static final String DELETE = "delete from news.tag where id = ?";
+    private static final String INSERT = "insert into tag (name) values (?)";
+    private static final String SELECT_ALL = "select id, name from tag";
+    private static final String UPDATE = "update tag set name = ?";
+    private static final String DELETE = "delete from tag where id = ?";
     private static final RowMapper<Tag> tagMapper = (resultSet, i) -> {
         long id = resultSet.getLong("id");
         String name = resultSet.getString("name");
@@ -32,7 +33,7 @@ public class TagRepoImpl implements TagRepo {
     public Long save(Tag tag) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = connection.prepareStatement(INSERT, new String[]{"id"});
             preparedStatement.setString(1, tag.getName());
             return preparedStatement;
         }, keyHolder);

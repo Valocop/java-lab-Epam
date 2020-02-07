@@ -1,6 +1,7 @@
 package com.epam.lab.repository;
 
 import com.epam.lab.model.Author;
+import com.epam.lab.specification.QuerySpecification;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -13,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AuthorRepoImpl implements AuthorRepo {
-    private static final String INSERT = "insert into news.author (name, surname) values (?, ?)";
-    private static final String SELECT_ALL = "select id, name, surname from news.author";
-    private static final String UPDATE = "update news.author set name = ?, surname = ? where id = ?";
-    private static final String DELETE = "delete from news.author where id = ?";
+    private static final String INSERT = "insert into author (name, surname) values (?, ?)";
+    private static final String SELECT_ALL = "select id, name, surname from author";
+    private static final String UPDATE = "update author set name = ?, surname = ? where id = ?";
+    private static final String DELETE = "delete from author where id = ?";
     private static final RowMapper<Author> authorMapper = (resultSet, i) -> {
         long id = resultSet.getLong("id");
         String name = resultSet.getString("name");
@@ -33,12 +34,12 @@ public class AuthorRepoImpl implements AuthorRepo {
     public Long save(Author author) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = connection.prepareStatement(INSERT, new String[]{"id"});
             preparedStatement.setString(1, author.getName());
             preparedStatement.setString(2, author.getSurname());
             return preparedStatement;
         }, keyHolder);
-        return (Long) keyHolder.getKey();
+        return keyHolder.getKey().longValue();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.epam.lab.repository;
 
 import com.epam.lab.model.Tag;
+import com.epam.lab.specification.QueryTagByIdSpec;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @RunWith(JUnit4.class)
 public class TagRepoImplTest {
-    private static final String DELETE_FROM_TAG = "delete from news.tag";
+    private static final String DELETE_FROM_TAG = "delete from tag";
     private static final String CREATE_DB = "createDB.sql";
     private static EmbeddedDatabase embeddedDatabase;
     private static TagRepo tagRepo;
@@ -76,7 +77,7 @@ public class TagRepoImplTest {
         expectedTag.setId(id);
         boolean isUpdated = tagRepo.update(expectedTag);
         Assert.assertTrue(isUpdated);
-        List<Tag> tagList = tagRepo.find(new QueryTagByIdSpec(id, "news.tag"));
+        List<Tag> tagList = tagRepo.find(new QueryTagByIdSpec(id, "tag"));
         Assert.assertEquals(1, tagList.size());
         Assert.assertEquals(expectedTag, tagList.get(0));
     }
@@ -113,7 +114,7 @@ public class TagRepoImplTest {
         Long id = tagRepo.save(expectedTag);
         Assert.assertNotNull(id);
         expectedTag.setId(id);
-        List<Tag> tagList = tagRepo.find(new QueryTagByIdSpec(id, "news.tag"));
+        List<Tag> tagList = tagRepo.find(new QueryTagByIdSpec(id, "tag"));
         Assert.assertEquals(1, tagList.size());
         Assert.assertEquals(expectedTag, tagList.get(0));
     }
@@ -128,7 +129,7 @@ public class TagRepoImplTest {
     @Test
     public void shouldReturnEmptyListByGetNotExistTagById() {
         Tag expectedTag = new Tag(1, "Test");
-        List<Tag> tagList = tagRepo.find(new QueryTagByIdSpec(expectedTag.getId(), "news.tag"));
+        List<Tag> tagList = tagRepo.find(new QueryTagByIdSpec(expectedTag.getId(), "tag"));
         Assert.assertNotNull(tagList);
         Assert.assertTrue(tagList.isEmpty());
     }

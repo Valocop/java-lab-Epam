@@ -1,5 +1,7 @@
 package com.epam.lab.repository;
 
+import com.epam.lab.specification.QuerySpecification;
+
 import java.util.List;
 
 public interface Repository<ENTITY, KEY> {
