@@ -14,7 +14,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import java.io.IOException;
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @RunWith(JUnit4.class)
@@ -64,7 +64,7 @@ public class NewsRepoImplTest {
     @Test
     public void shouldSaveNews() {
         News expectedNews = new News(1, "Test", "Test", "Test",
-                new Date(new java.util.Date().getTime()), new Date(new java.util.Date().getTime()));
+                LocalDate.now(), LocalDate.now());
         Long saveId = newsRepo.save(expectedNews);
         Assert.assertNotNull(saveId);
         expectedNews.setId(saveId);
@@ -80,24 +80,24 @@ public class NewsRepoImplTest {
     @Test(expected = DataAccessException.class)
     public void shouldThrowExceptionBySaveNewsWithNullFields() {
         News expectedNews = new News(1, null, null, "Test",
-                new Date(new java.util.Date().getTime()), new Date(new java.util.Date().getTime()));
+                LocalDate.now(), LocalDate.now());
         newsRepo.save(expectedNews);
     }
 
     @Test(expected = DataAccessException.class)
     public void shouldThrowExceptionBySaveNewsWithIncorrectFields() {
         News expectedNews = new News(1, "Teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest",
-                "Test", "Test", new Date(new java.util.Date().getTime()),
-                new Date(new java.util.Date().getTime()));
+                "Test", "Test", LocalDate.now(),
+                LocalDate.now());
         newsRepo.save(expectedNews);
     }
 
     @Test
     public void shouldUpdateNews() {
         News primaryNews = new News(1, "Test", "Test", "Test",
-                new Date(new java.util.Date().getTime()), new Date(new java.util.Date().getTime()));
+                LocalDate.now(), LocalDate.now());
         News expectedNews = new News(1, "New Test", "New Test", "Test Test",
-                new Date(new java.util.Date().getTime()), new Date(new java.util.Date().getTime()));
+                LocalDate.now(), LocalDate.now());
         Long save = newsRepo.save(primaryNews);
         Assert.assertNotNull(save);
         expectedNews.setId(save);
@@ -112,7 +112,7 @@ public class NewsRepoImplTest {
     @Test
     public void shouldReturnFalseByUpdateNotExistNews() {
         News testNews = new News(1, "New Test", "New Test", "Test Test",
-                new Date(new java.util.Date().getTime()), new Date(new java.util.Date().getTime()));
+                LocalDate.now(), LocalDate.now());
         boolean isUpdated = newsRepo.update(testNews);
         Assert.assertFalse(isUpdated);
     }
@@ -120,7 +120,7 @@ public class NewsRepoImplTest {
     @Test
     public void shouldDeleteNews() {
         News testNews = new News(1, "New Test", "New Test", "Test Test",
-                new Date(new java.util.Date().getTime()), new Date(new java.util.Date().getTime()));
+                LocalDate.now(), LocalDate.now());
         Long save = newsRepo.save(testNews);
         Assert.assertNotNull(save);
         testNews.setId(save);
@@ -137,7 +137,7 @@ public class NewsRepoImplTest {
     @Test
     public void shouldGetNewsById() {
         News expectedNews = new News(1, "Test", "Test", "Test",
-                new Date(new java.util.Date().getTime()), new Date(new java.util.Date().getTime()));
+                LocalDate.now(), LocalDate.now());
         Long save = newsRepo.save(expectedNews);
         Assert.assertNotNull(save);
         expectedNews.setId(save);
@@ -157,7 +157,7 @@ public class NewsRepoImplTest {
     @Test
     public void shouldReturnEmptyListByGetNotExistAuthorById() {
         News expectedNews = new News(1, "Test", "Test", "Test",
-                new Date(new java.util.Date().getTime()), new Date(new java.util.Date().getTime()));
+                LocalDate.now(), LocalDate.now());
         List<News> newsList = newsRepo.find(new QueryNewsByIdSpec(expectedNews.getId(), "news.news"));
         Assert.assertNotNull(newsList);
         Assert.assertTrue(newsList.isEmpty());
@@ -166,7 +166,7 @@ public class NewsRepoImplTest {
     @Test
     public void shouldFindAllNews() {
         News testNews = new News(1, "Test", "Test", "Test",
-                new Date(new java.util.Date().getTime()), new Date(new java.util.Date().getTime()));
+                LocalDate.now(), LocalDate.now());
         Long saveOne = newsRepo.save(testNews);
         Assert.assertNotNull(saveOne);
         Long saveTwo = newsRepo.save(testNews);
@@ -186,10 +186,10 @@ public class NewsRepoImplTest {
     @Test
     public void shouldCreateAuthorToNews() {
         Author author = new Author(1, "Author", "Test Author");
-        News news = new News(1, "Test", "Test", "Test", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
-        News newsTwo = new News(1, "Test2", "Test2", "Test", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
+        News news = new News(1, "Test", "Test", "Test", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
+        News newsTwo = new News(1, "Test2", "Test2", "Test", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
         author.setId(authorRepo.save(author));
         news.setId(newsRepo.save(news));
         newsTwo.setId(newsRepo.save(newsTwo));
@@ -204,10 +204,10 @@ public class NewsRepoImplTest {
     @Test
     public void shouldCreateSeveralNewsByAuthor() {
         Author author = new Author(1, "Author", "Test Author");
-        News news = new News(1, "Test", "Test", "Test", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
-        News newsTwo = new News(1, "Test2", "Test2", "Test", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
+        News news = new News(1, "Test", "Test", "Test", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
+        News newsTwo = new News(1, "Test2", "Test2", "Test", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
         author.setId(authorRepo.save(author));
         news.setId(newsRepo.save(news));
         newsTwo.setId(newsRepo.save(newsTwo));
@@ -222,8 +222,8 @@ public class NewsRepoImplTest {
     @Test
     public void shouldCreateNotExistAuthorToNews() {
         Author author = new Author(1, "Author", "Test Author");
-        News news = new News(1, "Test", "Test", "Test", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
+        News news = new News(1, "Test", "Test", "Test", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
         news.setId(newsRepo.save(news));
         boolean isCreated = newsRepo.createAuthorToNews(news, author);
         Assert.assertFalse(isCreated);
@@ -232,8 +232,8 @@ public class NewsRepoImplTest {
     @Test
     public void shouldCreateNotExistNewsToAuthor() {
         Author author = new Author(1, "Author", "Test Author");
-        News news = new News(1, "Test", "Test", "Test", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
+        News news = new News(1, "Test", "Test", "Test", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
         author.setId(authorRepo.save(author));
         boolean isCreated = newsRepo.createAuthorToNews(news, author);
         Assert.assertFalse(isCreated);
@@ -242,8 +242,8 @@ public class NewsRepoImplTest {
     @Test
     public void shouldDeleteAuthorOfNews() {
         Author author = new Author(1, "Author", "Test Author");
-        News news = new News(1, "Test", "Test", "Test", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
+        News news = new News(1, "Test", "Test", "Test", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
         author.setId(authorRepo.save(author));
         news.setId(newsRepo.save(news));
         boolean isCreated = newsRepo.createAuthorToNews(news, author);
@@ -258,8 +258,8 @@ public class NewsRepoImplTest {
     @Test
     public void shouldDeleteAuthorOfNotExistNews() {
         Author author = new Author(1, "Author", "Test Author");
-        News news = new News(1, "Test", "Test", "Test", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
+        News news = new News(1, "Test", "Test", "Test", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
         author.setId(authorRepo.save(author));
         boolean isCreated = newsRepo.createAuthorToNews(news, author);
         Assert.assertFalse(isCreated);
@@ -270,10 +270,10 @@ public class NewsRepoImplTest {
     @Test
     public void shouldDeleteNewsOfAuthor() {
         Author author = new Author(1, "Author", "Test Author");
-        News newsOne = new News(1, "Test", "Test", "Test", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
-        News newsTwo = new News(1, "Test2", "Test2", "Test2", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
+        News newsOne = new News(1, "Test", "Test", "Test", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
+        News newsTwo = new News(1, "Test2", "Test2", "Test2", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
         author.setId(authorRepo.save(author));
         newsOne.setId(newsRepo.save(newsOne));
         newsTwo.setId(newsRepo.save(newsTwo));
@@ -302,10 +302,10 @@ public class NewsRepoImplTest {
     @Test
     public void shouldDeleteNewsByNotExistAuthor() {
         Author author = new Author(1, "Author", "Test Author");
-        News newsOne = new News(1, "Test", "Test", "Test", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
-        News newsTwo = new News(1, "Test2", "Test2", "Test2", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
+        News newsOne = new News(1, "Test", "Test", "Test", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
+        News newsTwo = new News(1, "Test2", "Test2", "Test2", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
         newsOne.setId(newsRepo.save(newsOne));
         newsTwo.setId(newsRepo.save(newsTwo));
         boolean isDeleted = newsRepo.deleteNewsOfAuthor(author);
@@ -314,10 +314,10 @@ public class NewsRepoImplTest {
 
     @Test
     public void shouldCreateTagToNews() {
-        News newsOne = new News(1, "Test1", "Test1", "Test1", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
-        News newsTwo = new News(1, "Test2", "Test2", "Test2", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
+        News newsOne = new News(1, "Test1", "Test1", "Test1", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
+        News newsTwo = new News(1, "Test2", "Test2", "Test2", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
         Tag tag = new Tag(1, "TagTest1");
         newsOne.setId(newsRepo.save(newsOne));
         newsTwo.setId(newsRepo.save(newsTwo));
@@ -332,10 +332,10 @@ public class NewsRepoImplTest {
 
     @Test
     public void shouldCreatedTagsToNews() {
-        News newsOne = new News(1, "Test1", "Test1", "Test1", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
-        News newsTwo = new News(1, "Test2", "Test2", "Test2", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
+        News newsOne = new News(1, "Test1", "Test1", "Test1", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
+        News newsTwo = new News(1, "Test2", "Test2", "Test2", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
         Tag tagOne = new Tag(1, "TagTest1");
         Tag tagTwo = new Tag(2, "TagTest2");
         Tag tagThree = new Tag(3, "TagTest3");
@@ -363,10 +363,10 @@ public class NewsRepoImplTest {
 
     @Test
     public void shouldDeleteTagOfNews() {
-        News newsOne = new News(1, "Test1", "Test1", "Test1", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
-        News newsTwo = new News(1, "Test2", "Test2", "Test2", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
+        News newsOne = new News(1, "Test1", "Test1", "Test1", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
+        News newsTwo = new News(1, "Test2", "Test2", "Test2", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
         Tag tagOne = new Tag(1, "TagTest1");
         Tag tagTwo = new Tag(2, "TagTest2");
         Tag tagThree = new Tag(3, "TagTest3");
@@ -391,10 +391,10 @@ public class NewsRepoImplTest {
 
     @Test
     public void shouldDeleteTagsOfNews() {
-        News newsOne = new News(1, "Test1", "Test1", "Test1", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
-        News newsTwo = new News(1, "Test2", "Test2", "Test2", Date.valueOf("2019-01-01"),
-                Date.valueOf("2019-01-01"));
+        News newsOne = new News(1, "Test1", "Test1", "Test1", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
+        News newsTwo = new News(1, "Test2", "Test2", "Test2", LocalDate.parse("2019-01-01"),
+                LocalDate.parse("2019-01-01"));
         Tag tagOne = new Tag(1, "TagTest1");
         Tag tagTwo = new Tag(2, "TagTest2");
         Tag tagThree = new Tag(3, "TagTest3");

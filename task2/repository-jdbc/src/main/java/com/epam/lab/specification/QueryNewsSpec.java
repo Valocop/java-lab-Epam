@@ -17,14 +17,14 @@ public class QueryNewsSpec implements QuerySpecification {
     private String inTagByName = " and news.id in (select news_id from news_tag " +
             "where tag_id in (select id from tag where name in (%s)) " +
             "group by news_id having count (news_id) = %d) ";
-    private String groupBy = " group by news.id ";
+//    private String groupBy = " group by news.id ";
     private String andTag = "";
     private String and = "";
     private String order = "";
 
     @Override
     public String query() {
-        return String.format("%s %s %s %s %s", query, and, andTag, groupBy,
+        return String.format("%s %s %s %s", query, and, andTag,
                 (order.trim().isEmpty() ? order : order.substring(0, order.length() - 2)));
     }
 

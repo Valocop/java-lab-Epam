@@ -1,7 +1,6 @@
 package com.epam.lab.model;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class News {
@@ -9,16 +8,19 @@ public class News {
     private String title;
     private String shortText;
     private String fullText;
-    private Date creationDate;
-    private Date modificationDate;
+    private LocalDate creationDate;
+    private LocalDate modificationDate;
 
-    public News(long id, String title, String shortText, String fullText, Date creationDate, Date modificationDate) {
+    public News() {
+    }
+
+    public News(long id, String title, String shortText, String fullText, LocalDate creationDate, LocalDate modificationDate) {
         this.id = id;
         this.title = title;
         this.shortText = shortText;
         this.fullText = fullText;
-        this.creationDate = Date.valueOf(creationDate.toString());
-        this.modificationDate = Date.valueOf(modificationDate.toString());
+        this.creationDate = creationDate;
+        this.modificationDate = modificationDate;
     }
 
     public long getId() {
@@ -53,19 +55,19 @@ public class News {
         this.fullText = fullText;
     }
 
-    public Date getCreationDate() {
-        return new Date(creationDate.getTime());
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
 
-    public Date getModificationDate() {
-        return new Date(modificationDate.getTime());
+    public LocalDate getModificationDate() {
+        return modificationDate;
     }
 
-    public void setModificationDate(Date modificationDate) {
+    public void setModificationDate(LocalDate modificationDate) {
         this.modificationDate = modificationDate;
     }
 

@@ -9,15 +9,17 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TagRepoImpl implements TagRepo {
     private static final String INSERT = "insert into tag (name) values (?)";
     private static final String SELECT_ALL = "select id, name from tag";
-    private static final String UPDATE = "update tag set name = ?";
+    private static final String UPDATE = "update tag set name = ? where id = ?";
     private static final String DELETE = "delete from tag where id = ?";
+    private static final String DELETE_UNSIGNED_TAGS = "delete from tag where tag.id in " +
+            "(select tag.id from tag left join news_tag on news_tag.tag_id = tag.id " +
+            "where news_tag.news_id IS NULL and news_tag.tag_id IS NULL)";
     private static final RowMapper<Tag> tagMapper = (resultSet, i) -> {
         long id = resultSet.getLong("id");
         String name = resultSet.getString("name");
@@ -42,7 +44,7 @@ public class TagRepoImpl implements TagRepo {
 
     @Override
     public boolean update(Tag tag) {
-        return jdbcTemplate.update(UPDATE, tag.getName()) == 1;
+        return jdbcTemplate.update(UPDATE, tag.getName(), tag.getId()) == 1;
     }
 
     @Override
@@ -64,5 +66,10 @@ public class TagRepoImpl implements TagRepo {
     @Override
     public List<Tag> findAll() {
         return jdbcTemplate.query(SELECT_ALL, tagMapper);
+    }
+
+    @Override
+    public boolean deleteUnsignedTags() {
+        return jdbcTemplate.update(DELETE_UNSIGNED_TAGS) > 0;
     }
 }

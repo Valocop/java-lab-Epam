@@ -39,7 +39,7 @@ public class AuthorRepoImpl implements AuthorRepo {
             preparedStatement.setString(2, author.getSurname());
             return preparedStatement;
         }, keyHolder);
-        return keyHolder.getKey().longValue();
+        return (Long) keyHolder.getKey();
     }
 
     @Override

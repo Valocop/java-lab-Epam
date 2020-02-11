@@ -14,14 +14,17 @@ import org.springframework.context.annotation.Import;
 public class SpringServiceConfig {
 
     @Bean
-    public NewsService newsService(NewsRepo newsRepo) {
-        NewsServiceImpl newsService = new NewsServiceImpl(newsRepo);
+    public NewsService newsService(NewsRepo newsRepo, AuthorService authorService, TagService tagService) {
+        NewsServiceImpl newsService = new NewsServiceImpl(newsRepo, authorService, tagService);
+        newsService.setModelMapper(modelMapper());
         return newsService;
     }
 
     @Bean
     public AuthorService authorService(AuthorRepo authorRepo) {
-        return new AuthorServiceImpl(authorRepo);
+        AuthorServiceImpl authorService = new AuthorServiceImpl(authorRepo);
+        authorService.setModelMapper(modelMapper());
+        return authorService;
     }
 
     @Bean

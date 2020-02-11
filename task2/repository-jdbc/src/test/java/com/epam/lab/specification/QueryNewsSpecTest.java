@@ -12,10 +12,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import java.io.IOException;
-import java.sql.Date;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 public class QueryNewsSpecTest {
     private static final String DELETE_FROM_AUTHOR = "delete from author";
@@ -63,11 +61,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSearchNewsByAuthorName() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsTree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         testNewsOne.setId(newsRepo.save(testNewsOne));
         testNewsTwo.setId(newsRepo.save(testNewsTwo));
         testNewsTree.setId(newsRepo.save(testNewsTree));
@@ -88,11 +86,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSearchNewsByAuthorSurname() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsTree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         testNewsOne.setId(newsRepo.save(testNewsOne));
         testNewsTwo.setId(newsRepo.save(testNewsTwo));
         testNewsTree.setId(newsRepo.save(testNewsTree));
@@ -113,11 +111,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSearchNewsByAuthorNameAndSurname() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsTree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         testNewsOne.setId(newsRepo.save(testNewsOne));
         testNewsTwo.setId(newsRepo.save(testNewsTwo));
         testNewsTree.setId(newsRepo.save(testNewsTree));
@@ -139,11 +137,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSearchNewsWithoutCriteria() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsTree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         testNewsOne.setId(newsRepo.save(testNewsOne));
         testNewsTwo.setId(newsRepo.save(testNewsTwo));
         testNewsTree.setId(newsRepo.save(testNewsTree));
@@ -163,11 +161,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSortNewsByDateDescWithAuthorSearch() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsTree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         testNewsOne.setId(newsRepo.save(testNewsOne));
         testNewsTwo.setId(newsRepo.save(testNewsTwo));
         testNewsTree.setId(newsRepo.save(testNewsTree));
@@ -190,11 +188,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSortNewsByDateAscWithAuthorSearch() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsTree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         testNewsOne.setId(newsRepo.save(testNewsOne));
         testNewsTwo.setId(newsRepo.save(testNewsTwo));
         testNewsTree.setId(newsRepo.save(testNewsTree));
@@ -217,11 +215,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSortNewsAscByAuthorName() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsTree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         testNewsTwo.setId(newsRepo.save(testNewsTwo));
         testNewsTree.setId(newsRepo.save(testNewsTree));
         testNewsOne.setId(newsRepo.save(testNewsOne));
@@ -247,11 +245,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSortNewsDescByAuthorName() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsTree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         testNewsTwo.setId(newsRepo.save(testNewsTwo));
         testNewsTree.setId(newsRepo.save(testNewsTree));
         testNewsOne.setId(newsRepo.save(testNewsOne));
@@ -277,11 +275,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSortNewsAscByAuthorSurname() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsTree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         testNewsTwo.setId(newsRepo.save(testNewsTwo));
         testNewsTree.setId(newsRepo.save(testNewsTree));
         testNewsOne.setId(newsRepo.save(testNewsOne));
@@ -307,11 +305,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSortNewsDescByAuthorSurname() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsTree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         testNewsTwo.setId(newsRepo.save(testNewsTwo));
         testNewsTree.setId(newsRepo.save(testNewsTree));
         testNewsOne.setId(newsRepo.save(testNewsOne));
@@ -337,11 +335,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldMultipleSortAscByAuthorNameAndSurname() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsTree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         testNewsTwo.setId(newsRepo.save(testNewsTwo));
         testNewsTree.setId(newsRepo.save(testNewsTree));
         testNewsOne.setId(newsRepo.save(testNewsOne));
@@ -370,11 +368,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldMultipleSortCombByAuthorNameAndSurname() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsTree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         testNewsTwo.setId(newsRepo.save(testNewsTwo));
         testNewsTree.setId(newsRepo.save(testNewsTree));
         testNewsOne.setId(newsRepo.save(testNewsOne));
@@ -403,11 +401,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSearchNewsByTagName() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsThree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         Tag tagOne = new Tag(1, "Tag1");
         Tag tagTwo = new Tag(2, "Tag2");
         Tag tagThree = new Tag(3, "Tag3");
@@ -440,11 +438,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSearchNewsByTags() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsThree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         Tag tagOne = new Tag(1, "Tag1");
         Tag tagTwo = new Tag(2, "Tag2");
         Tag tagThree = new Tag(3, "Tag3");
@@ -466,17 +464,20 @@ public class QueryNewsSpecTest {
         newsRepo.createTagToNews(testNewsTwo, tagOne);
         Criteria searchNewsByTagOneCriteria = new Criteria("tag_name", Arrays.asList("Tag1", "Tag4"));
         QuerySpecification searchNewsByTagOneSpec = new QueryNewsSpec().add(searchNewsByTagOneCriteria);
-        List<News> searchListOne = newsRepo.find(searchNewsByTagOneSpec);
+        Set<News> newsSet = new LinkedHashSet<>(newsRepo.find(searchNewsByTagOneSpec));
+        List<News> searchListOne = new ArrayList<>(newsSet);
         Assert.assertEquals(1, searchListOne.size());
         Assert.assertEquals(testNewsOne, searchListOne.get(0));
         Criteria searchNewsByTagTwoCriteria = new Criteria("tag_name", Arrays.asList("Tag1", "Tag4", "Tag5"));
         QuerySpecification searchNewsByTagTwoSpec = new QueryNewsSpec().add(searchNewsByTagTwoCriteria);
-        List<News> searchListTwo = newsRepo.find(searchNewsByTagTwoSpec);
+        Set<News> newsSetOne = new LinkedHashSet<>(newsRepo.find(searchNewsByTagTwoSpec));
+        List<News> searchListTwo = new ArrayList<>(newsSetOne);
         Assert.assertEquals(1, searchListTwo.size());
         Assert.assertEquals(testNewsOne, searchListTwo.get(0));
         Criteria searchNewsByTagThreeCriteria = new Criteria("tag_name", Arrays.asList("Tag1"));
         QuerySpecification searchNewsByTagThreeSpec = new QueryNewsSpec().add(searchNewsByTagThreeCriteria);
-        List<News> searchListThree = newsRepo.find(searchNewsByTagThreeSpec);
+        Set<News> newsSetTwo = new LinkedHashSet<>(newsRepo.find(searchNewsByTagThreeSpec));
+        List<News> searchListThree = new ArrayList<>(newsSetTwo);
         Assert.assertEquals(2, searchListThree.size());
         Assert.assertTrue(searchListThree.contains(testNewsOne));
         Assert.assertTrue(searchListThree.contains(testNewsTwo));
@@ -485,11 +486,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSortAscNewsWithTagsByAuthorName() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsThree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         Author authorOne = new Author(1, "Andrei", "Zdanovich");
         Author authorTwo = new Author(2, "Vasia", "Pupkin");
         Author authorThree = new Author(3, "Ivan", "Ivanov");
@@ -518,9 +519,10 @@ public class QueryNewsSpecTest {
         newsRepo.createTagToNews(testNewsOne, tagFour);
         newsRepo.createTagToNews(testNewsOne, tagFive);
         newsRepo.createTagToNews(testNewsTwo, tagOne);
-        Criteria searchNewsByTagOneCriteria = new Criteria("author_name", true , Collections.singletonList("ASC"));
+        Criteria searchNewsByTagOneCriteria = new Criteria("author_name", true, Collections.singletonList("ASC"));
         QuerySpecification searchNewsByTagOneSpec = new QueryNewsSpec().add(searchNewsByTagOneCriteria);
-        List<News> searchListOne = newsRepo.find(searchNewsByTagOneSpec);
+        Set<News> newsSetOne = new LinkedHashSet<>(newsRepo.find(searchNewsByTagOneSpec));
+        List<News> searchListOne = new ArrayList<>(newsSetOne);
         Assert.assertEquals(3, searchListOne.size());
         Assert.assertEquals(testNewsOne, searchListOne.get(0));
         Assert.assertEquals(testNewsThree, searchListOne.get(1));
@@ -530,11 +532,11 @@ public class QueryNewsSpecTest {
     @Test
     public void shouldSortAscNewsWithTagsByAuthorNameAndDate() {
         News testNewsOne = new News(1, "Test1", "Test1", "Test1",
-                Date.valueOf("2019-10-10"), Date.valueOf("2019-10-10"));
+                LocalDate.parse("2019-10-10"), LocalDate.parse("2019-10-10"));
         News testNewsTwo = new News(2, "Test2", "Test2", "Test2",
-                Date.valueOf("2019-11-11"), Date.valueOf("2019-11-11"));
+                LocalDate.parse("2019-11-11"), LocalDate.parse("2019-11-11"));
         News testNewsThree = new News(3, "Test3", "Test3", "Test2",
-                Date.valueOf("2019-09-09"), Date.valueOf("2019-12-12"));
+                LocalDate.parse("2019-09-09"), LocalDate.parse("2019-12-12"));
         Author authorOne = new Author(1, "Andrei", "Zdanovich");
         Author authorTwo = new Author(2, "Andrei", "Pupkin");
         Author authorThree = new Author(3, "Ivan", "Ivanov");
@@ -563,10 +565,11 @@ public class QueryNewsSpecTest {
         newsRepo.createTagToNews(testNewsOne, tagFour);
         newsRepo.createTagToNews(testNewsOne, tagFive);
         newsRepo.createTagToNews(testNewsTwo, tagOne);
-        Criteria sortNewsByAuthorName = new Criteria("author_name", true , Collections.singletonList("ASC"));
-        Criteria sortNewsByDate = new Criteria("date", true , Collections.singletonList("ASC"));
+        Criteria sortNewsByAuthorName = new Criteria("author_name", true, Collections.singletonList("ASC"));
+        Criteria sortNewsByDate = new Criteria("date", true, Collections.singletonList("ASC"));
         QuerySpecification searchNewsByTagOneSpec = new QueryNewsSpec().add(sortNewsByAuthorName).add(sortNewsByDate);
-        List<News> searchListOne = newsRepo.find(searchNewsByTagOneSpec);
+        Set<News> searchSetOne = new LinkedHashSet<>(newsRepo.find(searchNewsByTagOneSpec));
+        List<News> searchListOne = new ArrayList<>(searchSetOne);
         Assert.assertEquals(3, searchListOne.size());
         Assert.assertEquals(testNewsOne, searchListOne.get(0));
         Assert.assertEquals(testNewsThree, searchListOne.get(2));
