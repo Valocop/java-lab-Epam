@@ -1,6 +1,7 @@
 package com.epam.lab.repository;
 
 import com.epam.lab.model.Author;
+import com.epam.lab.specification.QueryAuthorByIdAndNameSpec;
 import com.epam.lab.specification.QueryAuthorByIdSpec;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -151,5 +152,18 @@ public class AuthorRepoImplTest {
         List<Author> authorList = authorRepo.findAll();
         Assert.assertNotNull(authorList);
         Assert.assertTrue(authorList.isEmpty());
+    }
+
+    @Test
+    public void shouldFindAuthorVyIdAndName() {
+        Author testAuthorOne = new Author(1, "Test1", "Test1 Test");
+        Author testAuthorTwo = new Author(1, "Test2", "Test2 Test");
+        testAuthorOne.setId(authorRepo.save(testAuthorOne));
+        testAuthorTwo.setId(authorRepo.save(testAuthorTwo));
+        List<Author> authors = authorRepo.find(new QueryAuthorByIdAndNameSpec(testAuthorOne.getId(),
+                testAuthorOne.getName()));
+        Assert.assertNotNull(authors);
+        Assert.assertEquals(1, authors.size());
+        Assert.assertEquals(testAuthorOne, authors.get(0));
     }
 }

@@ -2,6 +2,7 @@ package com.epam.lab.repository;
 
 import com.epam.lab.model.Tag;
 import com.epam.lab.specification.QueryTagByIdSpec;
+import com.epam.lab.specification.QueryTagByNameSpec;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -151,5 +152,31 @@ public class TagRepoImplTest {
         List<Tag> tagList = tagRepo.findAll();
         Assert.assertNotNull(tagList);
         Assert.assertTrue(tagList.isEmpty());
+    }
+
+    @Test
+    public void shouldFindTagByName() {
+        Tag testTagOne = new Tag(1, "Test1");
+        Tag testTagTwo = new Tag(1, "Test2");
+        testTagOne.setId(tagRepo.save(testTagOne));
+        testTagTwo.setId(tagRepo.save(testTagTwo));
+        List<Tag> tags = tagRepo.find(new QueryTagByNameSpec("Test1"));
+        Assert.assertNotNull(tags);
+        Assert.assertEquals(1, tags.size());
+        Assert.assertEquals(testTagOne, tags.get(0));
+    }
+
+    @Test
+    public void shouldDeleteUnsignedTags() {
+        Tag testTagOne = new Tag(1, "Test1");
+        Tag testTagTwo = new Tag(1, "Test2");
+        testTagOne.setId(tagRepo.save(testTagOne));
+        testTagTwo.setId(tagRepo.save(testTagTwo));
+        List<Tag> tagRepoAll = tagRepo.findAll();
+        Assert.assertEquals(2, tagRepoAll.size());
+        boolean unsignedTagsDeleted = tagRepo.deleteUnsignedTags();
+        Assert.assertTrue(unsignedTagsDeleted);
+        List<Tag> tagList = tagRepo.findAll();
+        Assert.assertEquals(0, tagList.size());
     }
 }

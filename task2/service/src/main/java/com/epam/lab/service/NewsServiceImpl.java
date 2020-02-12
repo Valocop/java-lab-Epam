@@ -9,9 +9,7 @@ import com.epam.lab.model.Author;
 import com.epam.lab.model.News;
 import com.epam.lab.model.Tag;
 import com.epam.lab.repository.NewsRepo;
-import com.epam.lab.specification.QueryNewsByIdSpec;
-import com.epam.lab.specification.QueryNewsSpec;
-import com.epam.lab.specification.QuerySpecification;
+import com.epam.lab.specification.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,7 +48,7 @@ public class NewsServiceImpl implements NewsService {
         });
         Long newsId = newsRepo.save(convertToEntity(dto));
         dto.setId(newsId);
-        boolean authorToNews = newsRepo.createAuthorToNews(convertToEntity(dto), convertToEntity(authorDto));
+        newsRepo.createAuthorToNews(convertToEntity(dto), convertToEntity(authorDto));
         actualTags.forEach(tagDto -> {
             newsRepo.createTagToNews(convertToEntity(dto), convertToEntity(tagDto));
         });
@@ -189,5 +187,28 @@ public class NewsServiceImpl implements NewsService {
             newsDto.setTagDtoList(tagDtoList);
         });
         return new ArrayList<>(newsDtoSet);
+    }
+
+    @Override
+    public List<NewsDto> findByAuthorId(long authorId) {
+        return newsRepo.find(new QueryNewsByAuthorIdSpec(authorId)).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NewsDto> findByTagId(long tagId) {
+        return newsRepo.find(new QueryNewsByTagIdSpec(tagId)).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean deleteTagOfNews(long newsId, long tagId) {
+        News news = new News();
+        news.setId(newsId);
+        Tag tag = new Tag();
+        tag.setId(tagId);
+        return newsRepo.deleteTagOfNews(news, tag);
     }
 }

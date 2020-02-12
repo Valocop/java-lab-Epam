@@ -1,5 +1,7 @@
 package com.epam.lab.service;
 
+import org.modelmapper.ModelMapper;
+
 import java.util.Optional;
 
 public interface Service<T> {
@@ -8,4 +10,6 @@ public interface Service<T> {
     Optional<T> update(T dto);
 
     boolean remove(T dto);
+
+    void setModelMapper(ModelMapper modelMapper);
 }

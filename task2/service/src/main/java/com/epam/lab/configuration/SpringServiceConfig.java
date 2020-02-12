@@ -21,15 +21,15 @@ public class SpringServiceConfig {
     }
 
     @Bean
-    public AuthorService authorService(AuthorRepo authorRepo) {
-        AuthorServiceImpl authorService = new AuthorServiceImpl(authorRepo);
+    public AuthorService authorService(AuthorRepo authorRepo, NewsRepo newsRepo) {
+        AuthorServiceImpl authorService = new AuthorServiceImpl(authorRepo, newsRepo);
         authorService.setModelMapper(modelMapper());
         return authorService;
     }
 
     @Bean
-    public TagService tagService(TagRepo tagRepo) {
-        TagServiceImpl tagService = new TagServiceImpl(tagRepo);
+    public TagService tagService(TagRepo tagRepo, NewsRepo newsRepo) {
+        TagServiceImpl tagService = new TagServiceImpl(tagRepo, newsRepo);
         tagService.setModelMapper(modelMapper());
         return tagService;
     }
