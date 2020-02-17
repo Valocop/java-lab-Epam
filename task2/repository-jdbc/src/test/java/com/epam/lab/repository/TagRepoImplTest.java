@@ -1,8 +1,8 @@
 package com.epam.lab.repository;
 
 import com.epam.lab.model.Tag;
-import com.epam.lab.specification.QueryTagByIdSpec;
-import com.epam.lab.specification.QueryTagByNameSpec;
+import com.epam.lab.specification.FindTagByIdSpec;
+import com.epam.lab.specification.FindTagByNameSpec;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -78,7 +78,7 @@ public class TagRepoImplTest {
         expectedTag.setId(id);
         boolean isUpdated = tagRepo.update(expectedTag);
         Assert.assertTrue(isUpdated);
-        List<Tag> tagList = tagRepo.find(new QueryTagByIdSpec(id, "tag"));
+        List<Tag> tagList = tagRepo.findBy(new FindTagByIdSpec(id, "tag"));
         Assert.assertEquals(1, tagList.size());
         Assert.assertEquals(expectedTag, tagList.get(0));
     }
@@ -115,14 +115,14 @@ public class TagRepoImplTest {
         Long id = tagRepo.save(expectedTag);
         Assert.assertNotNull(id);
         expectedTag.setId(id);
-        List<Tag> tagList = tagRepo.find(new QueryTagByIdSpec(id, "tag"));
+        List<Tag> tagList = tagRepo.findBy(new FindTagByIdSpec(id, "tag"));
         Assert.assertEquals(1, tagList.size());
         Assert.assertEquals(expectedTag, tagList.get(0));
     }
 
     @Test
     public void shouldReturnEmptyListOfTagsByFindWithNullSpec() {
-        List<Tag> tagList = tagRepo.find(null);
+        List<Tag> tagList = tagRepo.findBy(null);
         Assert.assertNotNull(tagList);
         Assert.assertTrue(tagList.isEmpty());
     }
@@ -130,7 +130,7 @@ public class TagRepoImplTest {
     @Test
     public void shouldReturnEmptyListByGetNotExistTagById() {
         Tag expectedTag = new Tag(1, "Test");
-        List<Tag> tagList = tagRepo.find(new QueryTagByIdSpec(expectedTag.getId(), "tag"));
+        List<Tag> tagList = tagRepo.findBy(new FindTagByIdSpec(expectedTag.getId(), "tag"));
         Assert.assertNotNull(tagList);
         Assert.assertTrue(tagList.isEmpty());
     }
@@ -160,7 +160,7 @@ public class TagRepoImplTest {
         Tag testTagTwo = new Tag(1, "Test2");
         testTagOne.setId(tagRepo.save(testTagOne));
         testTagTwo.setId(tagRepo.save(testTagTwo));
-        List<Tag> tags = tagRepo.find(new QueryTagByNameSpec("Test1"));
+        List<Tag> tags = tagRepo.findBy(new FindTagByNameSpec("Test1"));
         Assert.assertNotNull(tags);
         Assert.assertEquals(1, tags.size());
         Assert.assertEquals(testTagOne, tags.get(0));

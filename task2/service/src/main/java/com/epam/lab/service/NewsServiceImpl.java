@@ -32,26 +32,12 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public long create(NewsDto dto) {
         AuthorDto authorDto = dto.getAuthorDto();
-        Optional<AuthorDto> authorOptional = authorService.findByIdAndName(authorDto.getId(), authorDto.getName());
-        if (!authorOptional.isPresent()) {
-            authorDto.setId(authorService.create(authorDto));
-        }
-        List<TagDto> actualTags = new ArrayList<>(dto.getTagDtoList());
-        actualTags.forEach(tagDto -> {
-            List<TagDto> tagByName = tagService.findByName(tagDto.getName());
-            if (tagByName.isEmpty()) {
-                long id = tagService.create(tagDto);
-                tagDto.setId(id);
-            } else {
-                tagDto.setId(tagByName.get(0).getId());
-            }
-        });
-        Long newsId = newsRepo.save(convertToEntity(dto));
+        saveAuthorIfAbsent(authorDto);
+        List<TagDto> actualTags = createAbsentTags(dto);
+        long newsId = newsRepo.save(convertToEntity(dto));
         dto.setId(newsId);
-        newsRepo.createAuthorToNews(convertToEntity(dto), convertToEntity(authorDto));
-        actualTags.forEach(tagDto -> {
-            newsRepo.createTagToNews(convertToEntity(dto), convertToEntity(tagDto));
-        });
+        newsRepo.createBindingOfAuthorAndNews(convertToEntity(dto), convertToEntity(authorDto));
+        actualTags.forEach(tagDto -> newsRepo.createBindingOfNewsAndTags(convertToEntity(dto), convertToEntity(tagDto)));
         return dto.getId();
     }
 
@@ -59,72 +45,97 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Optional<NewsDto> update(NewsDto dto) {
         AuthorDto authorDto = dto.getAuthorDto();
-        Optional<AuthorDto> authorOptional = authorService.findByIdAndName(authorDto.getId(), authorDto.getName());
-        List<NewsDto> newsDtoList = newsRepo.find(new QueryNewsByIdSpec(dto.getId()))
-                .stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-        if (newsDtoList.isEmpty()) {
-            dto.setId(newsRepo.save(convertToEntity(dto)));
-        }
-        if (!authorOptional.isPresent()) {
-            authorDto.setId(authorService.create(authorDto));
-        }
-        List<AuthorDto> authorOfNewsList = authorService.findByNewsId(dto.getId());
-        if (!authorOfNewsList.isEmpty()) {
-            if (!(authorOfNewsList.get(0).getId() == authorDto.getId())) {
-                boolean isAuthorOfNewsDeleted = newsRepo.deleteAuthorOfNews(convertToEntity(dto));
-                boolean isAuthorToNewsCreated = newsRepo.createAuthorToNews(convertToEntity(dto),
-                        convertToEntity(authorDto));
-                if (!(isAuthorOfNewsDeleted && isAuthorToNewsCreated)) {
-                    throw new ServiceException("Failed to create author to news");
-                }
-            }
-            if (!updateNewsOfAuthor(dto)) {
-                throw new ServiceException("Failed to update news");
-            }
-        } else {
-            boolean isNewsCreatedToAuthor = createNewsToAuthor(authorDto, dto);
-            boolean isNewsUpdated = updateNewsOfAuthor(dto);
-            if (!(isNewsCreatedToAuthor && isNewsUpdated)) {
-                throw new ServiceException("Failed to create author to news and update news");
-            }
-        }
+        saveNewsIfAbsent(dto);
+        saveAuthorIfAbsent(authorDto);
+        updateNewsAndTags(dto, authorDto);
         updateTagsOfNews(dto);
         return Optional.of(dto);
-    }
-
-    private void updateTagsOfNews(NewsDto newsDto) {
-        List<TagDto> tagDtoList = new ArrayList<>(newsDto.getTagDtoList());
-        tagDtoList.forEach(tagDto -> {
-            List<TagDto> tagByName = tagService.findByName(tagDto.getName());
-            if (tagByName.isEmpty()) {
-                long id = tagService.create(tagDto);
-                tagDto.setId(id);
-            } else {
-                tagDto.setId(tagByName.get(0).getId());
-            }
-        });
-        newsRepo.deleteTagsOfNews(convertToEntity(newsDto));
-        tagDtoList.forEach(tagDto -> newsRepo.createTagToNews(convertToEntity(newsDto), convertToEntity(tagDto)));
-        tagService.deleteUnsignedTags();
-    }
-
-    private boolean createNewsToAuthor(AuthorDto authorDto, NewsDto newsDto) {
-        return newsRepo.createAuthorToNews(convertToEntity(newsDto), convertToEntity(authorDto));
-    }
-
-    private boolean updateNewsOfAuthor(NewsDto newsDto) {
-        return newsRepo.update(convertToEntity(newsDto));
     }
 
     @Transactional
     @Override
     public boolean remove(NewsDto dto) {
-        newsRepo.deleteAuthorOfNews(convertToEntity(dto));
-        newsRepo.deleteTagsOfNews(convertToEntity(dto));
+        newsRepo.deleteBindingsOfNewsAndAutors(convertToEntity(dto));
+        newsRepo.deleteBindingsOfNewsAndAllTags(convertToEntity(dto));
         tagService.deleteUnsignedTags();
         return newsRepo.delete(convertToEntity(dto));
+    }
+
+    @Transactional
+    @Override
+    public Optional<NewsDto> findById(long id) {
+        List<News> newsList = newsRepo.findBy(new FindNewsByIdSpec(id));
+
+        if (isNewsListNotEmpty(newsList.isEmpty())) {
+            NewsDto newsDto = newsList.stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList()).get(0);
+            List<TagDto> tagDtoList = tagService.findByNewsId(id);
+            List<AuthorDto> authorDtoList = getAuthorsByNewsId(id);
+            if (isAuthorNotPresent(authorDtoList.isEmpty())) {
+                newsDto.setAuthorDto(authorDtoList.get(0));
+                newsDto.setTagDtoList(tagDtoList);
+                return Optional.of(newsDto);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public List<NewsDto> findByCriteria(List<Criteria> criteriaList) {
+        FindSpecification findByCriteriaSpec = buildSpecByListOfCriteria(criteriaList);
+        Set<NewsDto> newsDtoSet = findNewsBySpecification(findByCriteriaSpec);
+        return new ArrayList<>(newsDtoSet);
+    }
+
+    @Override
+    public List<NewsDto> findByAuthorId(long authorId) {
+        return newsRepo.findBy(new FindNewsByAuthorIdSpec(authorId)).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NewsDto> findByTagId(long tagId) {
+        return newsRepo.findBy(new FindNewsByTagIdSpec(tagId)).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean deleteTagOfNews(long newsId, long tagId) {
+        News news = new News();
+        news.setId(newsId);
+        Tag tag = new Tag();
+        tag.setId(tagId);
+        return newsRepo.deleteBindingOfNewsAndTag(news, tag);
+    }
+
+    private Set<NewsDto> findNewsBySpecification(FindSpecification findByCriteriaSpec) {
+        Set<NewsDto> newsDtoSet = newsRepo.findBy(findByCriteriaSpec).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        newsDtoSet.forEach(newsDto -> {
+            List<AuthorDto> authorDtoList = getAuthorsByNewsId(newsDto.getId());
+            if (isAuthorNotPresent(authorDtoList.isEmpty())) {
+                newsDto.setAuthorDto(authorDtoList.get(0));
+            }
+            List<TagDto> tagDtoList = tagService.findByNewsId(newsDto.getId());
+            newsDto.setTagDtoList(tagDtoList);
+        });
+        return newsDtoSet;
+    }
+
+    private FindSpecification buildSpecByListOfCriteria(List<Criteria> criteriaList) {
+        FindSpecification findByCriteriaSpec = new FindNewsSpec();
+        for (Criteria criteria : criteriaList) {
+            findByCriteriaSpec = findByCriteriaSpec.add(criteria);
+        }
+        return findByCriteriaSpec;
+    }
+
+    private boolean isNewsListNotEmpty(boolean empty) {
+        return !empty;
     }
 
     public void setModelMapper(ModelMapper modelMapper) {
@@ -147,68 +158,100 @@ public class NewsServiceImpl implements NewsService {
         return modelMapper.map(tagDto, Tag.class);
     }
 
-    @Transactional
-    @Override
-    public Optional<NewsDto> findById(long id) {
-        List<News> newsList = newsRepo.find(new QueryNewsByIdSpec(id));
-        if (newsList.isEmpty()) {
-            return Optional.empty();
-        } else {
-            NewsDto newsDto = newsList.stream()
-                    .map(this::convertToDto)
-                    .collect(Collectors.toList()).get(0);
-            List<TagDto> tagDtoList = tagService.findByNewsId(id);
-            List<AuthorDto> authorDtoList = authorService.findByNewsId(id);
-            if (!authorDtoList.isEmpty()) {
-                newsDto.setAuthorDto(authorDtoList.get(0));
-                newsDto.setTagDtoList(tagDtoList);
-                return Optional.of(newsDto);
+    private boolean isAuthorNotPresent(boolean present) {
+        return !present;
+    }
+
+    private List<TagDto> createAbsentTags(NewsDto dto) {
+        List<TagDto> actualTags = new ArrayList<>(dto.getTagDtoList());
+        actualTags.forEach(tagDto -> {
+            List<TagDto> tagByName = tagService.findByName(tagDto.getName());
+            if (tagByName.isEmpty()) {
+                long id = tagService.create(tagDto);
+                tagDto.setId(id);
             } else {
-                return Optional.empty();
+                tagDto.setId(tagByName.get(0).getId());
             }
-        }
-    }
-
-    @Override
-    public List<NewsDto> findByCriteria(List<Criteria> criteriaList) {
-        QuerySpecification findByCriteriaSpec = new QueryNewsSpec();
-        for (Criteria criteria : criteriaList) {
-            findByCriteriaSpec = findByCriteriaSpec.add(criteria);
-        }
-        Set<NewsDto> newsDtoSet = newsRepo.find(findByCriteriaSpec).stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        newsDtoSet.forEach(newsDto -> {
-            List<AuthorDto> authorDtoList = authorService.findByNewsId(newsDto.getId());
-            if (!authorDtoList.isEmpty()) {
-                newsDto.setAuthorDto(authorDtoList.get(0));
-            }
-            List<TagDto> tagDtoList = tagService.findByNewsId(newsDto.getId());
-            newsDto.setTagDtoList(tagDtoList);
         });
-        return new ArrayList<>(newsDtoSet);
+        return actualTags;
     }
 
-    @Override
-    public List<NewsDto> findByAuthorId(long authorId) {
-        return newsRepo.find(new QueryNewsByAuthorIdSpec(authorId)).stream()
+    private void updateNewsAndTags(NewsDto dto, AuthorDto authorDto) {
+        List<AuthorDto> authorOfNewsList = getAuthorsByNewsId(dto.getId());
+        if (isAuthorNotPresent(authorOfNewsList.isEmpty())) {
+            final AuthorDto authorOfNews = authorOfNewsList.get(0);
+            if (authorOfNews.getId() != authorDto.getId()) {
+                updateNewsAndAuthorBinding(dto, authorDto);
+            }
+            if (isNotUpdatedNewsOfAuthor(dto)) {
+                throw new ServiceException("Failed to update news");
+            }
+        } else {
+            if (isNotUpdated(createNewsToAuthor(authorDto, dto), updateNewsOfAuthor(dto))) {
+                throw new ServiceException("Failed to create author to news and update news");
+            }
+        }
+    }
+
+    private void saveAuthorIfAbsent(AuthorDto authorDto) {
+        Optional<AuthorDto> authorOptional = authorService.findByIdAndName(authorDto.getId(), authorDto.getName());
+        if (isAuthorNotPresent(authorOptional.isPresent())) {
+            saveAuthor(authorDto);
+        }
+    }
+
+    private void saveNewsIfAbsent(NewsDto dto) {
+        List<NewsDto> newsDtoList = getNewsById(dto);
+        if (newsDtoList.isEmpty()) {
+            long newsId = newsRepo.save(convertToEntity(dto));
+            dto.setId(newsId);
+        }
+    }
+
+    private void updateNewsAndAuthorBinding(NewsDto dto, AuthorDto authorDto) {
+        boolean isAuthorOfNewsDeleted = newsRepo.deleteBindingsOfNewsAndAutors(convertToEntity(dto));
+        boolean isAuthorToNewsCreated = newsRepo.createBindingOfAuthorAndNews(convertToEntity(dto),
+                convertToEntity(authorDto));
+        if (isNotUpdated(isAuthorOfNewsDeleted, isAuthorToNewsCreated)) {
+            throw new ServiceException("Failed to create author to news");
+        }
+    }
+
+    private boolean isNotUpdated(boolean isOne, boolean isTwo) {
+        return !(isOne && isTwo);
+    }
+
+    private List<AuthorDto> getAuthorsByNewsId(long id) {
+        return authorService.findByNewsId(id);
+    }
+
+    private void saveAuthor(AuthorDto authorDto) {
+        authorDto.setId(authorService.create(authorDto));
+    }
+
+    private List<NewsDto> getNewsById(NewsDto dto) {
+        return newsRepo.findBy(new FindNewsByIdSpec(dto.getId()))
+                .stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<NewsDto> findByTagId(long tagId) {
-        return newsRepo.find(new QueryNewsByTagIdSpec(tagId)).stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+    private void updateTagsOfNews(NewsDto newsDto) {
+        List<TagDto> tagDtoList = createAbsentTags(newsDto);
+        newsRepo.deleteBindingsOfNewsAndAllTags(convertToEntity(newsDto));
+        tagDtoList.forEach(tagDto -> newsRepo.createBindingOfNewsAndTags(convertToEntity(newsDto), convertToEntity(tagDto)));
+        tagService.deleteUnsignedTags();
     }
 
-    @Override
-    public boolean deleteTagOfNews(long newsId, long tagId) {
-        News news = new News();
-        news.setId(newsId);
-        Tag tag = new Tag();
-        tag.setId(tagId);
-        return newsRepo.deleteTagOfNews(news, tag);
+    private boolean createNewsToAuthor(AuthorDto authorDto, NewsDto newsDto) {
+        return newsRepo.createBindingOfAuthorAndNews(convertToEntity(newsDto), convertToEntity(authorDto));
+    }
+
+    private boolean updateNewsOfAuthor(NewsDto newsDto) {
+        return newsRepo.update(convertToEntity(newsDto));
+    }
+
+    private boolean isNotUpdatedNewsOfAuthor(NewsDto newsDto) {
+        return !newsRepo.update(convertToEntity(newsDto));
     }
 }

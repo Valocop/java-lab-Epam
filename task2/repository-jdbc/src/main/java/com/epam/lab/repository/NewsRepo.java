@@ -5,10 +5,15 @@ import com.epam.lab.model.News;
 import com.epam.lab.model.Tag;
 
 public interface NewsRepo extends Repository<News, Long> {
-    boolean createAuthorToNews(News news, Author author);
-    boolean deleteAuthorOfNews(News news);
-    boolean deleteNewsOfAuthor(Author author);
-    boolean createTagToNews(News news, Tag tag);
-    boolean deleteTagOfNews(News news, Tag tag);
-    boolean deleteTagsOfNews(News news);
+    boolean createBindingOfAuthorAndNews(News news, Author author);
+
+    boolean deleteBindingsOfNewsAndAutors(News news);
+
+    boolean deleteBindingsOfAuthorAndNews(Author author);
+
+    boolean createBindingOfNewsAndTags(News news, Tag tag);
+
+    boolean deleteBindingOfNewsAndTag(News news, Tag tag);
+
+    boolean deleteBindingsOfNewsAndAllTags(News news);
 }

@@ -1,10 +1,10 @@
 package com.epam.lab.specification;
 
-public class QueryTagByNameSpec implements QuerySpecification {
+public class FindTagByNameSpec implements FindSpecification {
     private String query = "select id, name from tag where name = '%s'";
     private String name;
 
-    public QueryTagByNameSpec(String name) {
+    public FindTagByNameSpec(String name) {
         this.name = name;
     }
 

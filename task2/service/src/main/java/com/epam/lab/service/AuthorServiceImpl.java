@@ -36,57 +36,53 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Optional<AuthorDto> update(AuthorDto dto) {
-        if (authorRepo.update(convertToEntity(dto))) {
-            return Optional.of(dto);
-        } else {
-            return Optional.empty();
-        }
+        return authorRepo.update(convertToEntity(dto)) ? Optional.of(dto) : Optional.empty();
     }
 
     @Transactional
     @Override
     public boolean remove(AuthorDto dto) {
-        List<NewsDto> newsDtoList = newsRepo.find(new QueryNewsByAuthorIdSpec(dto.getId())).stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+        List<NewsDto> newsDtoList = findNewsDtoByAuthorDto(dto);
         newsDtoList.forEach(newsDto -> {
-            boolean isNewsRemoved = newsRepo.delete(convertToEntity(newsDto));
-            if (!isNewsRemoved) {
+            if (isNewsNotRemoved(newsRepo.delete(convertToEntity(newsDto)))) {
                 throw new ServiceException("Failed to remove news " + newsDto.getId());
             }
         });
         return authorRepo.delete(convertToEntity(dto));
     }
 
+    private boolean isNewsNotRemoved(boolean isNewsRemoved) {
+        return !isNewsRemoved;
+    }
+
+    private List<NewsDto> findNewsDtoByAuthorDto(AuthorDto dto) {
+        return newsRepo.findBy(new FindNewsByAuthorIdSpec(dto.getId())).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
     @Override
-    public AuthorDto findById(long id) {
-        QuerySpecification findByIdSpec = new QueryAuthorByIdSpec(id);
-        List<AuthorDto> authorDtoList = authorRepo.find(findByIdSpec)
+    public Optional<AuthorDto> findById(long id) {
+        FindSpecification findByIdSpec = new FindAuthorByIdSpec(id);
+        List<AuthorDto> authorDtoList = authorRepo.findBy(findByIdSpec)
                 .stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
-        if (authorDtoList.isEmpty()) {
-            throw new ServiceException("Fail to find author by id. Not founded");
-        }
-        return authorDtoList.get(0);
+        return authorDtoList.isEmpty() ? Optional.empty() : Optional.of(authorDtoList.get(0));
     }
 
     @Override
     public Optional<AuthorDto> findByIdAndName(long id, String name) {
-        List<AuthorDto> authorDtoList = authorRepo.find(new QueryAuthorByIdAndNameSpec(id, name))
+        List<AuthorDto> authorDtoList = authorRepo.findBy(new FindAuthorByIdAndNameSpec(id, name))
                 .stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
-        if (authorDtoList.isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(authorDtoList.get(0));
-        }
+        return authorDtoList.isEmpty() ? Optional.empty() : Optional.of(authorDtoList.get(0));
     }
 
     @Override
     public List<AuthorDto> findByNewsId(long newsId) {
-        return authorRepo.find(new QueryAuthorsByNewsIdSpec(newsId)).stream()
+        return authorRepo.findBy(new FindAuthorsByNewsIdSpec(newsId)).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }

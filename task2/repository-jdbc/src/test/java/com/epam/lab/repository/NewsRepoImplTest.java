@@ -68,7 +68,7 @@ public class NewsRepoImplTest {
         Long saveId = newsRepo.save(expectedNews);
         Assert.assertNotNull(saveId);
         expectedNews.setId(saveId);
-        List<News> newsList = newsRepo.find(new QueryNewsByIdSpec(saveId, "news"));
+        List<News> newsList = newsRepo.findBy(new FindNewsByIdSpec(saveId, "news"));
         Assert.assertNotNull(newsList);
         Assert.assertEquals(1, newsList.size());
         Assert.assertEquals(expectedNews, newsList.get(0));
@@ -103,7 +103,7 @@ public class NewsRepoImplTest {
         expectedNews.setId(save);
         boolean isUpdated = newsRepo.update(expectedNews);
         Assert.assertTrue(isUpdated);
-        List<News> newsList = newsRepo.find(new QueryNewsByIdSpec(save, "news"));
+        List<News> newsList = newsRepo.findBy(new FindNewsByIdSpec(save, "news"));
         Assert.assertNotNull(newsList);
         Assert.assertEquals(1, newsList.size());
         Assert.assertEquals(expectedNews, newsList.get(0));
@@ -124,12 +124,12 @@ public class NewsRepoImplTest {
         Long save = newsRepo.save(testNews);
         Assert.assertNotNull(save);
         testNews.setId(save);
-        List<News> newsList = newsRepo.find(new QueryNewsByIdSpec(save, "news"));
+        List<News> newsList = newsRepo.findBy(new FindNewsByIdSpec(save, "news"));
         Assert.assertNotNull(newsList);
         Assert.assertEquals(testNews, newsList.get(0));
         boolean isDeleted = newsRepo.delete(testNews);
         Assert.assertTrue(isDeleted);
-        List<News> emptyList = newsRepo.find(new QueryNewsByIdSpec(save, "news"));
+        List<News> emptyList = newsRepo.findBy(new FindNewsByIdSpec(save, "news"));
         Assert.assertNotNull(newsList);
         Assert.assertEquals(0, emptyList.size());
     }
@@ -141,7 +141,7 @@ public class NewsRepoImplTest {
         Long save = newsRepo.save(expectedNews);
         Assert.assertNotNull(save);
         expectedNews.setId(save);
-        List<News> newsList = newsRepo.find(new QueryNewsByIdSpec(save, "news"));
+        List<News> newsList = newsRepo.findBy(new FindNewsByIdSpec(save, "news"));
         Assert.assertNotNull(newsList);
         Assert.assertEquals(1, newsList.size());
         Assert.assertEquals(expectedNews, newsList.get(0));
@@ -149,7 +149,7 @@ public class NewsRepoImplTest {
 
     @Test
     public void shouldReturnEmptyListOfByFindWithNullSpec() {
-        List<News> newsList = newsRepo.find(null);
+        List<News> newsList = newsRepo.findBy(null);
         Assert.assertNotNull(newsList);
         Assert.assertTrue(newsList.isEmpty());
     }
@@ -158,7 +158,7 @@ public class NewsRepoImplTest {
     public void shouldReturnEmptyListByGetNotExistAuthorById() {
         News expectedNews = new News(1, "Test", "Test", "Test",
                 LocalDate.now(), LocalDate.now());
-        List<News> newsList = newsRepo.find(new QueryNewsByIdSpec(expectedNews.getId(), "news.news"));
+        List<News> newsList = newsRepo.findBy(new FindNewsByIdSpec(expectedNews.getId(), "news.news"));
         Assert.assertNotNull(newsList);
         Assert.assertTrue(newsList.isEmpty());
     }
@@ -193,9 +193,9 @@ public class NewsRepoImplTest {
         author.setId(authorRepo.save(author));
         news.setId(newsRepo.save(news));
         newsTwo.setId(newsRepo.save(newsTwo));
-        boolean isCreated = newsRepo.createAuthorToNews(news, author);
+        boolean isCreated = newsRepo.createBindingOfAuthorAndNews(news, author);
         Assert.assertTrue(isCreated);
-        List<News> newsList = newsRepo.find(new QueryNewsByAuthorIdSpec(author.getId()));
+        List<News> newsList = newsRepo.findBy(new FindNewsByAuthorIdSpec(author.getId()));
         Assert.assertNotNull(newsList);
         Assert.assertEquals(1, newsList.size());
         Assert.assertEquals(news, newsList.get(0));
@@ -211,10 +211,10 @@ public class NewsRepoImplTest {
         author.setId(authorRepo.save(author));
         news.setId(newsRepo.save(news));
         newsTwo.setId(newsRepo.save(newsTwo));
-        boolean isCreatedOne = newsRepo.createAuthorToNews(news, author);
+        boolean isCreatedOne = newsRepo.createBindingOfAuthorAndNews(news, author);
         Assert.assertTrue(isCreatedOne);
-        boolean isCreatedTwo = newsRepo.createAuthorToNews(newsTwo, author);
-        List<News> newsList = newsRepo.find(new QueryNewsByAuthorIdSpec(author.getId()));
+        boolean isCreatedTwo = newsRepo.createBindingOfAuthorAndNews(newsTwo, author);
+        List<News> newsList = newsRepo.findBy(new FindNewsByAuthorIdSpec(author.getId()));
         Assert.assertNotNull(newsList);
         Assert.assertEquals(2, newsList.size());
     }
@@ -225,7 +225,7 @@ public class NewsRepoImplTest {
         News news = new News(1, "Test", "Test", "Test", LocalDate.parse("2019-01-01"),
                 LocalDate.parse("2019-01-01"));
         news.setId(newsRepo.save(news));
-        boolean isCreated = newsRepo.createAuthorToNews(news, author);
+        boolean isCreated = newsRepo.createBindingOfAuthorAndNews(news, author);
         Assert.assertFalse(isCreated);
     }
 
@@ -235,7 +235,7 @@ public class NewsRepoImplTest {
         News news = new News(1, "Test", "Test", "Test", LocalDate.parse("2019-01-01"),
                 LocalDate.parse("2019-01-01"));
         author.setId(authorRepo.save(author));
-        boolean isCreated = newsRepo.createAuthorToNews(news, author);
+        boolean isCreated = newsRepo.createBindingOfAuthorAndNews(news, author);
         Assert.assertFalse(isCreated);
     }
 
@@ -246,11 +246,11 @@ public class NewsRepoImplTest {
                 LocalDate.parse("2019-01-01"));
         author.setId(authorRepo.save(author));
         news.setId(newsRepo.save(news));
-        boolean isCreated = newsRepo.createAuthorToNews(news, author);
+        boolean isCreated = newsRepo.createBindingOfAuthorAndNews(news, author);
         Assert.assertTrue(isCreated);
-        boolean isDeleted = newsRepo.deleteAuthorOfNews(news);
+        boolean isDeleted = newsRepo.deleteBindingsOfNewsAndAutors(news);
         Assert.assertTrue(isDeleted);
-        List<News> newsList = newsRepo.find(new QueryAuthorsByNewsIdSpec(news.getId()));
+        List<News> newsList = newsRepo.findBy(new FindAuthorsByNewsIdSpec(news.getId()));
         Assert.assertNotNull(newsList);
         Assert.assertEquals(0, newsList.size());
     }
@@ -261,9 +261,9 @@ public class NewsRepoImplTest {
         News news = new News(1, "Test", "Test", "Test", LocalDate.parse("2019-01-01"),
                 LocalDate.parse("2019-01-01"));
         author.setId(authorRepo.save(author));
-        boolean isCreated = newsRepo.createAuthorToNews(news, author);
+        boolean isCreated = newsRepo.createBindingOfAuthorAndNews(news, author);
         Assert.assertFalse(isCreated);
-        boolean isDeleted = newsRepo.deleteAuthorOfNews(news);
+        boolean isDeleted = newsRepo.deleteBindingsOfNewsAndAutors(news);
         Assert.assertFalse(isDeleted);
     }
 
@@ -277,13 +277,13 @@ public class NewsRepoImplTest {
         author.setId(authorRepo.save(author));
         newsOne.setId(newsRepo.save(newsOne));
         newsTwo.setId(newsRepo.save(newsTwo));
-        boolean isCreated = newsRepo.createAuthorToNews(newsOne, author);
+        boolean isCreated = newsRepo.createBindingOfAuthorAndNews(newsOne, author);
         Assert.assertTrue(isCreated);
-        boolean isCreatedTwo = newsRepo.createAuthorToNews(newsTwo, author);
+        boolean isCreatedTwo = newsRepo.createBindingOfAuthorAndNews(newsTwo, author);
         Assert.assertTrue(isCreatedTwo);
-        boolean isDeleted = newsRepo.deleteNewsOfAuthor(author);
+        boolean isDeleted = newsRepo.deleteBindingsOfAuthorAndNews(author);
         Assert.assertTrue(isDeleted);
-        List<News> newsList = newsRepo.find(new QueryNewsByAuthorIdSpec(author.getId()));
+        List<News> newsList = newsRepo.findBy(new FindNewsByAuthorIdSpec(author.getId()));
         Assert.assertNotNull(newsList);
         Assert.assertEquals(0, newsList.size());
     }
@@ -292,9 +292,9 @@ public class NewsRepoImplTest {
     public void shouldDeleteNotExistNewsOfAuthor() {
         Author author = new Author(1, "Author", "Test Author");
         author.setId(authorRepo.save(author));
-        boolean isDeleted = newsRepo.deleteNewsOfAuthor(author);
+        boolean isDeleted = newsRepo.deleteBindingsOfAuthorAndNews(author);
         Assert.assertFalse(isDeleted);
-        List<News> newsList = newsRepo.find(new QueryNewsByAuthorIdSpec(author.getId()));
+        List<News> newsList = newsRepo.findBy(new FindNewsByAuthorIdSpec(author.getId()));
         Assert.assertNotNull(newsList);
         Assert.assertEquals(0, newsList.size());
     }
@@ -308,7 +308,7 @@ public class NewsRepoImplTest {
                 LocalDate.parse("2019-01-01"));
         newsOne.setId(newsRepo.save(newsOne));
         newsTwo.setId(newsRepo.save(newsTwo));
-        boolean isDeleted = newsRepo.deleteNewsOfAuthor(author);
+        boolean isDeleted = newsRepo.deleteBindingsOfAuthorAndNews(author);
         Assert.assertFalse(isDeleted);
     }
 
@@ -322,9 +322,9 @@ public class NewsRepoImplTest {
         newsOne.setId(newsRepo.save(newsOne));
         newsTwo.setId(newsRepo.save(newsTwo));
         tag.setId(tagRepo.save(tag));
-        boolean isTagCreated = newsRepo.createTagToNews(newsOne, tag);
+        boolean isTagCreated = newsRepo.createBindingOfNewsAndTags(newsOne, tag);
         Assert.assertTrue(isTagCreated);
-        List<News> newsList = newsRepo.find(new QueryNewsByTagIdSpec(tag.getId()));
+        List<News> newsList = newsRepo.findBy(new FindNewsByTagIdSpec(tag.getId()));
         Assert.assertNotNull(newsList);
         Assert.assertEquals(1, newsList.size());
         Assert.assertEquals(newsOne, newsList.get(0));
@@ -344,17 +344,17 @@ public class NewsRepoImplTest {
         tagOne.setId(tagRepo.save(tagOne));
         tagTwo.setId(tagRepo.save(tagTwo));
         tagThree.setId(tagRepo.save(tagThree));
-        boolean tagOneCreated = newsRepo.createTagToNews(newsOne, tagOne);
-        boolean tagTwoCreated = newsRepo.createTagToNews(newsTwo, tagTwo);
-        boolean tagThreeCreated = newsRepo.createTagToNews(newsTwo, tagThree);
+        boolean tagOneCreated = newsRepo.createBindingOfNewsAndTags(newsOne, tagOne);
+        boolean tagTwoCreated = newsRepo.createBindingOfNewsAndTags(newsTwo, tagTwo);
+        boolean tagThreeCreated = newsRepo.createBindingOfNewsAndTags(newsTwo, tagThree);
         Assert.assertTrue(tagOneCreated);
         Assert.assertTrue(tagTwoCreated);
         Assert.assertTrue(tagThreeCreated);
-        List<Tag> tagsListOne = tagRepo.find(new QueryTagsByNewsIdSpec(newsOne.getId()));
+        List<Tag> tagsListOne = tagRepo.findBy(new FindTagsByNewsIdSpec(newsOne.getId()));
         Assert.assertNotNull(tagsListOne);
         Assert.assertEquals(1, tagsListOne.size());
         Assert.assertEquals(tagOne, tagsListOne.get(0));
-        List<Tag> tagsListTwo = tagRepo.find(new QueryTagsByNewsIdSpec(newsTwo.getId()));
+        List<Tag> tagsListTwo = tagRepo.findBy(new FindTagsByNewsIdSpec(newsTwo.getId()));
         Assert.assertNotNull(tagsListTwo);
         Assert.assertEquals(2, tagsListTwo.size());
         Assert.assertEquals(tagTwo, tagsListTwo.get(0));
@@ -375,16 +375,16 @@ public class NewsRepoImplTest {
         tagOne.setId(tagRepo.save(tagOne));
         tagTwo.setId(tagRepo.save(tagTwo));
         tagThree.setId(tagRepo.save(tagThree));
-        newsRepo.createTagToNews(newsOne, tagOne);
-        newsRepo.createTagToNews(newsTwo, tagTwo);
-        newsRepo.createTagToNews(newsTwo, tagThree);
-        List<Tag> tagsListBefore = tagRepo.find(new QueryTagsByNewsIdSpec(newsOne.getId()));
+        newsRepo.createBindingOfNewsAndTags(newsOne, tagOne);
+        newsRepo.createBindingOfNewsAndTags(newsTwo, tagTwo);
+        newsRepo.createBindingOfNewsAndTags(newsTwo, tagThree);
+        List<Tag> tagsListBefore = tagRepo.findBy(new FindTagsByNewsIdSpec(newsOne.getId()));
         Assert.assertEquals(1, tagsListBefore.size());
-        boolean isDeleted = newsRepo.deleteTagOfNews(newsOne, tagOne);
+        boolean isDeleted = newsRepo.deleteBindingOfNewsAndTag(newsOne, tagOne);
         Assert.assertTrue(isDeleted);
-        List<Tag> tagsListAfter = tagRepo.find(new QueryTagsByNewsIdSpec(newsOne.getId()));
+        List<Tag> tagsListAfter = tagRepo.findBy(new FindTagsByNewsIdSpec(newsOne.getId()));
         Assert.assertEquals(0, tagsListAfter.size());
-        List<Tag> tagList = tagRepo.find(new QueryTagByIdSpec(tagOne.getId()));
+        List<Tag> tagList = tagRepo.findBy(new FindTagByIdSpec(tagOne.getId()));
         Assert.assertEquals(1, tagList.size());
         Assert.assertEquals(tagOne, tagList.get(0));
     }
@@ -403,19 +403,19 @@ public class NewsRepoImplTest {
         tagOne.setId(tagRepo.save(tagOne));
         tagTwo.setId(tagRepo.save(tagTwo));
         tagThree.setId(tagRepo.save(tagThree));
-        newsRepo.createTagToNews(newsOne, tagOne);
-        newsRepo.createTagToNews(newsTwo, tagTwo);
-        newsRepo.createTagToNews(newsTwo, tagThree);
-        List<Tag> tagsListBefore = tagRepo.find(new QueryTagsByNewsIdSpec(newsTwo.getId()));
+        newsRepo.createBindingOfNewsAndTags(newsOne, tagOne);
+        newsRepo.createBindingOfNewsAndTags(newsTwo, tagTwo);
+        newsRepo.createBindingOfNewsAndTags(newsTwo, tagThree);
+        List<Tag> tagsListBefore = tagRepo.findBy(new FindTagsByNewsIdSpec(newsTwo.getId()));
         Assert.assertEquals(2, tagsListBefore.size());
-        boolean isTagsDeleted = newsRepo.deleteTagsOfNews(newsTwo);
+        boolean isTagsDeleted = newsRepo.deleteBindingsOfNewsAndAllTags(newsTwo);
         Assert.assertTrue(isTagsDeleted);
-        List<Tag> tagsListAfter = tagRepo.find(new QueryTagsByNewsIdSpec(newsTwo.getId()));
+        List<Tag> tagsListAfter = tagRepo.findBy(new FindTagsByNewsIdSpec(newsTwo.getId()));
         Assert.assertEquals(0, tagsListAfter.size());
-        List<Tag> tagList = tagRepo.find(new QueryTagByIdSpec(tagTwo.getId()));
+        List<Tag> tagList = tagRepo.findBy(new FindTagByIdSpec(tagTwo.getId()));
         Assert.assertEquals(1, tagList.size());
         Assert.assertEquals(tagTwo, tagList.get(0));
-        List<Tag> tagListThree = tagRepo.find(new QueryTagByIdSpec(tagThree.getId()));
+        List<Tag> tagListThree = tagRepo.findBy(new FindTagByIdSpec(tagThree.getId()));
         Assert.assertEquals(1, tagListThree.size());
         Assert.assertEquals(tagThree, tagListThree.get(0));
     }

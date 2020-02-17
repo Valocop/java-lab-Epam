@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/authors")
@@ -25,7 +26,7 @@ public class AuthorController {
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    public AuthorDto findById(@PathVariable("id") @Min(1) @Max(Long.MAX_VALUE) long id) {
+    public Optional<AuthorDto> findById(@PathVariable("id") @Min(1) @Max(Long.MAX_VALUE) long id) {
         try {
             return authorService.findById(id);
         } catch (ServiceException e) {
@@ -52,8 +53,12 @@ public class AuthorController {
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
     public void delete(@Validated(FullValidation.class) @RequestBody AuthorDto authorDto) {
-        if (!authorService.remove(authorDto)) {
+        if (isAuthorNotDeleted(authorDto)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to delete author");
         }
+    }
+
+    private boolean isAuthorNotDeleted(@RequestBody @Validated(FullValidation.class) AuthorDto authorDto) {
+        return !authorService.remove(authorDto);
     }
 }

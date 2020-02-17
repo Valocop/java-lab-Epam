@@ -40,7 +40,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public boolean remove(TagDto dto) {
-        List<NewsDto> newsDtoList = newsRepo.find(new QueryNewsByTagIdSpec(dto.getId())).stream()
+        List<NewsDto> newsDtoList = newsRepo.findBy(new FindNewsByTagIdSpec(dto.getId())).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
         newsDtoList.forEach(newsDto -> {
@@ -48,7 +48,7 @@ public class TagServiceImpl implements TagService {
             news.setId(newsDto.getId());
             Tag tag = new Tag();
             tag.setId(dto.getId());
-            if (!newsRepo.deleteTagOfNews(news, tag)) {
+            if (!newsRepo.deleteBindingOfNewsAndTag(news, tag)) {
                 throw new ServiceException("Failed to delete relation of tag "
                         + dto.getId() + " news " + newsDto.getId());
             }
@@ -68,36 +68,32 @@ public class TagServiceImpl implements TagService {
         return modelMapper.map(news, NewsDto.class);
     }
 
-    private News convertToEntity(NewsDto newsDto) {
-        return modelMapper.map(newsDto, News.class);
-    }
-
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 
     @Override
     public TagDto findById(long id) {
-        QuerySpecification findByIdSpec = new QueryTagByIdSpec(id);
-        List<TagDto> tagDtoList = tagRepo.find(findByIdSpec)
+        FindSpecification findByIdSpec = new FindTagByIdSpec(id);
+        List<TagDto> tagDtoList = tagRepo.findBy(findByIdSpec)
                 .stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
         if (tagDtoList.isEmpty()) {
-            throw new ServiceException("Fail to find tag by id. Not founded");
+            throw new ServiceException("Fail to find tag by id. Not found");
         }
         return tagDtoList.get(0);
     }
 
     @Override
     public List<TagDto> findByName(String name) {
-        QuerySpecification spec = new QueryTagByNameSpec(name);
-        return tagRepo.find(spec).stream().map(this::convertToDto).collect(Collectors.toList());
+        FindSpecification spec = new FindTagByNameSpec(name);
+        return tagRepo.findBy(spec).stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
     @Override
     public List<TagDto> findByNewsId(long newsId) {
-        return tagRepo.find(new QueryTagsByNewsIdSpec(newsId)).stream()
+        return tagRepo.findBy(new FindTagsByNewsIdSpec(newsId)).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }

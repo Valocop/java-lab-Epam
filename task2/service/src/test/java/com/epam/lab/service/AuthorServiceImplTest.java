@@ -4,7 +4,7 @@ import com.epam.lab.dto.AuthorDto;
 import com.epam.lab.model.Author;
 import com.epam.lab.repository.AuthorRepo;
 import com.epam.lab.repository.NewsRepo;
-import com.epam.lab.specification.QuerySpecification;
+import com.epam.lab.specification.FindSpecification;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class AuthorServiceImplTest {
         when(authorRepo.save(testAuthorOne)).thenReturn((long) 1);
         when(authorRepo.update(testAuthorOne)).thenReturn(true);
         when(authorRepo.delete(testAuthorOne)).thenReturn(true);
-        when(authorRepo.find(any())).thenReturn(testAuthorList());
+        when(authorRepo.findBy(any())).thenReturn(testAuthorList());
     }
 
     @Test
@@ -72,16 +72,16 @@ public class AuthorServiceImplTest {
 
     @Test
     public void shouldFindAuthorById() {
-        AuthorDto authorDto = authorService.findById(1);
-        verify(authorRepo, times(1)).find(any(QuerySpecification.class));
+        Optional<AuthorDto> authorDto = authorService.findById(1);
+        verify(authorRepo, times(1)).findBy(any(FindSpecification.class));
         Assert.assertNotNull(authorDto);
-        Assert.assertEquals(testAuthorDto, authorDto);
+        Assert.assertEquals(testAuthorDto, authorDto.get());
     }
 
     @Test
     public void shouldFindAuthorByNameAndId() {
         Optional<AuthorDto> dtoOptional = authorService.findByIdAndName(testAuthorDto.getId(), testAuthorDto.getName());
-        verify(authorRepo, times(1)).find(any(QuerySpecification.class));
+        verify(authorRepo, times(1)).findBy(any(FindSpecification.class));
         Assert.assertTrue(dtoOptional.isPresent());
         Assert.assertEquals(testAuthorDto, dtoOptional.get());
     }
@@ -89,7 +89,7 @@ public class AuthorServiceImplTest {
     @Test
     public void shouldFindByNewsId() {
         List<AuthorDto> authorDtoList = authorService.findByNewsId(anyLong());
-        verify(authorRepo, times(1)).find(any());
+        verify(authorRepo, times(1)).findBy(any());
         Assert.assertNotNull(authorDtoList);
         Assert.assertEquals(2, authorDtoList.size());
         Assert.assertEquals(testAuthorDto, authorDtoList.get(0));

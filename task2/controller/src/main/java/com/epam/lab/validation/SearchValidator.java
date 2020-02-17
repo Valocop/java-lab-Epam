@@ -14,7 +14,7 @@ public class SearchValidator implements Validator {
         ResultValidator resultValidator = new ResultValidatorImpl();
         data.forEach((s, list) -> {
             Optional<CriteriaType> criteriaType = CriteriaType.getCriteriaType(s, false);
-            if (!criteriaType.isPresent()) {
+            if (isNotPresent(criteriaType)) {
                 resultValidator.addException("Search criteria type",
                         Collections.singletonList("Type of search incorrect"));
             }
@@ -24,5 +24,9 @@ public class SearchValidator implements Validator {
             }
         });
         return resultValidator;
+    }
+
+    private boolean isNotPresent(Optional<CriteriaType> criteriaType) {
+        return !criteriaType.isPresent();
     }
 }

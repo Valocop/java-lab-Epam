@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AuthorService extends Service<AuthorDto> {
-    AuthorDto findById(long id);
+    Optional<AuthorDto> findById(long id);
 
     Optional<AuthorDto> findByIdAndName(long id, String name);
 

@@ -1,7 +1,7 @@
 package com.epam.lab.repository;
 
 import com.epam.lab.model.Tag;
-import com.epam.lab.specification.QuerySpecification;
+import com.epam.lab.specification.FindSpecification;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -53,7 +53,7 @@ public class TagRepoImpl implements TagRepo {
     }
 
     @Override
-    public List<Tag> find(QuerySpecification spec) {
+    public List<Tag> findBy(FindSpecification spec) {
         List<Tag> tagList = new ArrayList<>();
 
         if (spec == null) {

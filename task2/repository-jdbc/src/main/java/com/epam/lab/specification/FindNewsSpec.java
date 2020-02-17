@@ -4,8 +4,8 @@ package com.epam.lab.specification;
 import com.epam.lab.criteria.Criteria;
 import com.epam.lab.criteria.CriteriaType;
 
-public class QueryNewsSpec implements QuerySpecification {
-    String query = "SELECT news.id, news.title, news.short_text, news.full_text, news.creation_date, news.modification_date " +
+public class FindNewsSpec implements FindSpecification {
+    private String query = "SELECT news.id, news.title, news.short_text, news.full_text, news.creation_date, news.modification_date " +
             "FROM news " +
             "LEFT JOIN news_tag nt on news.id = nt.news_id " +
             "LEFT JOIN tag t on nt.tag_id = t.id " +
@@ -17,7 +17,6 @@ public class QueryNewsSpec implements QuerySpecification {
     private String inTagByName = " and news.id in (select news_id from news_tag " +
             "where tag_id in (select id from tag where name in (%s)) " +
             "group by news_id having count (news_id) = %d) ";
-//    private String groupBy = " group by news.id ";
     private String andTag = "";
     private String and = "";
     private String order = "";
@@ -29,7 +28,7 @@ public class QueryNewsSpec implements QuerySpecification {
     }
 
     @Override
-    public QuerySpecification add(Criteria criteria) {
+    public FindSpecification add(Criteria criteria) {
         CriteriaType criteriaType = criteria.getCriteriaType()
                 .orElseThrow(() -> new IllegalStateException("Failed to get criteria type"));
 
@@ -40,7 +39,7 @@ public class QueryNewsSpec implements QuerySpecification {
         }
     }
 
-    private QuerySpecification sort(Criteria criteria, CriteriaType criteriaType) {
+    private FindSpecification sort(Criteria criteria, CriteriaType criteriaType) {
 
         switch (criteriaType) {
             case SORT_DATE:
@@ -60,7 +59,7 @@ public class QueryNewsSpec implements QuerySpecification {
         }
     }
 
-    private QuerySpecification search(Criteria criteria, CriteriaType criteriaType) {
+    private FindSpecification search(Criteria criteria, CriteriaType criteriaType) {
 
         switch (criteriaType) {
             case SEARCH_TAG_ID:
@@ -90,9 +89,7 @@ public class QueryNewsSpec implements QuerySpecification {
     }
 
     private void andAuthor(Criteria criteria, String field) {
-        criteria.getValues().forEach(s -> {
-            and += String.format(" and %s = '%s' ", field, s);
-        });
+        criteria.getValues().forEach(s -> and += String.format(" and %s = '%s' ", field, s));
     }
 
     private void order(Criteria criteria, String field) {

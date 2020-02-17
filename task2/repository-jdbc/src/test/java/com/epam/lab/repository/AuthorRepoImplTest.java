@@ -1,8 +1,8 @@
 package com.epam.lab.repository;
 
 import com.epam.lab.model.Author;
-import com.epam.lab.specification.QueryAuthorByIdAndNameSpec;
-import com.epam.lab.specification.QueryAuthorByIdSpec;
+import com.epam.lab.specification.FindAuthorByIdAndNameSpec;
+import com.epam.lab.specification.FindAuthorByIdSpec;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -78,7 +78,7 @@ public class AuthorRepoImplTest {
         expectedAuthor.setId(id);
         boolean isUpdated = authorRepo.update(expectedAuthor);
         Assert.assertTrue(isUpdated);
-        List<Author> authorList = authorRepo.find(new QueryAuthorByIdSpec(id, "author"));
+        List<Author> authorList = authorRepo.findBy(new FindAuthorByIdSpec(id, "author"));
         Assert.assertEquals(1, authorList.size());
         Assert.assertEquals(expectedAuthor, authorList.get(0));
     }
@@ -115,14 +115,14 @@ public class AuthorRepoImplTest {
         Long id = authorRepo.save(expectedAuthor);
         Assert.assertNotNull(id);
         expectedAuthor.setId(id);
-        List<Author> authorList = authorRepo.find(new QueryAuthorByIdSpec(id, "author"));
+        List<Author> authorList = authorRepo.findBy(new FindAuthorByIdSpec(id, "author"));
         Assert.assertEquals(1, authorList.size());
         Assert.assertEquals(expectedAuthor, authorList.get(0));
     }
 
     @Test
     public void shouldReturnEmptyListOfAuthorsByFindWithNullSpec() {
-        List<Author> authorList = authorRepo.find(null);
+        List<Author> authorList = authorRepo.findBy(null);
         Assert.assertNotNull(authorList);
         Assert.assertTrue(authorList.isEmpty());
     }
@@ -130,7 +130,7 @@ public class AuthorRepoImplTest {
     @Test
     public void shouldReturnEmptyListByGetNotExistAuthorById() {
         Author expectedAuthor = new Author(1, "Test", "Test Test");
-        List<Author> authorList = authorRepo.find(new QueryAuthorByIdSpec(expectedAuthor.getId(), "author"));
+        List<Author> authorList = authorRepo.findBy(new FindAuthorByIdSpec(expectedAuthor.getId(), "author"));
         Assert.assertNotNull(authorList);
         Assert.assertTrue(authorList.isEmpty());
     }
@@ -160,7 +160,7 @@ public class AuthorRepoImplTest {
         Author testAuthorTwo = new Author(1, "Test2", "Test2 Test");
         testAuthorOne.setId(authorRepo.save(testAuthorOne));
         testAuthorTwo.setId(authorRepo.save(testAuthorTwo));
-        List<Author> authors = authorRepo.find(new QueryAuthorByIdAndNameSpec(testAuthorOne.getId(),
+        List<Author> authors = authorRepo.findBy(new FindAuthorByIdAndNameSpec(testAuthorOne.getId(),
                 testAuthorOne.getName()));
         Assert.assertNotNull(authors);
         Assert.assertEquals(1, authors.size());

@@ -37,13 +37,13 @@ public class NewsServiceImplTest {
         newsService.setModelMapper(modelMapper);
         when(newsRepo.save(testNews)).thenReturn(10L);
         when(authorService.findByIdAndName(anyLong(), anyString())).thenReturn(Optional.empty());
-        when(newsRepo.find(any())).thenReturn(Collections.singletonList(testNews));
-        when(newsRepo.createAuthorToNews(any(), any())).thenReturn(true);
+        when(newsRepo.findBy(any())).thenReturn(Collections.singletonList(testNews));
+        when(newsRepo.createBindingOfAuthorAndNews(any(), any())).thenReturn(true);
         when(newsRepo.update(testNews)).thenReturn(true);
         when(newsRepo.delete(testNews)).thenReturn(true);
-        when(newsRepo.find(any())).thenReturn(Collections.singletonList(testNews));
+        when(newsRepo.findBy(any())).thenReturn(Collections.singletonList(testNews));
         when(authorService.findByNewsId(1L)).thenReturn(Collections.singletonList(new AuthorDto()));
-        when(newsRepo.deleteTagOfNews(any(), any())).thenReturn(true);
+        when(newsRepo.deleteBindingOfNewsAndTag(any(), any())).thenReturn(true);
     }
 
     @Test

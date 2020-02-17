@@ -1,11 +1,11 @@
 package com.epam.lab.specification;
 
-public class QueryAuthorByIdAndNameSpec implements QuerySpecification {
+public class FindAuthorByIdAndNameSpec implements FindSpecification {
     private String query = "select id, name, surname from author where id = %d and name = '%s'";
     private long id;
     private String name;
 
-    public QueryAuthorByIdAndNameSpec(long id, String name) {
+    public FindAuthorByIdAndNameSpec(long id, String name) {
         this.id = id;
         this.name = name;
     }

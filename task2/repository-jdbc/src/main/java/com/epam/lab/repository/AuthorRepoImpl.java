@@ -1,7 +1,7 @@
 package com.epam.lab.repository;
 
 import com.epam.lab.model.Author;
-import com.epam.lab.specification.QuerySpecification;
+import com.epam.lab.specification.FindSpecification;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -9,7 +9,6 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,14 +52,9 @@ public class AuthorRepoImpl implements AuthorRepo {
     }
 
     @Override
-    public List<Author> find(QuerySpecification spec) {
+    public List<Author> findBy(FindSpecification spec) {
         List<Author> authorList = new ArrayList<>();
-
-        if (spec == null) {
-            return authorList;
-        } else {
-            return jdbcTemplate.query(spec.query(), authorMapper);
-        }
+        return spec == null ? authorList : jdbcTemplate.query(spec.query(), authorMapper);
     }
 
     @Override

@@ -52,8 +52,12 @@ public class TagController {
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
     public void delete(@Validated(FullValidation.class) @RequestBody TagDto tagDto) {
-        if (!tagService.remove(tagDto)) {
+        if (isTagNotRemoved(tagDto)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to delete tag");
         }
+    }
+
+    private boolean isTagNotRemoved(@RequestBody @Validated(FullValidation.class) TagDto tagDto) {
+        return !tagService.remove(tagDto);
     }
 }

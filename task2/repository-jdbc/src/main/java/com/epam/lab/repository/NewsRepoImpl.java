@@ -3,7 +3,7 @@ package com.epam.lab.repository;
 import com.epam.lab.model.Author;
 import com.epam.lab.model.News;
 import com.epam.lab.model.Tag;
-import com.epam.lab.specification.QuerySpecification;
+import com.epam.lab.specification.FindSpecification;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -78,14 +78,10 @@ public class NewsRepoImpl implements NewsRepo {
     }
 
     @Override
-    public List<News> find(QuerySpecification spec) {
+    public List<News> findBy(FindSpecification spec) {
         List<News> newsList = new ArrayList<>();
-
-        if (spec == null) {
-            return newsList;
-        }
         try {
-            return jdbcTemplate.query(spec.query(), newsMapper);
+            return spec == null ? newsList : jdbcTemplate.query(spec.query(), newsMapper);
         } catch (DataAccessException e) {
             return newsList;
         }
@@ -97,7 +93,7 @@ public class NewsRepoImpl implements NewsRepo {
     }
 
     @Override
-    public boolean createAuthorToNews(News news, Author author) {
+    public boolean createBindingOfAuthorAndNews(News news, Author author) {
         try {
             return jdbcTemplate.update(INSERT_NEWS_AUTHOR, news.getId(), author.getId()) == 1;
         } catch (DataAccessException e) {
@@ -106,7 +102,7 @@ public class NewsRepoImpl implements NewsRepo {
     }
 
     @Override
-    public boolean deleteAuthorOfNews(News news) {
+    public boolean deleteBindingsOfNewsAndAutors(News news) {
         try {
             return jdbcTemplate.update(DELETE_AUTHOR_OF_NEWS, news.getId()) > 0;
         } catch (DataAccessException e) {
@@ -115,7 +111,7 @@ public class NewsRepoImpl implements NewsRepo {
     }
 
     @Override
-    public boolean deleteNewsOfAuthor(Author author) {
+    public boolean deleteBindingsOfAuthorAndNews(Author author) {
         try {
             return jdbcTemplate.update(DELETE_NEWS_OF_AUTHOR, author.getId()) > 0;
         } catch (DataAccessException e) {
@@ -124,7 +120,7 @@ public class NewsRepoImpl implements NewsRepo {
     }
 
     @Override
-    public boolean createTagToNews(News news, Tag tag) {
+    public boolean createBindingOfNewsAndTags(News news, Tag tag) {
         try {
             return jdbcTemplate.update(INSERT_TAG_TO_NEWS, news.getId(), tag.getId()) > 0;
         } catch (DataAccessException e) {
@@ -133,7 +129,7 @@ public class NewsRepoImpl implements NewsRepo {
     }
 
     @Override
-    public boolean deleteTagOfNews(News news, Tag tag) {
+    public boolean deleteBindingOfNewsAndTag(News news, Tag tag) {
         try {
             return jdbcTemplate.update(DELETE_TAG_OF_NEWS, news.getId(), tag.getId()) > 0;
         } catch (DataAccessException e) {
@@ -142,7 +138,7 @@ public class NewsRepoImpl implements NewsRepo {
     }
 
     @Override
-    public boolean deleteTagsOfNews(News news) {
+    public boolean deleteBindingsOfNewsAndAllTags(News news) {
         try {
             return jdbcTemplate.update(DELETE_TAGS_OF_NEWS, news.getId()) > 0;
         } catch (DataAccessException e) {

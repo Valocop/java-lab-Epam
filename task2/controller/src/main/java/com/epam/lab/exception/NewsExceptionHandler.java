@@ -16,46 +16,46 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class NewsExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private static final String TIME = "time";
+    private static final String STATUS = "status";
+    private static final String ERRORS = "errors";
+
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseBody
-    public ResponseEntity<Object> handConstraintViolationException(ConstraintViolationException e) throws IOException {
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("time", new Date().toString());
-        body.put("status", status.value());
+        body.put(TIME, new Date().toString());
+        body.put(STATUS, status.value());
 
         List<String> errors = e.getConstraintViolations()
                 .stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.toList());
-        body.put("errors", errors);
+        body.put(ERRORS, errors);
         return new ResponseEntity<>(body, status);
-//        response.sendError(HttpStatus.BAD_REQUEST.value());
     }
 
     @ExceptionHandler(ResponseStatusException.class)
     @ResponseBody
-    public ResponseEntity<Object> handResponseStatusException(ResponseStatusException e) {
+    public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException e) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("time", new Date().toString());
-        body.put("status", e.getStatus().value());
+        body.put(TIME, new Date().toString());
+        body.put(STATUS, e.getStatus().value());
 
         Map<String, List<String>> stringListMap = new LinkedHashMap<>();
-        e.getHeaders().forEach((s, s2) -> {
-            stringListMap.put(s, Collections.singletonList(s2));
-        });
+        e.getHeaders().forEach((s, s2) -> stringListMap.put(s, Collections.singletonList(s2)));
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>(stringListMap);
         HttpHeaders httpHeaders = new HttpHeaders(multiValueMap);
 
         List<String> errors = Collections.singletonList(e.getReason());
-        body.put("errors", errors);
+        body.put(ERRORS, errors);
         return new ResponseEntity<>(body, httpHeaders, e.getStatus());
     }
 
@@ -63,15 +63,15 @@ public class NewsExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
                                                                   HttpStatus status, WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("time", new Date().toString());
-        body.put("status", status.value());
+        body.put(TIME, new Date().toString());
+        body.put(STATUS, status.value());
 
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
-        body.put("errors", errors);
+        body.put(ERRORS, errors);
         return new ResponseEntity<>(body, headers, status);
     }
 }

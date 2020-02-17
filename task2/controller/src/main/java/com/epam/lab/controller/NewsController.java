@@ -45,7 +45,7 @@ public class NewsController {
         Map<String, List<String>> searchMap = convertToMap(Arrays.asList(search.split(":")));
         Map<String, List<String>> sortMap = convertToMap(Arrays.asList(sort.split(":")));
 
-        if (searchValidator.validate(searchMap).isValid() && sortValidator.validate(sortMap).isValid()) {
+        if (isCriteriaValid(searchMap, sortMap)) {
             List<Criteria> criteriaList = new ArrayList<>();
             addCriteriaToList(searchMap, false, criteriaList);
             addCriteriaToList(sortMap, true, criteriaList);
@@ -55,23 +55,18 @@ public class NewsController {
         }
     }
 
-    private void addCriteriaToList(Map<String, List<String>> searchMap, boolean isSort, List<Criteria> criteriaList) {
-        searchMap.forEach((s, list) -> {
-            criteriaList.add(new Criteria(s, isSort, list));
-        });
-    }
-
     @GetMapping("/search/{search}")
     @ResponseStatus(HttpStatus.FOUND)
     public List<NewsDto> searchNews(@PathVariable("search") String search) {
         List<String> searchCriteriaList = Arrays.asList(search.split(":"));
         Map<String, List<String>> searchMap = convertToMap(searchCriteriaList);
+
         if (searchValidator.validate(searchMap).isValid()) {
             List<Criteria> criteriaList = new ArrayList<>();
             addCriteriaToList(searchMap, false, criteriaList);
             return newsService.findByCriteria(criteriaList);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect search and sort params");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect search params");
         }
     }
 
@@ -80,12 +75,13 @@ public class NewsController {
     public List<NewsDto> sortNews(@PathVariable("sort") String sort) {
         List<String> sortCriteriaList = Arrays.asList(sort.split(":"));
         Map<String, List<String>> sortMap = convertToMap(sortCriteriaList);
+
         if (sortValidator.validate(sortMap).isValid()) {
             List<Criteria> criteriaList = new ArrayList<>();
             addCriteriaToList(sortMap, true, criteriaList);
             return newsService.findByCriteria(criteriaList);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect search and sort params");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect sort params");
         }
     }
 
@@ -98,46 +94,53 @@ public class NewsController {
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public NewsDto update(@Validated(CreateValidation.class) @RequestBody NewsDto newsDto) {
-        Optional<NewsDto> newsDtoOptional = null;
         try {
-            newsDtoOptional = newsService.update(newsDto);
+            Optional<NewsDto> newsDtoOptional = newsService.update(newsDto);
+            return newsDtoOptional.orElseThrow(ServiceException::new);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to update news", e);
-        }
-        if (newsDtoOptional.isPresent()) {
-            return newsDtoOptional.get();
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to update news");
         }
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
     public void delete(@RequestBody Map<String, Object> body) {
-        NewsDto newsDto = new NewsDto();
         try {
+            NewsDto newsDto = new NewsDto();
             newsDto.setId(Long.parseLong((String) body.get("id")));
+            if (isNewsNotRemoved(newsDto)) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to delete news");
+            }
         } catch (NumberFormatException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to delete news. Check id parameter");
         }
-        if (!newsService.remove(newsDto)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to delete news");
-        }
+    }
+
+    private boolean isNewsNotRemoved(NewsDto newsDto) {
+        return !newsService.remove(newsDto);
     }
 
     private Map<String, List<String>> convertToMap(List<String> params) {
-        Map<String, List<String>> result = new HashMap<>();
         try {
+            Map<String, List<String>> result = new HashMap<>();
             params.forEach(s -> {
                 List<String> strings = Arrays.asList(s.split("="));
                 String key = strings.get(0);
                 List<String> value = Arrays.asList(String.join("", strings.get(1)).split(","));
                 result.put(key, value);
             });
+            return result;
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect criteria");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect criteria. Check query params");
         }
-        return result;
+    }
+
+    private boolean isCriteriaValid(Map<String, List<String>> searchMap, Map<String, List<String>> sortMap) {
+        return searchValidator.validate(searchMap).isValid() && sortValidator.validate(sortMap).isValid();
+    }
+
+    private void addCriteriaToList(Map<String, List<String>> searchMap, boolean isSort, List<Criteria> criteriaList) {
+        searchMap.forEach((s, list) -> criteriaList.add(new Criteria(s, isSort, list)));
     }
 
     public SearchValidator getSearchValidator() {

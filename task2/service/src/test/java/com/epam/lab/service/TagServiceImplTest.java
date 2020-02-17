@@ -40,7 +40,7 @@ public class TagServiceImplTest {
         when(tagRepo.save(tagTestOne)).thenReturn(10L);
         when(tagRepo.update(tagTestOne)).thenReturn(true);
         when(tagRepo.delete(tagTestOne)).thenReturn(true);
-        when(tagRepo.find(any())).thenReturn(getTestTagList());
+        when(tagRepo.findBy(any())).thenReturn(getTestTagList());
         when(tagRepo.deleteUnsignedTags()).thenReturn(true);
     }
 
@@ -69,7 +69,7 @@ public class TagServiceImplTest {
     @Test
     public void shouldFindTagById() {
         TagDto tagDto = tagService.findById(anyLong());
-        verify(tagRepo, times(1)).find(any());
+        verify(tagRepo, times(1)).findBy(any());
         Assert.assertNotNull(tagDto);
         Assert.assertEquals(tagDtoTest, tagDto);
     }
@@ -77,7 +77,7 @@ public class TagServiceImplTest {
     @Test
     public void shouldFindByName() {
         List<TagDto> tagDtoList = tagService.findByName(anyString());
-        verify(tagRepo, times(1)).find(any());
+        verify(tagRepo, times(1)).findBy(any());
         Assert.assertNotNull(tagDtoList);
         Assert.assertEquals(tagDtoTest, tagDtoList.get(0));
     }
@@ -85,7 +85,7 @@ public class TagServiceImplTest {
     @Test
     public void shouldFindTagsByNewsId() {
         List<TagDto> tagDtoList = tagService.findByNewsId(anyLong());
-        verify(tagRepo, times(1)).find(any());
+        verify(tagRepo, times(1)).findBy(any());
         Assert.assertNotNull(tagDtoList);
         Assert.assertEquals(tagDtoTest, tagDtoList.get(0));
     }
