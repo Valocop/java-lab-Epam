@@ -9,11 +9,9 @@ import com.epam.lab.service.TagService;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackageClasses = AuthorServiceImpl.class)
 public class SpringServiceTestConfig {
 
     @Bean

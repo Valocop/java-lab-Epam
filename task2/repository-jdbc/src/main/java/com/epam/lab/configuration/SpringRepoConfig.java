@@ -4,6 +4,7 @@ import com.epam.lab.repository.*;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 @Configuration
+@ComponentScan("com.epam.lab")
 public class SpringRepoConfig {
 
     @Bean

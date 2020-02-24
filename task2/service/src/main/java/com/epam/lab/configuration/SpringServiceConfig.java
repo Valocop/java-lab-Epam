@@ -6,10 +6,12 @@ import com.epam.lab.repository.TagRepo;
 import com.epam.lab.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
+@ComponentScan("com.epam.lab")
 @Import(SpringRepoConfig.class)
 public class SpringServiceConfig {
 
