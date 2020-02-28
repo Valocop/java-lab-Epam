@@ -2,3 +2,5 @@
 /target/***
 /controller/target/*
 /service/target/
+/repository-jpa/target/
+target
