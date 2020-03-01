@@ -67,7 +67,8 @@ public class NewsRepositoryImpl implements NewsRepository {
 
     @Override
     public void delete(News entity) {
-        entityManager.remove(entity);
+        News news = entityManager.contains(entity) ? entity : entityManager.merge(entity);
+        entityManager.remove(news);
     }
 
     @Override

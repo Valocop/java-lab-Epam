@@ -10,8 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class NewsServiceImpl implements NewsService {
@@ -32,29 +33,36 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public NewsDto create(NewsDto dto) {
-        AuthorDto authorDto = dto.getAuthorDto();
-        List<TagDto> tagDtoList = dto.getTagDtoList();
-        createNotExistAuthor(authorDto);
-        createNotExistTags(tagDtoList);
+        AuthorDto authorDto = dto.getAuthor();
+        Set<TagDto> tagDtoSet = dto.getTags();
+        AuthorDto author = createNotExistAuthor(authorDto);
+        Set<TagDto> tags = createNotExistTags(tagDtoSet);
+        dto.setAuthor(author);
+        dto.setTags(tags);
         News news = newsRepository.save(convertToEntity(dto));
-        return convertToDto(news);
+        NewsDto newsDto = convertToDto(news);
+        newsDto.setAuthor(author);
+        newsDto.setTags(tags);
+        return newsDto;
     }
 
-    private void createNotExistTags(List<TagDto> tagDtoList) {
-        tagDtoList.forEach(tagDto -> {
-            if (isTagNotExist(tagDto)) {
-                tagService.create(tagDto);
-            }
-        });
-    }
-
-    private void createNotExistAuthor(AuthorDto authorDto) {
-        if (isAuthorNotExist(authorDto)) {
-            authorService.create(authorDto);
+    private Set<TagDto> createNotExistTags(Set<TagDto> tagDtoSet) {
+        Set<TagDto> tagsDto = new HashSet<>();
+        for (TagDto tagDto : tagDtoSet) {
+            Optional<TagDto> dtoOptional = tagService.read(tagDto);
+            TagDto dto = dtoOptional.orElseGet(() -> tagService.create(tagDto));
+            tagsDto.add(dto);
         }
+        return tagsDto;
+    }
+
+    private AuthorDto createNotExistAuthor(AuthorDto authorDto) {
+        Optional<AuthorDto> dtoOptional = authorService.read(authorDto);
+        return dtoOptional.orElseGet(() -> authorService.create(authorDto));
     }
 
     @Override
+    @Transactional
     public Optional<NewsDto> read(NewsDto dto) {
         Optional<News> newsOptional = newsRepository.findById(dto.getId());
         return newsOptional.map(this::convertToDto);
@@ -63,15 +71,19 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public NewsDto update(NewsDto dto) {
-        createNotExistAuthor(dto.getAuthorDto());
-        createNotExistTags(dto.getTagDtoList());
+        AuthorDto authorDto = createNotExistAuthor(dto.getAuthor());
+        Set<TagDto> tagDtoSet = createNotExistTags(dto.getTags());
+        dto.setAuthor(authorDto);
+        dto.setTags(tagDtoSet);
         News news = newsRepository.update(convertToEntity(dto));
         return convertToDto(news);
     }
 
     @Override
+    @Transactional
     public void delete(NewsDto dto) {
-        newsRepository.delete(convertToEntity(dto));
+        Optional<News> newsOptional = newsRepository.findById(dto.getId());
+        newsOptional.ifPresent(news -> newsRepository.delete(news));
     }
 
     private NewsDto convertToDto(News news) {
@@ -80,13 +92,5 @@ public class NewsServiceImpl implements NewsService {
 
     private News convertToEntity(NewsDto newsDto) {
         return modelMapper.map(newsDto, News.class);
-    }
-
-    private boolean isAuthorNotExist(AuthorDto authorDto) {
-        return !authorService.read(authorDto).isPresent();
-    }
-
-    private boolean isTagNotExist(TagDto tagDto) {
-        return !tagService.read(tagDto).isPresent();
     }
 }

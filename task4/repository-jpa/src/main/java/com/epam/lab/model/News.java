@@ -30,7 +30,7 @@ public class News {
             inverseJoinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id")
     )
     private Author author;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "news_tag",
             joinColumns = @JoinColumn(name = "news_id", referencedColumnName = "id"),
@@ -122,18 +122,18 @@ public class News {
         if (o == null || getClass() != o.getClass()) return false;
         News news = (News) o;
         return id == news.id &&
-                Objects.equals(title, news.title) &&
-                Objects.equals(shortText, news.shortText) &&
-                Objects.equals(fullText, news.fullText) &&
-                Objects.equals(creationDate, news.creationDate) &&
-                Objects.equals(modificationDate, news.modificationDate) &&
+                title.equals(news.title) &&
+                shortText.equals(news.shortText) &&
+                fullText.equals(news.fullText) &&
+                creationDate.equals(news.creationDate) &&
+                modificationDate.equals(news.modificationDate) &&
                 Objects.equals(author, news.author) &&
                 Objects.equals(tags, news.tags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, shortText, fullText, creationDate, modificationDate, author, tags);
+        return Objects.hash(id, title, shortText);
     }
 
     @Override
@@ -145,8 +145,6 @@ public class News {
                 ", fullText='" + fullText + '\'' +
                 ", creationDate=" + creationDate +
                 ", modificationDate=" + modificationDate +
-                ", author=" + author +
-                ", tagSet=" + tags +
                 '}';
     }
 }

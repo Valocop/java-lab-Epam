@@ -46,6 +46,7 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public void delete(Tag entity) {
-        entityManager.remove(entity);
+        Tag tag = entityManager.contains(entity) ? entity : entityManager.merge(entity);
+        entityManager.remove(tag);
     }
 }

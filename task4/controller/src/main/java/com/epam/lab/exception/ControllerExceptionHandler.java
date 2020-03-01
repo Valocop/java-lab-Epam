@@ -1,6 +1,7 @@
 package com.epam.lab.exception;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,14 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String TIME = "time";
     private static final String STATUS = "status";
     private static final String ERRORS = "errors";
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseBody
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException e) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        Map<String, Object> body = getMap(status, Collections.singletonList(e.getCause().getMessage()));
+        return new ResponseEntity<>(body, status);
+    }
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseBody

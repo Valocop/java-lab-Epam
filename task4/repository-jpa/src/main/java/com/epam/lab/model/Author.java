@@ -1,5 +1,7 @@
 package com.epam.lab.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,14 +70,14 @@ public class Author {
         if (o == null || getClass() != o.getClass()) return false;
         Author author = (Author) o;
         return id == author.id &&
-                Objects.equals(name, author.name) &&
-                Objects.equals(surname, author.surname) &&
+                name.equals(author.name) &&
+                surname.equals(author.surname) &&
                 Objects.equals(news, author.news);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, surname, news);
+        return Objects.hash(id, name, surname);
     }
 
     @Override
@@ -84,7 +86,6 @@ public class Author {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", news=" + news +
                 '}';
     }
 }

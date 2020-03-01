@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.net.URI;
@@ -30,7 +31,7 @@ public class AuthorController {
     @PostMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<AuthorDto> create(@Validated @RequestBody AuthorDto authorDto, UriComponentsBuilder ucb) {
+    public ResponseEntity<AuthorDto> create(@RequestBody @Valid AuthorDto authorDto, UriComponentsBuilder ucb) {
         AuthorDto author = authorService.create(authorDto);
         HttpHeaders headers = new HttpHeaders();
         URI locationUri = ucb.path("/authors/")
@@ -53,14 +54,14 @@ public class AuthorController {
     @PutMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public AuthorDto update(@Validated @RequestBody AuthorDto authorDto) {
+    public AuthorDto update(@RequestBody @Valid AuthorDto authorDto) {
         return authorService.update(authorDto);
     }
 
     @DeleteMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@Validated @RequestBody AuthorDto authorDto) {
+    public void delete(@RequestBody @Valid AuthorDto authorDto) {
         authorService.delete(authorDto);
     }
 }
