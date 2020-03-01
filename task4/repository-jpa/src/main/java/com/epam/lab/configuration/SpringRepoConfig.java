@@ -4,13 +4,11 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.PostgreSQL9Dialect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -24,14 +22,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Objects;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 @Configuration
 @ComponentScan("com.epam.lab")
 @EnableTransactionManagement
 public class SpringRepoConfig {
-    @Autowired
-    private Environment env;
 
     @Bean
     public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
@@ -40,11 +38,6 @@ public class SpringRepoConfig {
         return transactionManager;
     }
 
-//    @Bean
-//    public PlatformTransactionManager transactionManager(DataSource dataSource) {
-//        return new DataSourceTransactionManager(dataSource);
-//    }
-
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean(DataSource dataSource,
                                                                            JpaVendorAdapter vendorAdapter) {
@@ -52,7 +45,6 @@ public class SpringRepoConfig {
         managerFactoryBean.setDataSource(dataSource);
         managerFactoryBean.setJpaVendorAdapter(vendorAdapter);
         managerFactoryBean.setPackagesToScan("com.epam.lab");
-//        managerFactoryBean.setJpaProperties(additionalProperties());
         return managerFactoryBean;
     }
 
@@ -68,9 +60,13 @@ public class SpringRepoConfig {
 
     @Bean
     @Profile("prod")
-    public DataSource dataSource() {
-        HikariConfig hikariConfig = new HikariConfig(Objects.requireNonNull(env.getProperty("database.properties")));
-        return new HikariDataSource(hikariConfig);
+    public DataSource dataSource() throws IOException {
+        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("database.properties")) {
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            HikariConfig hikariConfig = new HikariConfig(properties);
+            return new HikariDataSource(hikariConfig);
+        }
     }
 
     @Bean
@@ -104,14 +100,4 @@ public class SpringRepoConfig {
         adapter.setDatabasePlatform(H2Dialect.class.getName());
         return adapter;
     }
-
-//    private Properties additionalProperties() {
-//        final Properties hibernateProperties = new Properties();
-//        hibernateProperties.setProperty("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
-//        hibernateProperties.setProperty("hibernate.dialect", env.getProperty("hibernate.dialect"));
-//        hibernateProperties.setProperty("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
-//        hibernateProperties.setProperty("hibernate.cache.use_second_level_cache", env.getProperty("hibernate.cache.use_second_level_cache"));
-//        hibernateProperties.setProperty("hibernate.cache.use_query_cache", env.getProperty("hibernate.cache.use_query_cache"));
-//        return hibernateProperties;
-//    }
 }
