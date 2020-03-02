@@ -5,14 +5,14 @@ import com.epam.lab.dto.NewsDto;
 import com.epam.lab.dto.TagDto;
 import com.epam.lab.model.News;
 import com.epam.lab.repository.NewsRepository;
+import com.epam.lab.specification.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class NewsServiceImpl implements NewsService {
@@ -92,5 +92,34 @@ public class NewsServiceImpl implements NewsService {
 
     private News convertToEntity(NewsDto newsDto) {
         return modelMapper.map(newsDto, News.class);
+    }
+
+    @Override
+    public List<NewsDto> findBySpecification(List<String> authorsName, List<String> tagsName, List<String> sorts) {
+        List<SearchCriteria> criteriaList = new ArrayList<>();
+        buildSearchCriteria(authorsName, criteriaList, NewsSearchSpecification.AUTHOR_NAME);
+        buildSearchCriteria(tagsName, criteriaList, NewsSearchSpecification.TAGS_NAME);
+        SearchSpecification<News> searchSpecification = new NewsSpecificationBuilder().with(criteriaList).build();
+        return getNewsDtoBySearchAndSortSpec(sorts, searchSpecification);
+    }
+
+    private List<NewsDto> getNewsDtoBySearchAndSortSpec(List<String> sorts, SearchSpecification<News> searchSpecification) {
+        if (sorts == null || sorts.isEmpty()) {
+            return newsRepository.findAll(searchSpecification).stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
+        } else {
+            SortCriteria sortCriteria = new SortCriteria(sorts.get(0));
+            NewsSortSpecification sortSpecification = new NewsSortSpecification(sortCriteria);
+            return newsRepository.findAll(searchSpecification, sortSpecification).stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    private void buildSearchCriteria(List<String> strings, List<SearchCriteria> criteriaList, String param) {
+        if (strings != null && !strings.isEmpty()) {
+            strings.forEach(s -> criteriaList.add(new SearchCriteria(param, s)));
+        }
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -48,6 +49,14 @@ public class NewsController {
         newsDto.setId(id);
         Optional<NewsDto> optionalNewsDto = newsService.read(newsDto);
         return optionalNewsDto.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "News not found"));
+    }
+
+    @GetMapping(produces = "application/json")
+    @ResponseStatus(HttpStatus.FOUND)
+    public List<NewsDto> readBySpecification(@RequestParam(name = "authors_name", required = false) List<String> authorsName,
+                                             @RequestParam(name = "tags_name", required = false) List<String> tagsName,
+                                             @RequestParam(name = "sort", required = false) List<String> sorts) {
+        return newsService.findBySpecification(authorsName, tagsName, sorts);
     }
 
     @PutMapping(produces = "application/json",
