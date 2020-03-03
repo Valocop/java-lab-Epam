@@ -4,7 +4,6 @@ import com.epam.lab.dto.AuthorDto;
 import com.epam.lab.model.Author;
 import com.epam.lab.repository.AuthorRepository;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +15,7 @@ import java.util.Optional;
 
 import static com.epam.lab.service.TestUtil.convertToEntity;
 import static com.epam.lab.service.TestUtil.getTestAuthorDto;
-import static org.apache.commons.lang3.RandomUtils.*;
+import static org.apache.commons.lang3.RandomUtils.nextLong;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
