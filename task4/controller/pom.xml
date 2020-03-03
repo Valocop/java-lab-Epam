@@ -17,7 +17,7 @@
     </properties>
 
     <build>
-        <finalName>newsManager</finalName>
+        <finalName>news-manager</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
