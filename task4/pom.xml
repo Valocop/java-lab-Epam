@@ -19,21 +19,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-<!--    <profiles>-->
-<!--        <profile>-->
-<!--            <id>sonar</id>-->
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
-<!--            <properties>-->
-<!--                <sonar.host.url>http://localhost:9000/</sonar.host.url>-->
-<!--                <sonar.organization>epam</sonar.organization>-->
-<!--                <sonar.login>admin</sonar.login>-->
-<!--                <sonar.password>admin</sonar.password>-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--    </profiles>-->
-
     <profiles>
         <profile>
             <id>sonar</id>
@@ -42,7 +27,6 @@
             </activation>
             <properties>
                 <sonar.host.url>http://localhost:9000/</sonar.host.url>
-<!--                <sonar.organization>your_origination</sonar.organization>-->
                 <sonar.login>b9ebbc4f8329aa92f57a348d6085c02d0fb6db82</sonar.login>
             </properties>
         </profile>
