@@ -78,10 +78,11 @@ public class NewsController {
         return newsService.update(newsDto);
     }
 
-    @DeleteMapping(produces = "application/json",
-            consumes = "application/json")
+    @DeleteMapping(path = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@Validated @RequestBody NewsDto newsDto) {
+    public void delete(@PathVariable("id") @Min(1) @Max(Long.MAX_VALUE) long id) {
+        NewsDto newsDto = new NewsDto();
+        newsDto.setId(id);
         newsService.delete(newsDto);
     }
 }
