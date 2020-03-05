@@ -53,12 +53,6 @@ public class NewsController {
 
     @GetMapping(path = "/", produces = "application/json")
     @ResponseStatus(HttpStatus.FOUND)
-    public long read() {
-        return newsService.getCountOfNews();
-    }
-
-    @GetMapping(produces = "application/json")
-    @ResponseStatus(HttpStatus.FOUND)
     public long readCountOfNews() {
         return newsService.getCountOfNews();
     }
