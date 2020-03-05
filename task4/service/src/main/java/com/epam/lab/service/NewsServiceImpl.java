@@ -103,6 +103,11 @@ public class NewsServiceImpl implements NewsService {
         return getNewsDtoBySearchAndSortSpec(sorts, searchSpecification);
     }
 
+    @Override
+    public long getCountOfNews() {
+        return newsRepository.count();
+    }
+
     private List<NewsDto> getNewsDtoBySearchAndSortSpec(List<String> sorts, SearchSpecification<News> searchSpecification) {
         if (sorts == null || sorts.isEmpty()) {
             return newsRepository.findAll(searchSpecification).stream()

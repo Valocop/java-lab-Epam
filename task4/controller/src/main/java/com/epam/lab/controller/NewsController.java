@@ -39,7 +39,7 @@ public class NewsController {
                 .build()
                 .toUri();
         headers.setLocation(locationUri);
-        return new ResponseEntity<NewsDto>(news, headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(news, headers, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
@@ -49,6 +49,12 @@ public class NewsController {
         newsDto.setId(id);
         Optional<NewsDto> optionalNewsDto = newsService.read(newsDto);
         return optionalNewsDto.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "News not found"));
+    }
+
+    @GetMapping(produces = "application/json")
+    @ResponseStatus(HttpStatus.FOUND)
+    public long readCountOfNews() {
+        return newsService.getCountOfNews();
     }
 
     @GetMapping(produces = "application/json")
