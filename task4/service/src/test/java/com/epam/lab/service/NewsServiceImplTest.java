@@ -3,7 +3,6 @@ package com.epam.lab.service;
 import com.epam.lab.dto.NewsDto;
 import com.epam.lab.model.News;
 import com.epam.lab.repository.NewsRepository;
-import com.epam.lab.specification.SearchCriteria;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,6 +70,38 @@ public class NewsServiceImplTest {
         assertTrue(news.getId() > 0);
         assertThat(news.getTitle(), is(newsDto.getTitle()));
         assertThat(news.getFullText(), is(newsDto.getFullText()));
+    }
+
+    @Test
+    public void shouldRollbackTransactionCreateNews() {
+        NewsDto newsDto = getTestNewsDto();
+        News newsEntity = convertToEntity(newsDto);
+        newsEntity.setId(1);
+        newsDto.getAuthor().setId(1);
+        newsDto.getTags().forEach(tagDto -> tagDto.setId(nextLong(1, Long.MAX_VALUE)));
+
+        when(modelMapperMock.map(newsDto, News.class)).thenReturn(newsEntity);
+        when(modelMapperMock.map(newsEntity, NewsDto.class)).thenReturn(newsDto);
+        when(newsRepositoryMock.save(any())).thenThrow(RuntimeException.class);
+        when(authorServiceMock.create(newsDto.getAuthor())).thenReturn(newsDto.getAuthor());
+        newsDto.getTags().forEach(tagDto -> when(tagServiceMock.create(tagDto)).thenReturn(tagDto));
+
+        try {
+            newsService.create(newsDto);
+        } catch (RuntimeException e) {
+            ArgumentCaptor<News> argumentCaptor = ArgumentCaptor.forClass(News.class);
+            verify(newsRepositoryMock, times(1)).save(argumentCaptor.capture());
+            verify(authorServiceMock, times(1)).create(newsDto.getAuthor());
+            newsDto.getTags().forEach(tagDto ->
+                    verify(tagServiceMock, times(1)).create(tagDto));
+            verifyNoMoreInteractions(newsRepositoryMock);
+
+            News news = argumentCaptor.getValue();
+
+            assertTrue(news.getId() > 0);
+            assertThat(news.getTitle(), is(newsDto.getTitle()));
+            assertThat(news.getFullText(), is(newsDto.getFullText()));
+        }
     }
 
     @Test
@@ -142,9 +173,6 @@ public class NewsServiceImplTest {
         List<String> authorsName = singletonList(newsDto.getAuthor().getName());
         List<String> tagsName = singletonList(random(5));
         List<String> sort = singletonList("author_name");
-
-        SearchCriteria authorNameCriteria = new SearchCriteria("author_name", authorsName.get(0));
-        SearchCriteria tagNameCriteria = new SearchCriteria("tags_name", tagsName.get(0));
 
         when(modelMapperMock.map(newsDto, News.class)).thenReturn(newsEntity);
         when(modelMapperMock.map(newsEntity, NewsDto.class)).thenReturn(newsDto);

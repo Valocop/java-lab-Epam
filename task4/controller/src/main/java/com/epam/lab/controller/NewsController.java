@@ -51,6 +51,12 @@ public class NewsController {
         return optionalNewsDto.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "News not found"));
     }
 
+    @GetMapping(path = "/", produces = "application/json")
+    @ResponseStatus(HttpStatus.FOUND)
+    public long read() {
+        return newsService.getCountOfNews();
+    }
+
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.FOUND)
     public long readCountOfNews() {
