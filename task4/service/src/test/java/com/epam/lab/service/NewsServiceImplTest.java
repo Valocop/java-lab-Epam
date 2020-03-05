@@ -1,20 +1,15 @@
 package com.epam.lab.service;
 
-import com.epam.lab.configuration.SpringServiceConfigTest;
 import com.epam.lab.dto.NewsDto;
 import com.epam.lab.model.News;
 import com.epam.lab.repository.NewsRepository;
-import com.epam.lab.specification.SearchCriteria;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,19 +25,12 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-//@RunWith(JUnit4.class)
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SpringServiceConfigTest.class},
-        loader = AnnotationConfigContextLoader.class)
+@RunWith(JUnit4.class)
 public class NewsServiceImplTest {
-    @Mock
     private NewsRepository newsRepositoryMock;
-    @Mock
     private AuthorService authorServiceMock;
-    @Mock
     private TagService tagServiceMock;
     private NewsService newsService;
-    @Mock
     private ModelMapper modelMapperMock;
 
     @Before
@@ -185,9 +173,6 @@ public class NewsServiceImplTest {
         List<String> authorsName = singletonList(newsDto.getAuthor().getName());
         List<String> tagsName = singletonList(random(5));
         List<String> sort = singletonList("author_name");
-
-        SearchCriteria authorNameCriteria = new SearchCriteria("author_name", authorsName.get(0));
-        SearchCriteria tagNameCriteria = new SearchCriteria("tags_name", tagsName.get(0));
 
         when(modelMapperMock.map(newsDto, News.class)).thenReturn(newsEntity);
         when(modelMapperMock.map(newsEntity, NewsDto.class)).thenReturn(newsDto);
