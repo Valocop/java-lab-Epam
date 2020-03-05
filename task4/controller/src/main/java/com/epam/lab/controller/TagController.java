@@ -57,10 +57,11 @@ public class TagController {
         return tagService.update(tagDto);
     }
 
-    @DeleteMapping(produces = "application/json",
-            consumes = "application/json")
+    @DeleteMapping(value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@Validated @RequestBody TagDto tagDto) {
+    public void delete(@PathVariable("id") @Min(1) @Max(Long.MAX_VALUE) long id) {
+        TagDto tagDto = new TagDto();
+        tagDto.setId(id);
         tagService.delete(tagDto);
     }
 }

@@ -58,10 +58,11 @@ public class AuthorController {
         return authorService.update(authorDto);
     }
 
-    @DeleteMapping(produces = "application/json",
-            consumes = "application/json")
+    @DeleteMapping(value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@RequestBody @Valid AuthorDto authorDto) {
+    public void delete(@PathVariable("id") @Min(1) @Max(Long.MAX_VALUE) long id) {
+        AuthorDto authorDto = new AuthorDto();
+        authorDto.setId(id);
         authorService.delete(authorDto);
     }
 }
