@@ -51,18 +51,25 @@ public class NewsController {
         return optionalNewsDto.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "News not found"));
     }
 
-    @GetMapping(path = "/", produces = "application/json")
+    @GetMapping(path = "/count", produces = "application/json")
     @ResponseStatus(HttpStatus.FOUND)
     public long readCountOfNews() {
         return newsService.getCountOfNews();
     }
 
-    @GetMapping(produces = "application/json")
+    @GetMapping(path = "/", produces = "application/json")
     @ResponseStatus(HttpStatus.FOUND)
     public List<NewsDto> readBySpecification(@RequestParam(name = "authors_name", required = false) List<String> authorsName,
                                              @RequestParam(name = "tags_name", required = false) List<String> tagsName,
                                              @RequestParam(name = "sort", required = false) List<String> sorts) {
-        return newsService.findBySpecification(authorsName, tagsName, sorts);
+        if (isSearchCorrect(authorsName, tagsName)) {
+            return newsService.findBySpecification(authorsName, tagsName, sorts);
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Check search parameters");
+    }
+
+    private boolean isSearchCorrect(List<String> authorsName, List<String> tagsName) {
+        return !(authorsName == null || tagsName == null);
     }
 
     @PutMapping(produces = "application/json",
