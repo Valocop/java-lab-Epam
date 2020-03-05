@@ -24,7 +24,7 @@
 *	DELETE: /tags/id - Delete tag by id.
 
 ***News***
-*	GET: /news - Gets count of news;
+*	GET: /count - Gets count of news;
 *	GET: /news/id - Gets news by id;
 *	GET: /news?authors_name=...,...&tags_name=...,...&sort=... - Gets news according to search and sort conditions. See more about search and sort conditions in News controller Javadocs;
 *	POST: /news - Persists news. News should be sent using request-body in appropriate JSON-format;
