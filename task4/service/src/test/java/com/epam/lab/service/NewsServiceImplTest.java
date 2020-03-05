@@ -1,5 +1,6 @@
 package com.epam.lab.service;
 
+import com.epam.lab.configuration.SpringServiceConfigTest;
 import com.epam.lab.dto.NewsDto;
 import com.epam.lab.model.News;
 import com.epam.lab.repository.NewsRepository;
@@ -8,9 +9,12 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,12 +30,19 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(JUnit4.class)
+//@RunWith(JUnit4.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {SpringServiceConfigTest.class},
+        loader = AnnotationConfigContextLoader.class)
 public class NewsServiceImplTest {
+    @Mock
     private NewsRepository newsRepositoryMock;
+    @Mock
     private AuthorService authorServiceMock;
+    @Mock
     private TagService tagServiceMock;
     private NewsService newsService;
+    @Mock
     private ModelMapper modelMapperMock;
 
     @Before
@@ -71,6 +82,38 @@ public class NewsServiceImplTest {
         assertTrue(news.getId() > 0);
         assertThat(news.getTitle(), is(newsDto.getTitle()));
         assertThat(news.getFullText(), is(newsDto.getFullText()));
+    }
+
+    @Test
+    public void shouldRollbackTransactionCreateNews() {
+        NewsDto newsDto = getTestNewsDto();
+        News newsEntity = convertToEntity(newsDto);
+        newsEntity.setId(1);
+        newsDto.getAuthor().setId(1);
+        newsDto.getTags().forEach(tagDto -> tagDto.setId(nextLong(1, Long.MAX_VALUE)));
+
+        when(modelMapperMock.map(newsDto, News.class)).thenReturn(newsEntity);
+        when(modelMapperMock.map(newsEntity, NewsDto.class)).thenReturn(newsDto);
+        when(newsRepositoryMock.save(any())).thenThrow(RuntimeException.class);
+        when(authorServiceMock.create(newsDto.getAuthor())).thenReturn(newsDto.getAuthor());
+        newsDto.getTags().forEach(tagDto -> when(tagServiceMock.create(tagDto)).thenReturn(tagDto));
+
+        try {
+            newsService.create(newsDto);
+        } catch (RuntimeException e) {
+            ArgumentCaptor<News> argumentCaptor = ArgumentCaptor.forClass(News.class);
+            verify(newsRepositoryMock, times(1)).save(argumentCaptor.capture());
+            verify(authorServiceMock, times(1)).create(newsDto.getAuthor());
+            newsDto.getTags().forEach(tagDto ->
+                    verify(tagServiceMock, times(1)).create(tagDto));
+            verifyNoMoreInteractions(newsRepositoryMock);
+
+            News news = argumentCaptor.getValue();
+
+            assertTrue(news.getId() > 0);
+            assertThat(news.getTitle(), is(newsDto.getTitle()));
+            assertThat(news.getFullText(), is(newsDto.getFullText()));
+        }
     }
 
     @Test
