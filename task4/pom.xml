@@ -27,7 +27,8 @@
             </activation>
             <properties>
                 <sonar.host.url>http://localhost:9000/</sonar.host.url>
-                <sonar.login>b9ebbc4f8329aa92f57a348d6085c02d0fb6db82</sonar.login>
+                <sonar.login>admin</sonar.login>
+                <sonar.password>admin</sonar.password>
             </properties>
         </profile>
     </profiles>
