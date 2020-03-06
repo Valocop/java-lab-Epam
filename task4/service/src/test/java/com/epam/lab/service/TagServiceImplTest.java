@@ -13,7 +13,8 @@ import org.modelmapper.ModelMapper;
 
 import java.util.Optional;
 
-import static com.epam.lab.service.TestUtil.*;
+import static com.epam.lab.service.TestUtil.convertToEntity;
+import static com.epam.lab.service.TestUtil.getTestTagDto;
 import static org.apache.commons.lang3.RandomUtils.nextLong;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -83,10 +84,12 @@ public class TagServiceImplTest {
         when(modelMapperMock.map(tagDto, Tag.class)).thenReturn(tagEntity);
         when(modelMapperMock.map(tagEntity, TagDto.class)).thenReturn(tagDto);
         when(tagRepositoryMock.update(tagEntity)).thenReturn(tagEntity);
+        when(tagRepositoryMock.findById(tagDto.getId())).thenReturn(Optional.of(tagEntity));
 
         tagService.update(tagDto);
 
         ArgumentCaptor<Tag> argumentCaptor = ArgumentCaptor.forClass(Tag.class);
+        verify(tagRepositoryMock, times(1)).findById(tagDto.getId());
         verify(tagRepositoryMock, times(1)).update(argumentCaptor.capture());
         verifyNoMoreInteractions(tagRepositoryMock);
 
@@ -108,6 +111,6 @@ public class TagServiceImplTest {
         tagService.delete(tagDto);
 
         verify(tagRepositoryMock, times(1)).delete(tagEntity);
-        verifyNoMoreInteractions(tagRepositoryMock  );
+        verifyNoMoreInteractions(tagRepositoryMock);
     }
 }

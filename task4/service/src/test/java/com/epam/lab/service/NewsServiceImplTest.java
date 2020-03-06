@@ -133,10 +133,12 @@ public class NewsServiceImplTest {
         when(modelMapperMock.map(newsDto, News.class)).thenReturn(newsEntity);
         when(modelMapperMock.map(newsEntity, NewsDto.class)).thenReturn(newsDto);
         when(newsRepositoryMock.update(newsEntity)).thenReturn(newsEntity);
+        when(newsRepositoryMock.findById(newsDto.getId())).thenReturn(Optional.of(newsEntity));
 
         newsService.update(newsDto);
 
         ArgumentCaptor<News> argumentCaptor = ArgumentCaptor.forClass(News.class);
+        verify(newsRepositoryMock, times(1)).findById(newsDto.getId());
         verify(newsRepositoryMock, times(1)).update(argumentCaptor.capture());
         verifyNoMoreInteractions(newsRepositoryMock);
 

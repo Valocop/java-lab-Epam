@@ -85,10 +85,12 @@ public class AuthorServiceImplTest {
         when(modelMapperMock.map(authorDto, Author.class)).thenReturn(authorEntity);
         when(modelMapperMock.map(authorEntity, AuthorDto.class)).thenReturn(authorDto);
         when(authorRepositoryMock.update(authorEntity)).thenReturn(authorEntity);
+        when(authorRepositoryMock.findById(authorDto.getId())).thenReturn(Optional.of(authorEntity));
 
         authorService.update(authorDto);
 
         ArgumentCaptor<Author> argumentCaptor = ArgumentCaptor.forClass(Author.class);
+        verify(authorRepositoryMock, times(1)).findById(authorDto.getId());
         verify(authorRepositoryMock, times(1)).update(argumentCaptor.capture());
         verifyNoMoreInteractions(authorRepositoryMock);
 
