@@ -2,6 +2,8 @@ package com.epam.lab.controller;
 
 import com.epam.lab.dto.NewsDto;
 import com.epam.lab.service.NewsService;
+import com.epam.lab.validation.CreateValidation;
+import com.epam.lab.validation.UpdateValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,7 +33,8 @@ public class NewsController {
     @PostMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<NewsDto> create(@Validated @RequestBody NewsDto newsDto, UriComponentsBuilder ucb) {
+    public ResponseEntity<NewsDto> create(@Validated(CreateValidation.class) @RequestBody NewsDto newsDto,
+                                          UriComponentsBuilder ucb) {
         NewsDto news = newsService.create(newsDto);
         HttpHeaders headers = new HttpHeaders();
         URI locationUri = ucb.path("/news/")
@@ -57,7 +60,7 @@ public class NewsController {
         return newsService.getCountOfNews();
     }
 
-    @GetMapping(path = "/", produces = "application/json")
+    @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.FOUND)
     public List<NewsDto> readBySpecification(@RequestParam(name = "authors_name", required = false) List<String> authorsName,
                                              @RequestParam(name = "tags_name", required = false) List<String> tagsName,
@@ -68,15 +71,12 @@ public class NewsController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Check search parameters");
     }
 
-    private boolean isSearchCorrect(List<String> authorsName, List<String> tagsName) {
-        return !(authorsName == null || tagsName == null);
-    }
-
     @PutMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public NewsDto update(@Validated @RequestBody NewsDto newsDto) {
-        return newsService.update(newsDto);
+    public NewsDto update(@Validated(UpdateValidation.class) @RequestBody NewsDto newsDto) {
+        Optional<NewsDto> dtoOptional = newsService.update(newsDto);
+        return dtoOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "News not found"));
     }
 
     @DeleteMapping(path = "/{id}", produces = "application/json")
@@ -85,5 +85,9 @@ public class NewsController {
         NewsDto newsDto = new NewsDto();
         newsDto.setId(id);
         newsService.delete(newsDto);
+    }
+
+    private boolean isSearchCorrect(List<String> authorsName, List<String> tagsName) {
+        return !(authorsName == null && tagsName == null);
     }
 }

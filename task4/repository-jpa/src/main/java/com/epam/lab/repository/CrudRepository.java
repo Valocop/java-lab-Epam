@@ -10,7 +10,5 @@ public interface CrudRepository<T, ID> {
 
     Optional<T> findById(ID id);
 
-//    void deleteById(ID id);
-
     void delete(T entity);
 }

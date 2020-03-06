@@ -1,5 +1,7 @@
 package com.epam.lab.dto;
 
+import com.epam.lab.validation.CreateValidation;
+import com.epam.lab.validation.UpdateValidation;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.validation.Valid;
@@ -8,17 +10,30 @@ import java.time.LocalDate;
 import java.util.Set;
 
 public class NewsDto {
-    @Min(value = 1)
-    @Max(value = Long.MAX_VALUE)
+    @Min(value = 1,
+            groups = UpdateValidation.class,
+            message = "id must be greater than 1")
+    @Max(value = Long.MAX_VALUE,
+            groups = UpdateValidation.class,
+            message = "id must be less than " + Long.MAX_VALUE)
     private long id;
-    @NotBlank
-    @Size(max = 30)
+    @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
+            message = "title must not be empty")
+    @Size(max = 30,
+            groups = {CreateValidation.class, UpdateValidation.class},
+            message = "title must be less than 30 symbols")
     private String title;
-    @NotBlank
-    @Size(max = 100)
+    @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
+            message = "shortText must not be empty")
+    @Size(max = 100,
+            groups = {CreateValidation.class, UpdateValidation.class},
+            message = "shortText must be less than 100 symbols")
     private String shortText;
-    @NotBlank
-    @Size(max = 2000)
+    @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
+            message = "fullText must not be empty")
+    @Size(max = 2000,
+            groups = {CreateValidation.class, UpdateValidation.class},
+            message = "fullText must be less than 100 symbols")
     private String fullText;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull
@@ -26,13 +41,15 @@ public class NewsDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull
     private LocalDate modificationDate;
+    @NotNull(groups = {CreateValidation.class, UpdateValidation.class},
+            message = "author field must be")
     @Valid
     private AuthorDto author;
+    @NotNull(groups = {CreateValidation.class, UpdateValidation.class},
+            message = "tags field must be")
     private Set<@Valid TagDto> tags;
 
     public NewsDto() {
-        creationDate = LocalDate.now();
-        modificationDate = LocalDate.now();
     }
 
     public NewsDto(long id, String title, String shortText, String fullText, LocalDate creationDate,

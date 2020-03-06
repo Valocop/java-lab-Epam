@@ -33,9 +33,13 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public TagDto update(TagDto dto) {
-        Tag tag = tagRepository.update(convertToTag(dto));
-        return convertToDto(tag);
+    public Optional<TagDto> update(TagDto dto) {
+        Optional<Tag> optionalTag = tagRepository.findById(dto.getId());
+        if (optionalTag.isPresent()) {
+            Tag tag = tagRepository.update(convertToTag(dto));
+            return Optional.of(convertToDto(tag));
+        }
+        return Optional.empty();
     }
 
     @Override

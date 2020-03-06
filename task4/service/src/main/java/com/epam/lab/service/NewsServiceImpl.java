@@ -50,7 +50,10 @@ public class NewsServiceImpl implements NewsService {
         Set<TagDto> tagsDto = new HashSet<>();
         for (TagDto tagDto : tagDtoSet) {
             Optional<TagDto> dtoOptional = tagService.read(tagDto);
-            TagDto dto = dtoOptional.orElseGet(() -> tagService.create(tagDto));
+            TagDto dto = dtoOptional.orElseGet(() -> {
+                tagDto.setId(0);
+                return tagService.create(tagDto);
+            });
             tagsDto.add(dto);
         }
         return tagsDto;
@@ -58,7 +61,10 @@ public class NewsServiceImpl implements NewsService {
 
     private AuthorDto createNotExistAuthor(AuthorDto authorDto) {
         Optional<AuthorDto> dtoOptional = authorService.read(authorDto);
-        return dtoOptional.orElseGet(() -> authorService.create(authorDto));
+        return dtoOptional.orElseGet(() -> {
+            authorDto.setId(0);
+            return authorService.create(authorDto);
+        });
     }
 
     @Override
@@ -70,13 +76,17 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public NewsDto update(NewsDto dto) {
-        AuthorDto authorDto = createNotExistAuthor(dto.getAuthor());
-        Set<TagDto> tagDtoSet = createNotExistTags(dto.getTags());
-        dto.setAuthor(authorDto);
-        dto.setTags(tagDtoSet);
-        News news = newsRepository.update(convertToEntity(dto));
-        return convertToDto(news);
+    public Optional<NewsDto> update(NewsDto dto) {
+        Optional<News> optionalNews = newsRepository.findById(dto.getId());
+        if (optionalNews.isPresent()) {
+            AuthorDto authorDto = createNotExistAuthor(dto.getAuthor());
+            Set<TagDto> tagDtoSet = createNotExistTags(dto.getTags());
+            dto.setAuthor(authorDto);
+            dto.setTags(tagDtoSet);
+            News news = newsRepository.update(convertToEntity(dto));
+            return Optional.of(convertToDto(news));
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -99,8 +109,15 @@ public class NewsServiceImpl implements NewsService {
         List<SearchCriteria> criteriaList = new ArrayList<>();
         buildSearchCriteria(authorsName, criteriaList, NewsSearchSpecification.AUTHOR_NAME);
         buildSearchCriteria(tagsName, criteriaList, NewsSearchSpecification.TAGS_NAME);
-        SearchSpecification<News> searchSpecification = new NewsSpecificationBuilder().with(criteriaList).build();
-        return getNewsDtoBySearchAndSortSpec(sorts, searchSpecification);
+        if (IsCriteriaNotEmpty(criteriaList)) {
+            SearchSpecification<News> searchSpecification = new NewsSpecificationBuilder().with(criteriaList).build();
+            return getNewsDtoBySearchAndSortSpec(sorts, searchSpecification);
+        }
+        return Collections.emptyList();
+    }
+
+    private boolean IsCriteriaNotEmpty(List<SearchCriteria> criteriaList) {
+        return !criteriaList.isEmpty();
     }
 
     @Override

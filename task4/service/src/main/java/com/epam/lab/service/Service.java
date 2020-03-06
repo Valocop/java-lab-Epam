@@ -8,7 +8,7 @@ public interface Service<T> {
 
     Optional<T> read(T dto);
 
-    T update(T dto);
+    Optional<T> update(T dto);
 
     void delete(T dto);
 }

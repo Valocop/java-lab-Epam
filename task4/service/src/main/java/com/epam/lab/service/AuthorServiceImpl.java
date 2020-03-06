@@ -6,7 +6,6 @@ import com.epam.lab.repository.AuthorRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -34,9 +33,13 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorDto update(AuthorDto dto) {
-        Author author = authorRepository.update(convertToEntity(dto));
-        return convertToDto(author);
+    public Optional<AuthorDto> update(AuthorDto dto) {
+        Optional<Author> optionalAuthor = authorRepository.findById(dto.getId());
+        if (optionalAuthor.isPresent()) {
+            Author author = authorRepository.update(convertToEntity(dto));
+            return Optional.of(convertToDto(author));
+        }
+        return Optional.empty();
     }
 
     @Override

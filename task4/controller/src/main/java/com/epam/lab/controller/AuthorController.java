@@ -2,6 +2,8 @@ package com.epam.lab.controller;
 
 import com.epam.lab.dto.AuthorDto;
 import com.epam.lab.service.AuthorService;
+import com.epam.lab.validation.CreateValidation;
+import com.epam.lab.validation.UpdateValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.net.URI;
@@ -31,7 +32,8 @@ public class AuthorController {
     @PostMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<AuthorDto> create(@RequestBody @Valid AuthorDto authorDto, UriComponentsBuilder ucb) {
+    public ResponseEntity<AuthorDto> create(@RequestBody @Validated(CreateValidation.class) AuthorDto authorDto,
+                                            UriComponentsBuilder ucb) {
         AuthorDto author = authorService.create(authorDto);
         HttpHeaders headers = new HttpHeaders();
         URI locationUri = ucb.path("/authors/")
@@ -39,7 +41,7 @@ public class AuthorController {
                 .build()
                 .toUri();
         headers.setLocation(locationUri);
-        return new ResponseEntity<AuthorDto>(author, headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(author, headers, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
@@ -54,8 +56,9 @@ public class AuthorController {
     @PutMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public AuthorDto update(@RequestBody @Valid AuthorDto authorDto) {
-        return authorService.update(authorDto);
+    public AuthorDto update(@RequestBody @Validated(UpdateValidation.class) AuthorDto authorDto) {
+        Optional<AuthorDto> dtoOptional = authorService.update(authorDto);
+        return dtoOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Author not found"));
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json")

@@ -2,6 +2,8 @@ package com.epam.lab.controller;
 
 import com.epam.lab.dto.TagDto;
 import com.epam.lab.service.TagService;
+import com.epam.lab.validation.CreateValidation;
+import com.epam.lab.validation.UpdateValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,7 +32,8 @@ public class TagController {
     @PostMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<TagDto> create(@Validated @RequestBody TagDto tagDto, UriComponentsBuilder ucb) {
+    public ResponseEntity<TagDto> create(@Validated(CreateValidation.class) @RequestBody TagDto tagDto,
+                                         UriComponentsBuilder ucb) {
         TagDto tag = tagService.create(tagDto);
         HttpHeaders headers = new HttpHeaders();
         URI locationUri = ucb.path("/tags/")
@@ -38,7 +41,7 @@ public class TagController {
                 .build()
                 .toUri();
         headers.setLocation(locationUri);
-        return new ResponseEntity<TagDto>(tag, headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(tag, headers, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
@@ -53,8 +56,9 @@ public class TagController {
     @PutMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public TagDto update(@Validated @RequestBody TagDto tagDto) {
-        return tagService.update(tagDto);
+    public TagDto update(@Validated(UpdateValidation.class) @RequestBody TagDto tagDto) {
+        Optional<TagDto> tagDtoOptional = tagService.update(tagDto);
+        return tagDtoOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found"));
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json")
