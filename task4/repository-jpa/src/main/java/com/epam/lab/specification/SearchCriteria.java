@@ -1,6 +1,9 @@
 package com.epam.lab.specification;
 
-public class SearchCriteria {
+import java.io.Serializable;
+
+public class SearchCriteria implements Serializable {
+    long serialVersionUID = 1L;
     private String key;
     private String value;
 

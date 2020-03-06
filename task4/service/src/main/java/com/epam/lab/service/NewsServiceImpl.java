@@ -109,14 +109,14 @@ public class NewsServiceImpl implements NewsService {
         List<SearchCriteria> criteriaList = new ArrayList<>();
         buildSearchCriteria(authorsName, criteriaList, NewsSearchSpecification.AUTHOR_NAME);
         buildSearchCriteria(tagsName, criteriaList, NewsSearchSpecification.TAGS_NAME);
-        if (IsCriteriaNotEmpty(criteriaList)) {
+        if (IsCriteriaListNotEmpty(criteriaList)) {
             SearchSpecification<News> searchSpecification = new NewsSpecificationBuilder().with(criteriaList).build();
             return getNewsDtoBySearchAndSortSpec(sorts, searchSpecification);
         }
         return Collections.emptyList();
     }
 
-    private boolean IsCriteriaNotEmpty(List<SearchCriteria> criteriaList) {
+    private boolean IsCriteriaListNotEmpty(List<SearchCriteria> criteriaList) {
         return !criteriaList.isEmpty();
     }
 

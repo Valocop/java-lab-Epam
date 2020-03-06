@@ -50,11 +50,12 @@ public class NewsDto {
     private Set<@Valid TagDto> tags;
 
     public NewsDto() {
+        creationDate = LocalDate.now();
+        modificationDate = LocalDate.now();
     }
 
-    public NewsDto(long id, String title, String shortText, String fullText, LocalDate creationDate,
+    public NewsDto(String title, String shortText, String fullText, LocalDate creationDate,
                    LocalDate modificationDate, AuthorDto author, Set<TagDto> tags) {
-        this.id = id;
         this.title = title;
         this.shortText = shortText;
         this.fullText = fullText;
