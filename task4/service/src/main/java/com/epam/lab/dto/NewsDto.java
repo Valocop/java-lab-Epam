@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 public class NewsDto {
@@ -52,6 +53,8 @@ public class NewsDto {
     public NewsDto() {
         creationDate = LocalDate.now();
         modificationDate = LocalDate.now();
+        author = new AuthorDto();
+        tags = new HashSet<>();
     }
 
     public NewsDto(String title, String shortText, String fullText, LocalDate creationDate,
