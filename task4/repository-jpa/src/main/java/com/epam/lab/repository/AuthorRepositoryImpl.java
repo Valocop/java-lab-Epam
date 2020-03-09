@@ -38,7 +38,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Author> criteriaQuery = criteriaBuilder.createQuery(Author.class);
         Root<Author> root = criteriaQuery.from(Author.class);
-        Predicate predicate = criteriaBuilder.equal(root.get("id"), aLong.toString());
+        Predicate predicate = criteriaBuilder.equal(root.get("id"), aLong);
         criteriaQuery.select(root).where(predicate);
         return entityManager.createQuery(criteriaQuery).getResultList().stream()
                 .findFirst();

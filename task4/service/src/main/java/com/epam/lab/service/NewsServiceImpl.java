@@ -35,8 +35,8 @@ public class NewsServiceImpl implements NewsService {
     public NewsDto create(NewsDto dto) {
         AuthorDto authorDto = dto.getAuthor();
         Set<TagDto> tagDtoSet = dto.getTags();
-        AuthorDto author = createNotExistAuthor(authorDto);
-        Set<TagDto> tags = createNotExistTags(tagDtoSet);
+        AuthorDto author = createAuthorIfNotExist(authorDto);
+        Set<TagDto> tags = createTagsIfNotExist(tagDtoSet);
         dto.setAuthor(author);
         dto.setTags(tags);
         News news = newsRepository.save(convertToEntity(dto));
@@ -46,7 +46,7 @@ public class NewsServiceImpl implements NewsService {
         return newsDto;
     }
 
-    private Set<TagDto> createNotExistTags(Set<TagDto> tagDtoSet) {
+    private Set<TagDto> createTagsIfNotExist(Set<TagDto> tagDtoSet) {
         Set<TagDto> tagsDto = new HashSet<>();
         for (TagDto tagDto : tagDtoSet) {
             Optional<TagDto> dtoOptional = tagService.read(tagDto);
@@ -59,7 +59,7 @@ public class NewsServiceImpl implements NewsService {
         return tagsDto;
     }
 
-    private AuthorDto createNotExistAuthor(AuthorDto authorDto) {
+    private AuthorDto createAuthorIfNotExist(AuthorDto authorDto) {
         Optional<AuthorDto> dtoOptional = authorService.read(authorDto);
         return dtoOptional.orElseGet(() -> {
             authorDto.setId(0);
@@ -79,8 +79,8 @@ public class NewsServiceImpl implements NewsService {
     public Optional<NewsDto> update(NewsDto dto) {
         Optional<News> optionalNews = newsRepository.findById(dto.getId());
         if (optionalNews.isPresent()) {
-            AuthorDto authorDto = createNotExistAuthor(dto.getAuthor());
-            Set<TagDto> tagDtoSet = createNotExistTags(dto.getTags());
+            AuthorDto authorDto = createAuthorIfNotExist(dto.getAuthor());
+            Set<TagDto> tagDtoSet = createTagsIfNotExist(dto.getTags());
             dto.setAuthor(authorDto);
             dto.setTags(tagDtoSet);
             News news = newsRepository.update(convertToEntity(dto));
