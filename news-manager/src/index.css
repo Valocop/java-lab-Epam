@@ -1,0 +1,89 @@
+header {
+    position: sticky;
+    top: 0px;
+	background-color: lightcoral;
+	height: 8vh;
+}
+
+footer {
+    display: block;
+    position: sticky;
+    bottom: 0px;
+	background-color: lightcoral;
+	height: 8vh;
+	text-align: center;
+	line-height: 8vh;
+}
+
+footer h5 {
+	display: inline;
+	margin: 0;
+	padding: 0;
+}
+
+article {
+	flex: 1;
+}
+
+body {
+	margin: 0% 20%;
+}
+
+.main {
+	display: flex;
+	min-height: calc(100vh - 16vh);
+	justify-content: center;
+}
+
+.login-container {
+	padding: 0 10%;
+	display: block;
+	width: calc(100% - 50%);
+	height: 100%;
+    background-color: lightgoldenrodyellow;
+    text-align: center;
+}
+
+.login-container div {
+	text-align: center;
+}
+
+.login-container form {
+	display: inline-block;
+	width: 100%;
+}
+
+.login-container form label {
+    text-align: start;
+	display: block;
+	padding: 10px;
+	width: 100%;
+}
+
+.login-container form input {
+	display: block;
+	padding: 10px;
+	width: 100%;
+}
+
+.login-container form input {
+	border: 1px solid black;
+    border-radius: 10px;
+}
+
+.login-container button {
+    display: inline-block;
+    border: 1px solid black;
+    margin: 5%;
+    border-radius: 10px;
+	padding: 10px;
+	background-color: cornflowerblue;
+}
+
+.login-container button:last-child {
+	background-color: hotpink;
+}
+
+* {
+	box-sizing: border-box;
+}
