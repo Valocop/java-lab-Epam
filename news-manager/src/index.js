@@ -29,15 +29,38 @@ class Login extends React.Component {
 			password: ""
 		};
 
-		this.onSubmit = this.onSubmit.bind(this);
-		this.on;
+		this.handleLoginChange = this.handleLoginChange.bind(
+			this
+		);
+		this.handlePasswordChange = this.handlePasswordChange.bind(
+			this
+		);
+		this.handleSubmit = this.handleSubmit.bind(
+			this
+		);
+		this.handleCancel = this.handleCancel.bind(
+			this
+		);
 	}
 
 	handleLoginChange(e) {
 		this.setState({ login: e.target.value });
-    }
-    
-    handlePasswordChange(e)
+	}
+
+	handlePasswordChange(e) {
+		this.setState({ password: e.target.value });
+	}
+
+	handleSubmit(e) {
+		alert(this.state.login);
+	}
+
+	handleCancel(e) {
+		this.setState({
+			login: "",
+			password: ""
+		});
+	}
 
 	render() {
 		return (
@@ -51,24 +74,24 @@ class Login extends React.Component {
 						<input
 							type="text"
 							id="flogin"
-							// value={login}
+							value={this.state.login}
 							placeholder="Input your login"
-							onChange={this.setLogin}
+							onChange={this.handleLoginChange}
 						></input>
 						<label for="fpass">Password:</label>
 						<input
 							type="password"
 							id="fpass"
-							// value={password}
+							value={this.state.password}
 							placeholder="Input your password"
-							onChange={this.setPassword}
+							onChange={this.handlePasswordChange}
 						></input>
 					</form>
 				</div>
-				<button onClick={this.onSubmit}>
+				<button onClick={this.handleSubmit}>
 					Login
 				</button>
-				<button onClick={this.clearLoginData}>
+				<button onClick={this.handleCancel}>
 					Cancel
 				</button>
 			</div>
