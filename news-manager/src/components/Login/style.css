@@ -1,0 +1,48 @@
+.login-container {
+	padding: 0 10%;
+	display: block;
+	width: calc(100% - 50%);
+	height: 100%;
+	background-color: lightgoldenrodyellow;
+	text-align: center;
+}
+
+.login-container div {
+	text-align: center;
+}
+
+.login-container form {
+	display: inline-block;
+	width: 100%;
+}
+
+.login-container form label {
+	text-align: start;
+	display: block;
+	padding: 10px;
+	width: 100%;
+}
+
+.login-container form input {
+	display: block;
+	padding: 10px;
+	width: 100%;
+}
+
+.login-container form input {
+	border: 1px solid black;
+	border-radius: 10px;
+}
+
+.login-container button {
+	display: inline-block;
+	border: 1px solid black;
+	margin: 5%;
+	border-radius: 10px;
+	padding: 10px;
+	background-color: cornflowerblue;
+}
+
+.login-container button:last-child {
+	background-color: hotpink;
+}

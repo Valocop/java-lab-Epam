@@ -1,0 +1,28 @@
+header {
+	position: sticky;
+	top: 0px;
+	background-color: lightcoral;
+	min-height: 8vh;
+	height: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 2vh;
+}
+
+header div div {
+	display: inline-block;
+}
+
+header a {
+	padding: 0 0.2vh;
+}
+
+header button {
+	border: 1px solid gray;
+	background-color: lightcoral;
+	border-radius: 10px;
+	margin: 5%;
+	padding: 5px;
+}
