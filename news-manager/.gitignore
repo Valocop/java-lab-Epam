@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+news-manager/package.json
+news-manager/package-lock.json
