@@ -1,32 +1,10 @@
-footer {
-	display: block;
-	position: sticky;
-	bottom: 0px;
-	background-color: lightcoral;
-	min-height: 8vh;
-	height: 100%;
-	text-align: center;
-	line-height: 8vh;
-}
-
-footer h5 {
-	display: inline;
-	margin: 0;
-	padding: 0;
-}
-
 article {
 	flex: 1;
 }
 
 body {
-	margin: 0% 20%;
-}
-
-.main {
-	display: flex;
-	min-height: calc(100vh - 16vh);
-	justify-content: center;
+	margin: 0;
+	/* background-color: #edeef0; */
 }
 
 * {

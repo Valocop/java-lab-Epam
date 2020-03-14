@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import "./style.css";
 
 class Login extends React.Component {
@@ -15,8 +14,12 @@ class Login extends React.Component {
 		this.handlePasswordChange = this.handlePasswordChange.bind(
 			this
 		);
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleCancel = this.handleCancel.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(
+			this
+		);
+		this.handleCancel = this.handleCancel.bind(
+			this
+		);
 	}
 
 	handleLoginChange(e) {
@@ -39,6 +42,7 @@ class Login extends React.Component {
 			login: "",
 			password: ""
 		});
+		this.props.handleCancel();
 	}
 
 	render() {
@@ -46,32 +50,40 @@ class Login extends React.Component {
 		const password = this.state.password;
 
 		return (
-			<div className="login-container">
-				<div>
-					<h1>Login</h1>
+			<div className="main">
+				<div className="login-container">
+					<div>
+						<h1>Login</h1>
+					</div>
+					<div>
+						<form>
+							<label for="flogin">Login:</label>
+							<input
+								type="text"
+								id="flogin"
+								value={login}
+								placeholder="Input your login"
+								onChange={this.handleLoginChange}
+							></input>
+							<label for="fpass">Password:</label>
+							<input
+								type="password"
+								id="fpass"
+								value={password}
+								placeholder="Input your password"
+								onChange={
+									this.handlePasswordChange
+								}
+							></input>
+						</form>
+					</div>
+					<button onClick={this.handleSubmit}>
+						Login
+					</button>
+					<button onClick={this.handleCancel}>
+						Cancel
+					</button>
 				</div>
-				<div>
-					<form>
-						<label for="flogin">Login:</label>
-						<input
-							type="text"
-							id="flogin"
-							value={login}
-							placeholder="Input your login"
-							onChange={this.handleLoginChange}
-						></input>
-						<label for="fpass">Password:</label>
-						<input
-							type="password"
-							id="fpass"
-							value={password}
-							placeholder="Input your password"
-							onChange={this.handlePasswordChange}
-						></input>
-					</form>
-				</div>
-				<button onClick={this.handleSubmit}>Login</button>
-				<button onClick={this.handleCancel}>Cancel</button>
 			</div>
 		);
 	}

@@ -4,11 +4,20 @@ import "./style.css";
 class Header extends React.Component {
 	constructor(props) {
 		super(props);
-		this.handleLogOut = this.handleLogOut.bind(this);
+		this.handleLogOut = this.handleLogOut.bind(
+			this
+		);
+		this.handleLogin = this.handleLogin.bind(
+			this
+		);
 	}
 
-	handleLogOut(userName, isLogin) {
+	handleLogOut() {
 		this.props.handleLogOut();
+	}
+
+	handleLogin() {
+		this.props.handleLogin();
 	}
 
 	render() {
@@ -21,9 +30,7 @@ class Header extends React.Component {
 					<h4>Welcome back, {userName}</h4>
 				</div>
 				<div>
-					<button
-						onClick={this.handleLogOut}
-					>
+					<button onClick={this.handleLogOut}>
 						Logout
 					</button>
 				</div>
@@ -31,7 +38,9 @@ class Header extends React.Component {
 		) : (
 			<div>
 				<div>
-					<button>Login</button>
+					<button onClick={this.handleLogin}>
+						Login
+					</button>
 				</div>
 				<div>
 					<button>Register</button>
@@ -41,15 +50,17 @@ class Header extends React.Component {
 
 		return (
 			<header>
-				<div>
-					<h2>NewsPortal</h2>
+				<div className="content">
+					<div className="home">
+						<a href="/">News portal</a>
+					</div>
+					<div className="lang-link">
+						<a href="/">EN</a>
+						<a href="/">RU</a>
+						<a href="/">FR</a>
+					</div>
+					{register}
 				</div>
-				<div>
-					<a href="/">EN</a>
-					<a href="/">RU</a>
-					<a href="/">FR</a>
-				</div>
-				{register}
 			</header>
 		);
 	}

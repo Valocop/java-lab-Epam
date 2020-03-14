@@ -1,0 +1,53 @@
+.main {
+	display: flex;
+	height: 100%;
+	padding: 0 15px;
+	margin: 0 auto;
+	margin-top: 42px;
+	margin-bottom: 42px;
+	width: 960px;
+	background-color: #edeef0;
+	justify-content: space-between;
+}
+
+.side-bar {
+	width: 150px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	background-color: blueviolet;
+}
+
+.search-bar {
+	/* background-color: brown; */
+}
+
+.news-bar {
+	width: 750px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	background-color: darkblue;
+}
+
+.news-list {
+	background-color: darkgreen;
+}
+
+.paggination-bar {
+	background-color: deeppink;
+}
+
+.search {
+	display: flex;
+    justify-content: left;
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+.multi-search {
+    width: 600px;
+}
+
+.search-bar button {
+    display: block;
+    margin-left: 20px;
+}

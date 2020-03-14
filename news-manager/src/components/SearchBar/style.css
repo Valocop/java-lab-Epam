@@ -1,0 +1,14 @@
+
+.multiselect-wrapper {
+    display: flex;
+    width: 500px;
+    margin: 0 auto;
+}
+
+.multiselect-wrapper button {
+    margin-left: 10px;
+}
+
+.multiselect {
+    display: block;
+}
