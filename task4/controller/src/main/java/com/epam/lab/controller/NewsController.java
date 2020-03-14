@@ -22,6 +22,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/news")
 @Validated
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class NewsController {
     private NewsService newsService;
 
@@ -65,6 +66,9 @@ public class NewsController {
     public List<NewsDto> readBySpecification(@RequestParam(name = "authors_name", required = false) List<String> authorsName,
                                              @RequestParam(name = "tags_name", required = false) List<String> tagsName,
                                              @RequestParam(name = "sort", required = false) List<String> sorts) {
+        if (isSearchNull(authorsName, tagsName, sorts)) {
+            return newsService.findAll();
+        }
         if (isSearchCorrect(authorsName, tagsName)) {
             return newsService.findBySpecification(authorsName, tagsName, sorts);
         }
@@ -89,5 +93,9 @@ public class NewsController {
 
     private boolean isSearchCorrect(List<String> authorsName, List<String> tagsName) {
         return !(authorsName == null && tagsName == null);
+    }
+
+    private boolean isSearchNull(List<String> authorsName, List<String> tagsName, List<String> sorts) {
+        return authorsName == null && tagsName == null && sorts == null;
     }
 }

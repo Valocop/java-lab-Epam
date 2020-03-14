@@ -21,6 +21,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/authors")
 @Validated
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class AuthorController {
     private AuthorService authorService;
 

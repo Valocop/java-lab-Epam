@@ -12,5 +12,7 @@ public interface NewsRepository extends CrudRepository<News, Long> {
 
     List<News> findAll(SearchSpecification<News> searchSpec);
 
+    List<News> findAll();
+
     long count();
 }

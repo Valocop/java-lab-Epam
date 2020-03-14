@@ -66,6 +66,15 @@ public class NewsRepositoryImpl implements NewsRepository {
     }
 
     @Override
+    public List<News> findAll() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<News> criteriaQuery = criteriaBuilder.createQuery(News.class);
+        Root<News> newsRoot = criteriaQuery.from(News.class);
+        criteriaQuery.select(newsRoot);
+        return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
+    @Override
     public void delete(News entity) {
         News news = entityManager.contains(entity) ? entity : entityManager.merge(entity);
         entityManager.remove(news);

@@ -116,6 +116,13 @@ public class NewsServiceImpl implements NewsService {
         return Collections.emptyList();
     }
 
+    @Override
+    public List<NewsDto> findAll() {
+        return newsRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
     private boolean isCriteriaListNotEmpty(List<SearchCriteria> criteriaList) {
         return !criteriaList.isEmpty();
     }

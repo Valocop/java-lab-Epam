@@ -21,6 +21,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/tags")
 @Validated
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class TagController {
     private TagService tagService;
 
