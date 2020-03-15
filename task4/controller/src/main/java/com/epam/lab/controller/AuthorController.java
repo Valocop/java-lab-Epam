@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -52,6 +53,12 @@ public class AuthorController {
         authorDto.setId(id);
         Optional<AuthorDto> optionalAuthorDto = authorService.read(authorDto);
         return optionalAuthorDto.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Author not found"));
+    }
+
+    @GetMapping(produces = "application/json")
+    @ResponseStatus(HttpStatus.FOUND)
+    public List<AuthorDto> readAll() {
+        return authorService.readAll();
     }
 
     @PutMapping(produces = "application/json",

@@ -7,7 +7,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TagServiceImpl implements TagService {
@@ -53,5 +55,12 @@ public class TagServiceImpl implements TagService {
 
     private Tag convertToTag(TagDto tagDto) {
         return modelMapper.map(tagDto, Tag.class);
+    }
+
+    @Override
+    public List<TagDto> readAll() {
+        return tagRepository.readAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 }

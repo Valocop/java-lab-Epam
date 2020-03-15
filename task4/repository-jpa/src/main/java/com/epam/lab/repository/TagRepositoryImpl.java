@@ -12,6 +12,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -48,5 +49,14 @@ public class TagRepositoryImpl implements TagRepository {
     public void delete(Tag entity) {
         Tag tag = entityManager.contains(entity) ? entity : entityManager.merge(entity);
         entityManager.remove(tag);
+    }
+
+    @Override
+    public List<Tag> readAll() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
+        Root<Tag> root = criteriaQuery.from(Tag.class);
+        criteriaQuery.select(root);
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 }

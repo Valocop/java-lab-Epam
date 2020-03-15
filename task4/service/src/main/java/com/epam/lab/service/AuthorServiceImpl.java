@@ -7,7 +7,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -53,5 +55,12 @@ public class AuthorServiceImpl implements AuthorService {
 
     private Author convertToEntity(AuthorDto authorDto) {
         return modelMapper.map(authorDto, Author.class);
+    }
+
+    @Override
+    public List<AuthorDto> readAll() {
+        return authorRepository.readAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 }

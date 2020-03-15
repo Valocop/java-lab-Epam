@@ -12,6 +12,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -48,5 +49,14 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     public void delete(Author entity) {
         Author author = entityManager.contains(entity) ? entity : entityManager.merge(entity);
         entityManager.remove(author);
+    }
+
+    @Override
+    public List<Author> readAll() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Author> criteriaQuery = criteriaBuilder.createQuery(Author.class);
+        Root<Author> root = criteriaQuery.from(Author.class);
+        criteriaQuery.select(root);
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 }
