@@ -17,7 +17,9 @@ class News extends React.Component {
 					</div>
 					<div className="news-info">
 						<div className="news-author">
-							{this.props.newsAuthor.name + this.props.newsAuthor.surname}
+							{this.props.newsAuthor.name +
+								" " +
+								this.props.newsAuthor.surname}
 						</div>
 						<div className="news-date">
 							{this.props.newsCreationDate}

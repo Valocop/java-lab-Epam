@@ -6,25 +6,39 @@ class SearchBar extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			options: [
-				{ name: "Srigar", id: 1 },
-				{ name: "Sam", id: 2 },
-				{ name: "Srigar", id: 1 },
-				{ name: "Sam", id: 2 },
-				{ name: "Srigar", id: 1 },
-				{ name: "Sam", id: 2 }
-			]
+			selectedItems: []
 		};
+		this.onSearchSelected = this.onSearchSelected.bind(
+			this
+		);
+		this.onSearchDeleted = this.onSearchDeleted.bind(
+			this
+		);
+	}
+
+	onSearchSelected(selectedList, selectedItem) {
+		this.setState({
+			selectedItems: selectedList
+		});
+		console.log(this.state.selectedItems);
+	}
+
+	onSearchDeleted(selectedList, removedItem) {
+		this.setState({
+			selectedItems: selectedList
+		});
+		console.log(this.state.selectedItems);
 	}
 
 	render() {
 		return (
 			<Multiselect
-				options={this.state.options}
-				selectedValues={this.state.selectedValue}
-				// onSelect={this.onSelect}
-				// onRemove={this.onRemove}
-				displayValue="name"
+				options={this.props.data}
+				selectedValues={this.state.selectedItems}
+				onSelect={this.onSearchSelected}
+				onRemove={this.onSearchDeleted}
+				displayValue={"name"}
+				ref={this.props.multiselectRef}
 			/>
 		);
 	}
