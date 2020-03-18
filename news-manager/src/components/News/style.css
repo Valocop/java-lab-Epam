@@ -10,6 +10,12 @@
 	font-size: 20px;
 	font-weight: 500;
 	padding-bottom: 3px;
+	cursor: pointer;
+}
+
+.news-title-close {
+	display: flex;
+	justify-content: space-between;
 }
 
 .news-info {
@@ -38,4 +44,13 @@
 	font-size: 13px;
 	background-color: rgba(184, 182, 182, 0.349);
 	margin-right: 3px;
+}
+
+.news-item-single {
+	min-height: 400px;
+	display: block;
+	background-color: white;
+	padding: 15px;
+	margin-bottom: 10px;
+	border-radius: 4px;
 }

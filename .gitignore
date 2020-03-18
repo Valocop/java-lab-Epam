@@ -1,2 +1,4 @@
 news-manager/package.json
 news-manager/package-lock.json
+node_modules/react-paginate/*
+node_modules/

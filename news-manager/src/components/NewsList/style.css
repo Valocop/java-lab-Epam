@@ -17,8 +17,9 @@
 	background-color: blueviolet;
 }
 
-.search-bar {
-	/* background-color: brown; */
+.search-bar-hidden {
+	visibility: hidden;
+	height: 0px;
 }
 
 .news-bar {
@@ -32,22 +33,24 @@
 	background-color: darkgreen;
 }
 
-.paggination-bar {
-	background-color: deeppink;
-}
-
 .search {
 	display: flex;
-    justify-content: left;
-    margin-left: 20px;
-    margin-bottom: 20px;
+	justify-content: left;
+	margin-left: 20px;
+	margin-bottom: 20px;
 }
 
 .multi-search {
-    width: 600px;
+	width: 600px;
 }
 
 .search-bar button {
-    display: block;
-    margin-left: 20px;
+	display: block;
+	margin-left: 20px;
+}
+
+.paggination-bar {
+	display: flex;
+	background-color: deeppink;
+	justify-content: center;
 }
