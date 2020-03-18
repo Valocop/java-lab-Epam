@@ -113,7 +113,20 @@ public class NewsServiceImpl implements NewsService {
             SearchSpecification<News> searchSpecification = new NewsSpecificationBuilder().with(criteriaList).build();
             return getNewsDtoBySearchAndSortSpec(sorts, searchSpecification);
         }
-        return Collections.emptyList();
+        return findAll();
+    }
+
+    @Override
+    public List<NewsDto> findBySpecification(List<String> authorsName, List<String> tagsName, List<String> sorts,
+                                             Integer limit, Integer offset) {
+        List<SearchCriteria> criteriaList = new ArrayList<>();
+        buildSearchCriteria(authorsName, criteriaList, NewsSearchSpecification.AUTHOR_NAME);
+        buildSearchCriteria(tagsName, criteriaList, NewsSearchSpecification.TAGS_NAME);
+        if (isCriteriaListNotEmpty(criteriaList)) {
+            SearchSpecification<News> searchSpecification = new NewsSpecificationBuilder().with(criteriaList).build();
+            return getNewsDtoBySearchAndSortSpec(sorts, searchSpecification, limit, offset);
+        }
+        return findAll(limit, offset);
     }
 
     @Override
@@ -123,6 +136,34 @@ public class NewsServiceImpl implements NewsService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<NewsDto> findAll(Integer limit, Integer offset) {
+        return newsRepository.findAll(limit, offset).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public long getCountOfNews(List<String> authorsName, List<String> tagsName) {
+        if (isAuthorsEmpty(authorsName) && isTagsEmpty(tagsName)) {
+            return getCountOfNews();
+        } else {
+            List<SearchCriteria> criteriaList = new ArrayList<>();
+            buildSearchCriteria(authorsName, criteriaList, NewsSearchSpecification.AUTHOR_NAME);
+            buildSearchCriteria(tagsName, criteriaList, NewsSearchSpecification.TAGS_NAME);
+            SearchSpecification<News> searchSpecification = new NewsSpecificationBuilder().with(criteriaList).build();
+            return newsRepository.count(searchSpecification);
+        }
+    }
+
+    private boolean isTagsEmpty(List<String> tagsName) {
+        return tagsName == null || tagsName.isEmpty();
+    }
+
+    private boolean isAuthorsEmpty(List<String> authorsName) {
+        return authorsName == null || authorsName.isEmpty();
+    }
+
     private boolean isCriteriaListNotEmpty(List<SearchCriteria> criteriaList) {
         return !criteriaList.isEmpty();
     }
@@ -130,6 +171,21 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public long getCountOfNews() {
         return newsRepository.count();
+    }
+
+    private List<NewsDto> getNewsDtoBySearchAndSortSpec(List<String> sorts, SearchSpecification<News> searchSpecification,
+                                                        Integer limit, Integer offset) {
+        if (sorts == null || sorts.isEmpty()) {
+            return newsRepository.findAll(searchSpecification, limit, offset).stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
+        } else {
+            SortCriteria sortCriteria = new SortCriteria(sorts.get(0));
+            NewsSortSpecification sortSpecification = new NewsSortSpecification(sortCriteria);
+            return newsRepository.findAll(searchSpecification, sortSpecification, limit, offset).stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
+        }
     }
 
     private List<NewsDto> getNewsDtoBySearchAndSortSpec(List<String> sorts, SearchSpecification<News> searchSpecification) {

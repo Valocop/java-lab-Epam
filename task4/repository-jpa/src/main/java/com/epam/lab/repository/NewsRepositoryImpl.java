@@ -8,11 +8,9 @@ import com.epam.lab.specification.SortSpecification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.*;
 import javax.persistence.criteria.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,13 +44,51 @@ public class NewsRepositoryImpl implements NewsRepository {
 
     @Override
     public List<News> findAll(SearchSpecification<News> searchSpec, SortSpecification<News> sortSpec) {
+        CriteriaQuery<News> criteriaQuery = getNewsCriteriaQuery(searchSpec, sortSpec);
+        return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
+    private CriteriaQuery<News> getNewsCriteriaQuery(SearchSpecification<News> searchSpec, SortSpecification<News> sortSpec) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<News> criteriaQuery = criteriaBuilder.createQuery(News.class);
         Root<News> newsRoot = criteriaQuery.from(News.class);
         Predicate predicate = searchSpec.toPredicate(newsRoot, criteriaQuery, criteriaBuilder);
         Order order = sortSpec.toOrder(newsRoot, criteriaQuery, criteriaBuilder);
         criteriaQuery.select(newsRoot).where(predicate).orderBy(order);
-        return entityManager.createQuery(criteriaQuery).getResultList();
+        return criteriaQuery;
+    }
+
+    @Override
+    public List<News> findAll(SearchSpecification<News> searchSpec, SortSpecification<News> sortSpec,
+                              Integer limit, Integer offset) {
+        CriteriaQuery<News> select = getNewsCriteriaQuery(searchSpec, sortSpec);
+
+        TypedQuery<News> typedQuery = entityManager.createQuery(select);
+        if (offset < count(searchSpec)) {
+            typedQuery.setFirstResult(offset);
+            typedQuery.setMaxResults(limit);
+            return typedQuery.getResultList();
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<News> findAll(SearchSpecification<News> searchSpec, Integer limit, Integer offset) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<News> criteriaQuery = criteriaBuilder.createQuery(News.class);
+        Root<News> newsRoot = criteriaQuery.from(News.class);
+        Predicate predicate = searchSpec.toPredicate(newsRoot, criteriaQuery, criteriaBuilder);
+        CriteriaQuery<News> select = criteriaQuery.select(newsRoot).where(predicate);
+
+        TypedQuery<News> typedQuery = entityManager.createQuery(select);
+        if (offset < count(searchSpec)) {
+            typedQuery.setFirstResult(offset);
+            typedQuery.setMaxResults(limit);
+            return typedQuery.getResultList();
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @Override
@@ -66,12 +102,39 @@ public class NewsRepositoryImpl implements NewsRepository {
     }
 
     @Override
+    public List<News> findAll(Integer limit, Integer offset) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<News> criteriaQuery = criteriaBuilder.createQuery(News.class);
+        Root<News> newsRoot = criteriaQuery.from(News.class);
+        CriteriaQuery<News> select = criteriaQuery.select(newsRoot);
+        TypedQuery<News> typedQuery = entityManager.createQuery(select);
+
+        if (offset < count()) {
+            typedQuery.setFirstResult(offset);
+            typedQuery.setMaxResults(limit);
+            return typedQuery.getResultList();
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
     public List<News> findAll() {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<News> criteriaQuery = criteriaBuilder.createQuery(News.class);
         Root<News> newsRoot = criteriaQuery.from(News.class);
         criteriaQuery.select(newsRoot);
         return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
+    @Override
+    public long count(SearchSpecification<News> searchSpec) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<News> criteriaQuery = criteriaBuilder.createQuery(News.class);
+        Root<News> newsRoot = criteriaQuery.from(News.class);
+        Predicate predicate = searchSpec.toPredicate(newsRoot, criteriaQuery, criteriaBuilder);
+        criteriaQuery.select(newsRoot).where(predicate);
+        return entityManager.createQuery(criteriaQuery).getResultList().size();
     }
 
     @Override

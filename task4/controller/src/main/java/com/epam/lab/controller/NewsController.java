@@ -16,8 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.net.URI;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/news")
@@ -63,16 +62,28 @@ public class NewsController {
 
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.FOUND)
-    public List<NewsDto> readBySpecification(@RequestParam(name = "authors_name", required = false) List<String> authorsName,
-                                             @RequestParam(name = "tags_name", required = false) List<String> tagsName,
-                                             @RequestParam(name = "sort", required = false) List<String> sorts) {
-        if (isSearchNull(authorsName, tagsName, sorts)) {
-            return newsService.findAll();
+    public ResponseEntity<Map<String, List<?>>> readBySpec(@RequestParam(name = "authors_name", required = false) List<String> authorsName,
+                                                           @RequestParam(name = "tags_name", required = false) List<String> tagsName,
+                                                           @RequestParam(name = "sort", required = false) List<String> sorts,
+                                                           @RequestParam(name = "limit", required = false) Integer limit,
+                                                           @RequestParam(name = "offset", required = false) Integer offset) {
+        return getNewsBySearch(authorsName, tagsName, sorts, limit, offset);
+    }
+
+    private ResponseEntity<Map<String, List<?>>> getNewsBySearch(List<String> authorsName, List<String> tagsName,
+                                                                 List<String> sorts, Integer limit, Integer offset) {
+        List<NewsDto> news;
+        if (isPaginationNull(limit, offset)) {
+            news = newsService.findBySpecification(authorsName, tagsName, sorts);
+        } else {
+            news = newsService.findBySpecification(authorsName, tagsName, sorts, limit, offset);
         }
-        if (isSearchCorrect(authorsName, tagsName)) {
-            return newsService.findBySpecification(authorsName, tagsName, sorts);
-        }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Check search parameters");
+        long countNews = newsService.getCountOfNews(authorsName, tagsName);
+        Map<String, List<?>> body = new HashMap<>();
+        body.put("news", news);
+        body.put("count", Collections.singletonList(countNews));
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .body(body);
     }
 
     @PutMapping(produces = "application/json",
@@ -91,11 +102,7 @@ public class NewsController {
         newsService.delete(newsDto);
     }
 
-    private boolean isSearchCorrect(List<String> authorsName, List<String> tagsName) {
-        return !(authorsName == null && tagsName == null);
-    }
-
-    private boolean isSearchNull(List<String> authorsName, List<String> tagsName, List<String> sorts) {
-        return authorsName == null && tagsName == null && sorts == null;
+    private boolean isPaginationNull(Integer limit, Integer offset) {
+        return limit == null || offset == null;
     }
 }

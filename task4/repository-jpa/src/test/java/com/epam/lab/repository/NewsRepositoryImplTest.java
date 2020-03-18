@@ -80,6 +80,30 @@ public class NewsRepositoryImplTest {
     }
 
     @Test
+    public void shouldCountNewsBySearchSpecification() {
+        News newsOne = getTestNews();
+        Author author = getTestAuthor();
+        Set<Tag> tagSet = getTestTags();
+        News newsTwo = getTestNews();
+        News newsTree = getTestNews();
+        newsOne.setAuthor(author);
+        newsOne.setTags(tagSet);
+        newsTwo.setAuthor(author);
+        newsTwo.setTags(tagSet);
+        newsTree.setAuthor(author);
+        newsTree.setTags(tagSet);
+        tagSet.forEach(tag -> tagRepository.save(tag));
+        authorRepository.save(author);
+        newsRepository.save(newsOne);
+        newsRepository.save(newsTwo);
+        newsRepository.save(newsTree);
+        NewsSearchSpecification specification =
+                new NewsSearchSpecification(new SearchCriteria(TAGS_NAME, tagSet.iterator().next().getName()));
+        long count = newsRepository.count(specification);
+        Assert.assertEquals(3, count);
+    }
+
+    @Test
     public void shouldSearchNewsByAuthorName() {
         News newsOne = getTestNews();
         Author authorOne = getTestAuthor();

@@ -3,6 +3,7 @@ package com.epam.lab.service;
 import com.epam.lab.dto.NewsDto;
 import com.epam.lab.model.News;
 import com.epam.lab.repository.NewsRepository;
+import com.epam.lab.specification.NewsSearchSpecification;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -181,6 +182,6 @@ public class NewsServiceImplTest {
 
         newsService.findBySpecification(authorsName, tagsName, sort);
 
-        verify(newsRepositoryMock, times(1)).findAll(any(), any());
+        verify(newsRepositoryMock, times(1)).findAll(any(NewsSearchSpecification.class), any());
     }
 }
