@@ -4,6 +4,7 @@ import SearchBar from "../SearchBar";
 import News from "../News";
 import Paginate from "../Paginate";
 import PageCounter from "../PageCounter";
+import DashBoard from "../DashBoard";
 
 class NewsList extends React.Component {
 	constructor(props) {
@@ -24,16 +25,19 @@ class NewsList extends React.Component {
 			newsError: null,
 			tagsError: null,
 			authorsError: null,
-			singleMode: false
+			singleMode: false,
+			addEditNewsMode: false,
+			lastState: null
 		};
 		this.resetSearch = this.resetSearch.bind(this);
 		this.searchNews = this.searchNews.bind(this);
-		this.handleChangeLimit = this.handleChangeLimit.bind(
-			this
-		);
+		this.handleChangeLimit = this.handleChangeLimit.bind(this);
 		this.handlePageClick = this.handlePageClick.bind(this);
 		this.handleNewsClick = this.handleNewsClick.bind(this);
 		this.handleNewsClose = this.handleNewsClose.bind(this);
+		this.handleSearchNews = this.handleSearchNews.bind(this);
+		this.handleDeleteNews = this.handleDeleteNews.bind(this);
+		this.handleEditNews = this.handleEditNews.bind(this);
 	}
 
 	getUnique(arr, comp) {
@@ -45,7 +49,7 @@ class NewsList extends React.Component {
 		return unique;
 	}
 
-	getAuthors(props) {
+	getAuthors() {
 		fetch("http://localhost:8080/news-manager/authors")
 			.then(res => res.json())
 			.then(
@@ -81,9 +85,7 @@ class NewsList extends React.Component {
 						this.setState({
 							newsList: result.news,
 							totalCount: result.count,
-							pageCount: Math.ceil(
-								result.count / this.state.limit
-							)
+							pageCount: Math.ceil(result.count / this.state.limit)
 						});
 					},
 					error => {
@@ -96,7 +98,7 @@ class NewsList extends React.Component {
 		}
 	}
 
-	getTags(props) {
+	getTags() {
 		fetch("http://localhost:8080/news-manager/tags")
 			.then(res => res.json())
 			.then(
@@ -123,8 +125,25 @@ class NewsList extends React.Component {
 	resetSearch() {
 		this.multiselectTags.current.resetSelectedValues();
 		this.multiselectAuthors.current.resetSelectedValues();
-		this.setState({ isSearch: false }, () =>
-			this.getNews()
+		this.setState(
+			{
+				isSearch: false,
+				selected: 0,
+				offset: 0,
+				forcePage: 0
+			},
+			() => this.getNews()
+		);
+	}
+
+	handleSearchNews() {
+		this.setState(
+			{
+				selected: 0,
+				offset: 0,
+				forcePage: 0
+			},
+			() => this.searchNews()
 		);
 	}
 
@@ -156,9 +175,7 @@ class NewsList extends React.Component {
 					this.setState({
 						newsList: result.news,
 						totalCount: result.count,
-						pageCount: Math.ceil(
-							result.count / this.state.limit
-						)
+						pageCount: Math.ceil(result.count / this.state.limit)
 					});
 				},
 				error => {
@@ -196,16 +213,14 @@ class NewsList extends React.Component {
 	}
 
 	handleNewsClick(news) {
-		alert(
-			"Click news id: " +
-				news.id +
-				" limit: " +
-				news.limit +
-				" selected: " +
-				news.selected +
-				"offset: " +
-				news.offset
-		);
+		this.setState(state => ({
+			lastState: {
+				limit: state.limit,
+				offset: state.offset,
+				selected: state.selected,
+				forcePage: state.forcePage
+			}
+		}));
 		this.setState(
 			{
 				limit: 1,
@@ -219,11 +234,47 @@ class NewsList extends React.Component {
 	}
 
 	handleNewsClose() {
+		const lastState = this.state.lastState;
+		this.setState(
+			{
+				singleMode: false,
+				selected: lastState.selected,
+				offset: lastState.offset,
+				forcePage: lastState.forcePage,
+				limit: lastState.limit
+			},
+			() => this.getNews()
+		);
+	}
+
+	handleDeleteNews(news) {
+		var status;
+		alert("Must delete news: " + news.id);
+		fetch("http://localhost:8080/news-manager/news/" + news.id, {
+			method: "DELETE"
+		}).then(
+			response => {
+				alert("response status: " + response.status);
+				status = response.status;
+			},
+			error => {
+				alert("searchNews error: " + error);
+				this.setState({
+					newsError: error
+				});
+			}
+		);
+		if (status.ok) {
+			this.getNews();
+		} else {
+			alert("status fail");
+		}
+	}
+
+	handleEditNews(news) {
+		alert("edit news :" + news.id);
 		this.setState({
-			singleMode: false,
-			selected: 0,
-			offset: 0,
-			forcePage: 0
+			addEditNewsMode: true
 		});
 	}
 
@@ -245,17 +296,22 @@ class NewsList extends React.Component {
 					limit={this.state.limit}
 					position={this.state.newsList.indexOf(news)}
 					handleNewsClose={this.handleNewsClose}
+					isLogin={this.props.isLogin}
+					handleDeleteNews={this.handleDeleteNews}
+					handleEditNews={this.handleEditNews}
 				/>
 			</div>
 		));
 
 		return (
 			<div className="main">
-				<div className="side-bar">Side bar</div>
+				<div className="side-bar">
+					{this.props.isLogin && <DashBoard />}
+				</div>
 				<div className="news-bar">
 					<div
 						className={
-							this.state.singleMode
+							this.state.singleMode || this.state.addEditNewsMode
 								? "search-bar-hidden"
 								: "search-bar"
 						}
@@ -267,9 +323,7 @@ class NewsList extends React.Component {
 									multiselectRef={this.multiselectTags}
 								/>
 							</div>
-							<button onClick={this.searchNews}>
-								search
-							</button>
+							<button onClick={this.handleSearchNews}>search</button>
 						</div>
 						<div className="search">
 							<div className="multi-search">
@@ -278,23 +332,28 @@ class NewsList extends React.Component {
 									multiselectRef={this.multiselectAuthors}
 								/>
 							</div>
-							<button onClick={this.resetSearch}>
-								reset
-							</button>
+							<button onClick={this.resetSearch}>reset</button>
 						</div>
 					</div>
-					<div className="news-list">{news}</div>
-					<div className="paggination-bar">
-						<PageCounter
-							limit={this.state.limit}
-							handleChangeLimit={this.handleChangeLimit}
-						/>
-						<Paginate
-							pageCount={this.state.pageCount}
-							handlePageClick={this.handlePageClick}
-							forcePage={this.state.forcePage}
-						/>
-					</div>
+					{!this.state.addEditNewsMode && (
+						<div className="news-list">{news}</div>
+					)}
+					{!this.state.addEditNewsMode && (
+						<div className="paggination-bar">
+							{!this.state.singleMode && (
+								<PageCounter
+									limit={this.state.limit}
+									handleChangeLimit={this.handleChangeLimit}
+								/>
+							)}
+							<Paginate
+								pageCount={this.state.pageCount}
+								handlePageClick={this.handlePageClick}
+								forcePage={this.state.forcePage}
+								singleMode={this.state.singleMode}
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 		);

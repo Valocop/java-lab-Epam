@@ -6,19 +6,11 @@ class News extends React.Component {
 		super(props);
 		this.handleNewsClick = this.handleNewsClick.bind(this);
 		this.handleNewsClose = this.handleNewsClose.bind(this);
+		this.handleDeleteNews = this.handleDeleteNews.bind(this);
+		this.handleEditNews = this.handleEditNews.bind(this);
 	}
 
-	handleNewsClick() {
-		const news = {
-			id: this.props.id,
-			title: this.props.newsTitle,
-			limit: this.props.limit,
-			selected: this.props.selected,
-			offset: Math.ceil(
-				this.props.selected * this.props.limit +
-					this.props.position
-			)
-		};
+	handleNewsClick(news) {
 		this.props.handleNewsClick(news);
 	}
 
@@ -26,7 +18,24 @@ class News extends React.Component {
 		this.props.handleNewsClose();
 	}
 
+	handleDeleteNews(news) {
+		this.props.handleDeleteNews(news);
+	}
+
+	handleEditNews(news) {
+		this.props.handleEditNews(news);
+	}
+
 	render() {
+		const news = {
+			id: this.props.id,
+			title: this.props.newsTitle,
+			limit: this.props.limit,
+			selected: this.props.selected,
+			offset: Math.ceil(
+				this.props.selected * this.props.limit + this.props.position
+			)
+		};
 		const tags = this.props.newsTags.map(tag => (
 			<div key={tag.id} className="news-tag">
 				{tag.name}
@@ -42,17 +51,13 @@ class News extends React.Component {
 					<div className="news-title-close">
 						<div
 							className="news-title"
-							onClick={this.handleNewsClick}
+							onClick={() => this.handleNewsClick(news)}
 						>
-							{this.props.newsTitle +
-								"  id: " +
-								this.props.id}
+							{this.props.newsTitle + "  id: " + this.props.id}
 						</div>
 						{this.props.singleMode && (
 							<div className="close-but">
-								<button onClick={this.handleNewsClose}>
-									close
-								</button>
+								<button onClick={this.handleNewsClose}>close</button>
 							</div>
 						)}
 					</div>
@@ -76,6 +81,16 @@ class News extends React.Component {
 					</div>
 				)}
 				<div className="news-tags">{tags}</div>
+				{this.props.isLogin && (
+					<div className="control-news">
+						<button onClick={() => this.handleEditNews(news)}>
+							EDIT
+						</button>
+						<button onClick={() => this.handleDeleteNews(news)}>
+							DELETE
+						</button>
+					</div>
+				)}
 			</div>
 		);
 	}

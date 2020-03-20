@@ -9,18 +9,10 @@ import NewsList from "./components/NewsList";
 class Main extends React.Component {
 	constructor(props) {
 		super(props);
-		this.handleUserLogin = this.handleUserLogin.bind(
-			this
-		);
-		this.handleUserLogout = this.handleUserLogout.bind(
-			this
-		);
-		this.handleShowLogin = this.handleShowLogin.bind(
-			this
-		);
-		this.handleHideLogin = this.handleHideLogin.bind(
-			this
-		);
+		this.handleUserLogin = this.handleUserLogin.bind(this);
+		this.handleUserLogout = this.handleUserLogout.bind(this);
+		this.handleShowLogin = this.handleShowLogin.bind(this);
+		this.handleHideLogin = this.handleHideLogin.bind(this);
 		this.state = {
 			isLogin: false,
 			userName: "",
@@ -63,11 +55,10 @@ class Main extends React.Component {
 	render() {
 		const isLogin = this.state.isLogin;
 		const userName = this.state.userName;
-		const showLoginComponent = this.state
-			.showLoginComponent;
+		const showLoginComponent = this.state.showLoginComponent;
 
 		let main = !showLoginComponent ? (
-			<NewsList />
+			<NewsList isLogin={this.state.isLogin} />
 		) : (
 			<Login
 				handleSubmit={this.handleUserLogin}
@@ -92,7 +83,4 @@ class Main extends React.Component {
 	}
 }
 
-ReactDOM.render(
-	<Main />,
-	document.getElementById("root")
-);
+ReactDOM.render(<Main />, document.getElementById("root"));

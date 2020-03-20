@@ -1,7 +1,9 @@
+
 .pagination {
 	text-align: center;
 	margin: 0;
 	font-size: 14px;
+	padding-right: 40px;
 }
 
 .pagination ul {
@@ -57,4 +59,8 @@
 	cursor: default;
 	background-color: #337ab7;
 	border-color: #337ab7;
+}
+
+.hide-li {
+	visibility: collapse;
 }

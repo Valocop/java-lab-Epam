@@ -1,10 +1,8 @@
 import React, { Component } from "react";
-import $ from "jquery";
 import "./style.css";
 import ReactPaginate from "react-paginate";
 
 class Paginate extends React.Component {
-	
 	render() {
 		return (
 			<div className="commentBox">
@@ -22,7 +20,9 @@ class Paginate extends React.Component {
 					activeClassName={"active"}
 					initialPage={0}
 					forcePage={this.props.forcePage}
-					// disableInitialCallback={true}
+					pageClassName={
+						this.props.singleMode ? "hide-li" : null
+					}
 				/>
 			</div>
 		);
