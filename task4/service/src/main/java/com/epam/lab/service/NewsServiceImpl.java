@@ -3,10 +3,13 @@ package com.epam.lab.service;
 import com.epam.lab.dto.AuthorDto;
 import com.epam.lab.dto.NewsDto;
 import com.epam.lab.dto.TagDto;
+import com.epam.lab.model.Author;
 import com.epam.lab.model.News;
+import com.epam.lab.model.Tag;
+import com.epam.lab.repository.AuthorRepository;
 import com.epam.lab.repository.NewsRepository;
+import com.epam.lab.repository.TagRepository;
 import com.epam.lab.specification.*;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,20 +17,20 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.epam.lab.service.ServiceUtil.convertToDto;
+import static com.epam.lab.service.ServiceUtil.convertToEntity;
+
 @Service
 public class NewsServiceImpl implements NewsService {
     private NewsRepository newsRepository;
-    private AuthorService authorService;
-    private TagService tagService;
-    private ModelMapper modelMapper;
+    private AuthorRepository authorRepository;
+    private TagRepository tagRepository;
 
     @Autowired
-    public NewsServiceImpl(NewsRepository newsRepository, AuthorService authorService,
-                           TagService tagService, ModelMapper modelMapper) {
+    public NewsServiceImpl(NewsRepository newsRepository, AuthorRepository authorRepository, TagRepository tagRepository) {
         this.newsRepository = newsRepository;
-        this.authorService = authorService;
-        this.tagService = tagService;
-        this.modelMapper = modelMapper;
+        this.authorRepository = authorRepository;
+        this.tagRepository = tagRepository;
     }
 
     @Override
@@ -49,10 +52,12 @@ public class NewsServiceImpl implements NewsService {
     private Set<TagDto> createTagsIfNotExist(Set<TagDto> tagDtoSet) {
         Set<TagDto> tagsDto = new HashSet<>();
         for (TagDto tagDto : tagDtoSet) {
-            Optional<TagDto> dtoOptional = tagService.read(tagDto);
+            Optional<Tag> tagOptional = tagRepository.findById(tagDto.getId());
+            Optional<TagDto> dtoOptional = tagOptional.map(ServiceUtil::convertToDto);
             TagDto dto = dtoOptional.orElseGet(() -> {
                 tagDto.setId(0);
-                return tagService.create(tagDto);
+                Tag savedTag = tagRepository.save(ServiceUtil.convertToEntity(tagDto));
+                return convertToDto(savedTag);
             });
             tagsDto.add(dto);
         }
@@ -60,10 +65,12 @@ public class NewsServiceImpl implements NewsService {
     }
 
     private AuthorDto createAuthorIfNotExist(AuthorDto authorDto) {
-        Optional<AuthorDto> dtoOptional = authorService.read(authorDto);
+        Optional<Author> authorOptional = authorRepository.findById(authorDto.getId());
+        Optional<AuthorDto> dtoOptional = authorOptional.map(ServiceUtil::convertToDto);
         return dtoOptional.orElseGet(() -> {
             authorDto.setId(0);
-            return authorService.create(authorDto);
+            Author savedAuthor = authorRepository.save(convertToEntity(authorDto));
+            return convertToDto(savedAuthor);
         });
     }
 
@@ -71,7 +78,7 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public Optional<NewsDto> read(NewsDto dto) {
         Optional<News> newsOptional = newsRepository.findById(dto.getId());
-        return newsOptional.map(this::convertToDto);
+        return newsOptional.map(ServiceUtil::convertToDto);
     }
 
     @Override
@@ -96,108 +103,23 @@ public class NewsServiceImpl implements NewsService {
         newsOptional.ifPresent(news -> newsRepository.delete(news));
     }
 
-    private NewsDto convertToDto(News news) {
-        return modelMapper.map(news, NewsDto.class);
-    }
-
-    private News convertToEntity(NewsDto newsDto) {
-        return modelMapper.map(newsDto, News.class);
-    }
-
     @Override
-    public List<NewsDto> findBySpecification(List<String> authorsName, List<String> tagsName, List<String> sorts) {
+    public List<NewsDto> findNews(List<String> authorsName, List<String> tagsName, List<String> sorts,
+                                  Integer count, Integer page) {
         List<SearchCriteria> criteriaList = new ArrayList<>();
         buildSearchCriteria(authorsName, criteriaList, NewsSearchSpecification.AUTHOR_NAME);
         buildSearchCriteria(tagsName, criteriaList, NewsSearchSpecification.TAGS_NAME);
-        if (isCriteriaListNotEmpty(criteriaList)) {
-            SearchSpecification<News> searchSpecification = new NewsSpecificationBuilder().with(criteriaList).build();
-            return getNewsDtoBySearchAndSortSpec(sorts, searchSpecification);
-        }
-        return findAll();
-    }
+        SortCriteria sortCriteria = new SortCriteria(sorts.get(0));
+        NewsSortSpecification sortSpecification = new NewsSortSpecification(sortCriteria);
 
-    @Override
-    public List<NewsDto> findBySpecification(List<String> authorsName, List<String> tagsName, List<String> sorts,
-                                             Integer limit, Integer offset) {
-        List<SearchCriteria> criteriaList = new ArrayList<>();
-        buildSearchCriteria(authorsName, criteriaList, NewsSearchSpecification.AUTHOR_NAME);
-        buildSearchCriteria(tagsName, criteriaList, NewsSearchSpecification.TAGS_NAME);
-        if (isCriteriaListNotEmpty(criteriaList)) {
-            SearchSpecification<News> searchSpecification = new NewsSpecificationBuilder().with(criteriaList).build();
-            return getNewsDtoBySearchAndSortSpec(sorts, searchSpecification, limit, offset);
-        }
-        return findAll(limit, offset);
-    }
-
-    @Override
-    public List<NewsDto> findAll() {
-        return newsRepository.findAll().stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<NewsDto> findAll(Integer limit, Integer offset) {
-        return newsRepository.findAll(limit, offset).stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public long getCountOfNews(List<String> authorsName, List<String> tagsName) {
-        if (isAuthorsEmpty(authorsName) && isTagsEmpty(tagsName)) {
-            return getCountOfNews();
-        } else {
-            List<SearchCriteria> criteriaList = new ArrayList<>();
-            buildSearchCriteria(authorsName, criteriaList, NewsSearchSpecification.AUTHOR_NAME);
-            buildSearchCriteria(tagsName, criteriaList, NewsSearchSpecification.TAGS_NAME);
-            SearchSpecification<News> searchSpecification = new NewsSpecificationBuilder().with(criteriaList).build();
-            return newsRepository.count(searchSpecification);
-        }
-    }
-
-    private boolean isTagsEmpty(List<String> tagsName) {
-        return tagsName == null || tagsName.isEmpty();
-    }
-
-    private boolean isAuthorsEmpty(List<String> authorsName) {
-        return authorsName == null || authorsName.isEmpty();
-    }
-
-    private boolean isCriteriaListNotEmpty(List<SearchCriteria> criteriaList) {
-        return !criteriaList.isEmpty();
-    }
-
-    @Override
-    public long getCountOfNews() {
-        return newsRepository.count();
-    }
-
-    private List<NewsDto> getNewsDtoBySearchAndSortSpec(List<String> sorts, SearchSpecification<News> searchSpecification,
-                                                        Integer limit, Integer offset) {
-        if (sorts == null || sorts.isEmpty()) {
-            return newsRepository.findAll(searchSpecification, limit, offset).stream()
-                    .map(this::convertToDto)
+        if (criteriaList.isEmpty()) {
+            return newsRepository.findAll(sortSpecification, count, page).stream()
+                    .map(ServiceUtil::convertToDto)
                     .collect(Collectors.toList());
         } else {
-            SortCriteria sortCriteria = new SortCriteria(sorts.get(0));
-            NewsSortSpecification sortSpecification = new NewsSortSpecification(sortCriteria);
-            return newsRepository.findAll(searchSpecification, sortSpecification, limit, offset).stream()
-                    .map(this::convertToDto)
-                    .collect(Collectors.toList());
-        }
-    }
-
-    private List<NewsDto> getNewsDtoBySearchAndSortSpec(List<String> sorts, SearchSpecification<News> searchSpecification) {
-        if (sorts == null || sorts.isEmpty()) {
-            return newsRepository.findAll(searchSpecification).stream()
-                    .map(this::convertToDto)
-                    .collect(Collectors.toList());
-        } else {
-            SortCriteria sortCriteria = new SortCriteria(sorts.get(0));
-            NewsSortSpecification sortSpecification = new NewsSortSpecification(sortCriteria);
-            return newsRepository.findAll(searchSpecification, sortSpecification).stream()
-                    .map(this::convertToDto)
+            SearchSpecification<News> searchSpecification = new NewsSpecificationBuilder().with(criteriaList).build();
+            return newsRepository.findAll(searchSpecification, sortSpecification, count, page).stream()
+                    .map(ServiceUtil::convertToDto)
                     .collect(Collectors.toList());
         }
     }
@@ -205,6 +127,25 @@ public class NewsServiceImpl implements NewsService {
     private void buildSearchCriteria(List<String> strings, List<SearchCriteria> criteriaList, String param) {
         if (strings != null && !strings.isEmpty()) {
             strings.forEach(s -> criteriaList.add(new SearchCriteria(param, s)));
+        }
+    }
+
+    @Override
+    public long getCountOfNews() {
+        return newsRepository.count();
+    }
+
+    @Override
+    public long getCountOfNews(List<String> authorsName, List<String> tagsName) {
+        List<SearchCriteria> criteriaList = new ArrayList<>();
+        buildSearchCriteria(authorsName, criteriaList, NewsSearchSpecification.AUTHOR_NAME);
+        buildSearchCriteria(tagsName, criteriaList, NewsSearchSpecification.TAGS_NAME);
+
+        if (criteriaList.isEmpty()) {
+            return getCountOfNews();
+        } else {
+            SearchSpecification<News> searchSpecification = new NewsSpecificationBuilder().with(criteriaList).build();
+            return newsRepository.count(searchSpecification);
         }
     }
 }

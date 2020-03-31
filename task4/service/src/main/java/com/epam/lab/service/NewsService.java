@@ -6,16 +6,10 @@ import java.util.List;
 
 public interface NewsService extends Service<NewsDto> {
 
-    List<NewsDto> findBySpecification(List<String> authorsName, List<String> tagsName, List<String> sorts);
-
-    List<NewsDto> findBySpecification(List<String> authorsName, List<String> tagsName, List<String> sorts,
-                                      Integer limit, Integer offset);
-
-    List<NewsDto> findAll();
-
-    List<NewsDto> findAll(Integer limit, Integer offset);
-
-    long getCountOfNews(List<String> authorsName, List<String> tagsName);
+    List<NewsDto> findNews(List<String> authorsName, List<String> tagsName, List<String> sorts,
+                           Integer count, Integer page);
 
     long getCountOfNews();
+
+    long getCountOfNews(List<String> authorsName, List<String> tagsName);
 }

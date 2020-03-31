@@ -8,17 +8,12 @@ import java.util.List;
 
 public interface NewsRepository extends CrudRepository<News, Long> {
 
-    List<News> findAll(SearchSpecification<News> searchSpec, SortSpecification<News> sortSpec);
-
-    List<News> findAll(SearchSpecification<News> searchSpec, SortSpecification<News> sortSpec, Integer limit, Integer offset);
-
-    List<News> findAll(SearchSpecification<News> searchSpec, Integer limit, Integer offset);
-
     List<News> findAll(SearchSpecification<News> searchSpec);
 
-    List<News> findAll(Integer limit, Integer offset);
+    List<News> findAll(SortSpecification<News> sortSpec, Integer count, Integer page);
 
-    List<News> findAll();
+    List<News> findAll(SearchSpecification<News> searchSpec, SortSpecification<News> sortSpec,
+                       Integer count, Integer page);
 
     long count(SearchSpecification<News> searchSpec);
 

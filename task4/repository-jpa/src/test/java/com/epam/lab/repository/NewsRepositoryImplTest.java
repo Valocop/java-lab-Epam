@@ -80,7 +80,7 @@ public class NewsRepositoryImplTest {
     }
 
     @Test
-    public void shouldCountNewsBySearchSpecification() {
+    public void shouldCountNewsBySearchTagNameSpecification() {
         News newsOne = getTestNews();
         Author author = getTestAuthor();
         Set<Tag> tagSet = getTestTags();
@@ -101,6 +101,40 @@ public class NewsRepositoryImplTest {
                 new NewsSearchSpecification(new SearchCriteria(TAGS_NAME, tagSet.iterator().next().getName()));
         long count = newsRepository.count(specification);
         Assert.assertEquals(3, count);
+    }
+
+    @Test
+    public void shouldCountNewsBySearchTagNameAndAuthorNameSpecification() {
+        News newsOne = getTestNews();
+        News newsTwo = getTestNews();
+        News newsThree = getTestNews();
+        Author authorOne = getTestAuthor();
+        Author authorTwo = getTestAuthor();
+        Author authorThree = getTestAuthor();
+        Tag tagOne = getTestTag();
+        Tag tagTwo = getTestTag();
+        newsOne.setAuthor(authorOne);
+        newsOne.setTags(Collections.singleton(tagOne));
+        newsTwo.setAuthor(authorTwo);
+        newsTwo.setTags(Collections.singleton(tagTwo));
+        newsThree.setAuthor(authorThree);
+        authorRepository.save(authorOne);
+        authorRepository.save(authorTwo);
+        authorRepository.save(authorThree);
+        tagRepository.save(tagOne);
+        tagRepository.save(tagTwo);
+        newsRepository.save(newsOne);
+        newsRepository.save(newsTwo);
+        newsRepository.save(newsThree);
+        SearchCriteria tagSearchCriteria = new SearchCriteria(TAGS_NAME, tagOne.getName());
+        SearchCriteria authorSearchCriteria = new SearchCriteria(AUTHOR_NAME, authorOne.getName());
+        NewsSpecificationBuilder specificationBuilder = new NewsSpecificationBuilder();
+        SearchSpecification<News> newsSearchSpecification = specificationBuilder
+                .with(tagSearchCriteria)
+                .with(authorSearchCriteria)
+                .build();
+        long actualResult = newsRepository.count(newsSearchSpecification);
+        Assert.assertEquals(1, actualResult);
     }
 
     @Test
@@ -270,23 +304,23 @@ public class NewsRepositoryImplTest {
         Author authorOne = getTestAuthor();
         Author authorTwo = getTestAuthor();
         Author authorThree = getTestAuthor();
-        Set<Tag> tagOne = getTestTags();
-        newsOne.setTags(tagOne);
-        newsTwo.setTags(tagOne);
-        newsThree.setTags(tagOne);
+        Set<Tag> tagSet = getTestTags();
+        newsOne.setTags(tagSet);
+        newsTwo.setTags(tagSet);
+        newsThree.setTags(tagSet);
         newsOne.setAuthor(authorOne);
         newsTwo.setAuthor(authorTwo);
         newsThree.setAuthor(authorThree);
         authorRepository.save(authorOne);
         authorRepository.save(authorTwo);
         authorRepository.save(authorThree);
-        tagOne.forEach(tag -> tagRepository.save(tag));
+        tagSet.forEach(tag -> tagRepository.save(tag));
         newsRepository.save(newsOne);
         newsRepository.save(newsTwo);
         newsRepository.save(newsThree);
         List<News> newsList = newsRepository.findAll(
-                new NewsSearchSpecification(new SearchCriteria(TAGS_NAME, tagOne.iterator().next().getName())),
-                new NewsSortSpecification(new SortCriteria(AUTHOR_NAME)));
+                new NewsSearchSpecification(new SearchCriteria(TAGS_NAME, new ArrayList<>(tagSet).get(0).getName())),
+                new NewsSortSpecification(new SortCriteria(AUTHOR_NAME)), 10, 1);
         List<News> expectedNews = new ArrayList<>();
         Collections.addAll(expectedNews, newsOne, newsTwo, newsThree);
         expectedNews.sort(Comparator.comparing(o -> o.getAuthor().getName()));

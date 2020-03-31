@@ -62,26 +62,17 @@ public class NewsController {
 
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.FOUND)
-    public ResponseEntity<Map<String, List<?>>> readBySpec(@RequestParam(name = "authors_name", required = false) List<String> authorsName,
-                                                           @RequestParam(name = "tags_name", required = false) List<String> tagsName,
-                                                           @RequestParam(name = "sort", required = false) List<String> sorts,
-                                                           @RequestParam(name = "limit", required = false) Integer limit,
-                                                           @RequestParam(name = "offset", required = false) Integer offset) {
-        return getNewsBySearch(authorsName, tagsName, sorts, limit, offset);
-    }
+    public ResponseEntity<Map<String, List<?>>> getNews(@RequestParam(name = "authors_name", required = false) List<String> authorsName,
+                                                        @RequestParam(name = "tags_name", required = false) List<String> tagsName,
+                                                        @RequestParam(name = "sort", required = false, defaultValue = "creation_date") List<String> sorts,
+                                                        @RequestParam(required = false, defaultValue = "10") Integer count,
+                                                        @RequestParam(required = false, defaultValue = "1") Integer page) {
+        List<NewsDto> news = newsService.findNews(authorsName, tagsName, sorts, count, page);
+        long countOfNews = newsService.getCountOfNews(authorsName, tagsName);
 
-    private ResponseEntity<Map<String, List<?>>> getNewsBySearch(List<String> authorsName, List<String> tagsName,
-                                                                 List<String> sorts, Integer limit, Integer offset) {
-        List<NewsDto> news;
-        if (isPaginationNull(limit, offset)) {
-            news = newsService.findBySpecification(authorsName, tagsName, sorts);
-        } else {
-            news = newsService.findBySpecification(authorsName, tagsName, sorts, limit, offset);
-        }
-        long countNews = newsService.getCountOfNews(authorsName, tagsName);
         Map<String, List<?>> body = new HashMap<>();
         body.put("news", news);
-        body.put("count", Collections.singletonList(countNews));
+        body.put("count", Collections.singletonList(countOfNews));
         return ResponseEntity.status(HttpStatus.FOUND)
                 .body(body);
     }
@@ -100,9 +91,5 @@ public class NewsController {
         NewsDto newsDto = new NewsDto();
         newsDto.setId(id);
         newsService.delete(newsDto);
-    }
-
-    private boolean isPaginationNull(Integer limit, Integer offset) {
-        return limit == null || offset == null;
     }
 }

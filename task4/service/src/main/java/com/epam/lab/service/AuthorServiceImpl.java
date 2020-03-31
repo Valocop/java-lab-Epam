@@ -11,15 +11,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.epam.lab.service.ServiceUtil.convertToDto;
+import static com.epam.lab.service.ServiceUtil.convertToEntity;
+
 @Service
 public class AuthorServiceImpl implements AuthorService {
     private AuthorRepository authorRepository;
-    private ModelMapper modelMapper;
 
     @Autowired
-    public AuthorServiceImpl(AuthorRepository authorRepository, ModelMapper modelMapper) {
+    public AuthorServiceImpl(AuthorRepository authorRepository) {
         this.authorRepository = authorRepository;
-        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -31,7 +32,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public Optional<AuthorDto> read(AuthorDto dto) {
         Optional<Author> optionalAuthor = authorRepository.findById(dto.getId());
-        return optionalAuthor.map(this::convertToDto);
+        return optionalAuthor.map(ServiceUtil::convertToDto);
     }
 
     @Override
@@ -49,18 +50,10 @@ public class AuthorServiceImpl implements AuthorService {
         authorRepository.delete(convertToEntity(dto));
     }
 
-    private AuthorDto convertToDto(Author author) {
-        return modelMapper.map(author, AuthorDto.class);
-    }
-
-    private Author convertToEntity(AuthorDto authorDto) {
-        return modelMapper.map(authorDto, Author.class);
-    }
-
     @Override
     public List<AuthorDto> readAll() {
         return authorRepository.readAll().stream()
-                .map(this::convertToDto)
+                .map(ServiceUtil::convertToDto)
                 .collect(Collectors.toList());
     }
 }
