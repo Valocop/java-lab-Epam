@@ -1,0 +1,11 @@
+.newsBar {
+    width: 750px;
+    border: 2px dashed #8376ff;
+    padding: 0 10px;
+    margin-left: 5px;
+}
+
+.newsList {
+    border: 2px dashed #ff84dd;
+    padding: 10px 0;
+}

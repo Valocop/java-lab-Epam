@@ -1,0 +1,9 @@
+.contentWrapper {
+    display: flex;
+    padding: 10px 15px;
+    margin: 42px auto;
+    width: 960px;
+    background-color: inherit;
+    justify-content: center;
+    border: 1px dashed black;
+}

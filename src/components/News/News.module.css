@@ -1,0 +1,43 @@
+.newsWrapper {
+    border-radius: 5px;
+    margin: 10px 0;
+    border: 2px dashed #ffdb90;
+    padding: 5px;
+}
+
+.fullWrapper {
+    border-radius: 5px;
+    margin: 10px 0;
+    border: 2px dashed #ffdb90;
+    padding: 5px;
+    min-height: 400px;
+}
+
+.navLink {
+    text-decoration: none;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+}
+
+.description {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: darkgray;
+}
+
+.tagContainer {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+}
+
+.tagContainer div {
+    font-size: 14px;
+    padding: 2px;
+    margin: 0 2px;
+}
