@@ -8,7 +8,7 @@ const News = (props) => {
 
     return (
         props.news.map(news => (
-            <div key={news.id} className={newsStyle}>
+            news && <div key={news.id} className={newsStyle}>
                 <div className={style.title}>
                     <NavLink className={style.navLink} to={'/news/' + news.id}>
                         {news.title}
@@ -28,6 +28,12 @@ const News = (props) => {
                     {news.tags.map(tag =>
                         <div key={tag.id}>{tag.name}</div>
                     )}
+                </div>
+                <div>
+                    <NavLink to={'/editNews/' + news.id}>
+                        <button>Edit</button>
+                    </NavLink>
+                    <button onClick={() => props.onDeleteNews(news.id)}>Delete</button>
                 </div>
             </div>
         ))

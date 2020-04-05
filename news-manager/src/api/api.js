@@ -19,15 +19,21 @@ export const newsAPI = {
             .then(response => {
                 return response.data;
             });
+    },
+    postNews(news) {
+        return instance.post('news', news);
+    },
+    putNews(news) {
+        return instance.put('news', news);
+    },
+    deleteNews(id) {
+        return instance.delete('news/' + id);
     }
 };
 
 export const tagsAPI = {
     getTags() {
-        return instance.get('tags')
-            .then(response => {
-                return response.data;
-            });
+        return instance.get('tags');
     }
 };
 

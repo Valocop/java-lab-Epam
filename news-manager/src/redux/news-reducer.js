@@ -1,5 +1,6 @@
 import {authorAPI, newsAPI, tagsAPI} from "../api/api";
 import {getUnique} from "./redux-util";
+import React from "react";
 
 const SET_NEWS = "SET_NEWS";
 const SET_CURRENT_PAGE = "SET_CURRENT_PAGE";
@@ -23,7 +24,7 @@ let initialState = {
     selectedAuthors: [],
     tagsNames: [],
     authorsNames: [],
-    newsPage: []
+    newsPage: null
 };
 
 const newsReducer = (state = initialState, action) => {
@@ -34,7 +35,7 @@ const newsReducer = (state = initialState, action) => {
         }
         case SET_PAGE_SIZE: {
             // requestNews(state.currentPage, action.pageSize, state.authorsNames, state.tagsNames);
-            return {...state, pageSize: action.pageSize}
+            return {...state, pageSize: action.pageSize, currentPage: 1}
         }
         case SET_CURRENT_PAGE: {
             // requestNews(action.currentPage, state.pageSize, state.authorsNames, state.tagsNames);
@@ -59,7 +60,7 @@ const newsReducer = (state = initialState, action) => {
             return {...state, selectedAuthors: [], selectedTags: [], tagsNames: [], authorsNames: [], currentPage: 1};
         }
         case SET_NEWS_PAGE: {
-            return {...state, newsPage: [action.news]};
+            return {...state, newsPage: action.news};
         }
         default:
             return state;
@@ -70,8 +71,8 @@ export const setNews = (news) => ({type: SET_NEWS, news});
 export const setCurrentPage = (currentPage) => ({type: SET_CURRENT_PAGE, currentPage});
 export const setPageSize = (pageSize) => ({type: SET_PAGE_SIZE, pageSize});
 export const setTotalNewsCount = (totalNewsCount) => ({type: SET_TOTAL_NEWS_COUNT, totalNewsCount});
-export const setTags = (tags) => ({type: SET_TAGS, tags});
-export const setAuthors = (authors) => ({type: SET_AUTHORS, authors});
+export const setNewsTags = (tags) => ({type: SET_TAGS, tags});
+export const setNewsAuthors = (authors) => ({type: SET_AUTHORS, authors});
 export const setSelectedTags = (tags) => ({type: SET_SELECTED_TAGS, tags});
 export const setSelectedAuthors = (authors) => ({type: SET_SELECTED_AUTHORS, authors});
 export const resetSearch = () => ({type: RESET_SEARCH});
@@ -81,8 +82,8 @@ export const requestTags = () => {
     return (dispatch) => {
         tagsAPI.getTags()
             .then(data => {
-                const tags = getUnique(data, "name");
-                dispatch(setTags(tags));
+                const tags = getUnique(data.data, "name");
+                dispatch(setNewsTags(tags));
             })
     }
 };
@@ -92,13 +93,50 @@ export const requestAuthors = () => {
         authorAPI.getAuthors()
             .then(data => {
                 const authors = getUnique(data, "name");
-                dispatch(setAuthors(authors));
+                dispatch(setNewsAuthors(authors));
             })
+    }
+};
+
+export const updateNews = (news, history) => {
+    debugger;
+    return (dispatch) => {
+        newsAPI.putNews(news)
+            .then(response => {
+                if (response.status === 200) {
+                    history.push("/news/" + response.data.id);
+                }
+            });
+    }
+};
+
+export const postNews = (news, history) => {
+    return (dispatch) => {
+        newsAPI.postNews(news)
+            .then(response => {
+                if (response.status === 201) {
+                    history.push("/news/" + response.data.id);
+                }
+            });
+    }
+};
+
+export const deleteNewsById = (id, history) => {
+    return (dispatch) => {
+        newsAPI.deleteNews(id)
+            .then(response => {
+                debugger;
+                if (response.status === 200) {
+                    dispatch(setNews([]));
+                    history.replace("/news");
+                }
+            });
     }
 };
 
 export const requestNewsById = (newsId) => {
     return (dispatch) => {
+        dispatch(setNewsPage(null));
         newsAPI.getNewsById(newsId)
             .then(data => {
                 dispatch(setNewsPage(data));

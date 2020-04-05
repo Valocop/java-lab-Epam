@@ -6,6 +6,7 @@ import News from "./News";
 import {compose} from "redux";
 import {connect} from "react-redux";
 import {
+    deleteNewsById,
     requestAuthors,
     requestNews,
     requestTags, resetSearch,
@@ -13,6 +14,7 @@ import {
     setPageSize, setSelectedAuthors, setSelectedTags,
     setTotalNewsCount
 } from "../../redux/news-reducer";
+import {withRouter} from "react-router-dom";
 
 class NewsContainer extends React.Component {
 
@@ -28,7 +30,8 @@ class NewsContainer extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.currentPage !== prevProps.currentPage ||
-            this.props.pageSize !== prevProps.pageSize) {
+            this.props.pageSize !== prevProps.pageSize ||
+            this.props.news.length !== prevProps.news.length) {
             this.newsRequest();
         }
     };
@@ -36,6 +39,11 @@ class NewsContainer extends React.Component {
     resetNewsSearch = () => {
         this.props.resetSearch();
         this.props.requestNews(1, this.props.pageSize, null, null);
+    };
+
+    onDeleteNews = (newsId) => {
+        debugger;
+        this.props.deleteNewsById(newsId, this.props.history);
     };
 
     render() {
@@ -46,8 +54,11 @@ class NewsContainer extends React.Component {
                     resetSearch={this.resetNewsSearch}
                 />
                 <div className={style.newsList}>
-                    <News news={this.props.news}
-                          fullMode={false}/>
+                    <News
+                        news={this.props.news}
+                        fullMode={false}
+                        onDeleteNews={this.onDeleteNews}
+                    />
                 </div>
                 <Pagination
                     pageSize={this.props.pageSize}
@@ -86,6 +97,7 @@ export default compose(
         requestAuthors,
         setSelectedTags,
         setSelectedAuthors,
-        resetSearch
-    })(NewsContainer)
+        resetSearch,
+        deleteNewsById
+    })(withRouter(NewsContainer))
 );

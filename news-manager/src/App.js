@@ -6,6 +6,9 @@ import NavBar from "./components/NavBar/NavBar";
 import NewsContainer from "./components/News/NewsContainer";
 import {Route, withRouter} from "react-router-dom";
 import SingleNewsContainer from "./components/News/SingleNewsContainer";
+import AddNewsContainer from "./components/AddNews/AddNewsContainer";
+import EditNewsContainer from "./components/EditNews/EditNewsContainer";
+import AuthorContainer from "./components/Authors/AuthorContainer";
 
 class App extends Component {
 
@@ -18,6 +21,9 @@ class App extends Component {
                     <NavBar/>
                     <Route exact path='/news' render={() => <NewsContainer/>}/>
                     <Route path='/news/:newsId' render={() => <SingleNewsContainer/>}/>
+                    <Route exact path='/addNews' render={() => <AddNewsContainer/>}/>
+                    <Route path='/editNews/:newsId' render={() => <EditNewsContainer/>}/>
+                    <Route path='/authors' render={() => <AuthorContainer/>}/>
                 </div>
             </div>
         );
