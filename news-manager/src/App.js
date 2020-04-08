@@ -9,6 +9,7 @@ import SingleNewsContainer from "./components/News/SingleNewsContainer";
 import AddNewsContainer from "./components/AddNews/AddNewsContainer";
 import EditNewsContainer from "./components/EditNews/EditNewsContainer";
 import AuthorContainer from "./components/Authors/AuthorContainer";
+import TagContainer from "./components/Tags/TagContainer";
 
 class App extends Component {
 
@@ -24,6 +25,7 @@ class App extends Component {
                     <Route exact path='/addNews' render={() => <AddNewsContainer/>}/>
                     <Route path='/editNews/:newsId' render={() => <EditNewsContainer/>}/>
                     <Route path='/authors' render={() => <AuthorContainer/>}/>
+                    <Route path={'/tags'} render={() => <TagContainer/>}/>
                 </div>
             </div>
         );

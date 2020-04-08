@@ -1,34 +1,23 @@
+import style from "../Authors/Author.module.css";
 import React, {useEffect, useState} from "react";
-import style from "./Author.module.css";
 
-const Author = (props) => {
+const Tag = (props) => {
 
-    let [initialName, setInitialName] = useState(props.author.name);
-    let [initialSurname, setInitialSurname] = useState(props.author.surname);
-    let [name, setName] = useState(props.author.name);
-    let [surname, setSurname] = useState(props.author.surname);
+    let [initialName, setInitialName] = useState(props.tag.name);
+    let [name, setName] = useState(props.tag.name);
     let [isEdit, setEdit] = useState(false);
     let [nameError, setNameError] = useState(null);
-    let [surnameError, setSurnameError] = useState(null);
 
     useEffect(() => {
         debugger;
-        setInitialName(props.author.name);
-        setInitialSurname(props.author.surname);
-        setName(props.author.name);
-        setSurname(props.author.surname);
-    }, [props.author]);
+        setInitialName(props.tag.name);
+        setName(props.tag.name);
+    }, [props.tag]);
 
     let onNameChanged = (e) => {
         let value = e.target.value;
         setName(value);
         setNameError(checkForError(value))
-    };
-
-    let onSurnameChanged = (e) => {
-        let value = e.target.value;
-        setSurname(value);
-        setSurnameError(checkForError(value))
     };
 
     let checkForError = (value) => {
@@ -43,21 +32,20 @@ const Author = (props) => {
 
     let discardChanges = () => {
         setName(initialName);
-        setSurname(initialSurname);
         setEdit(false);
         setNameError(null);
-        setSurnameError(null);
     };
 
     let saveChanges = () => {
-        props.updateAuthor({id: props.author.id, name: name, surname: surname});
+        debugger;
+        props.updateTag({id: props.tag.id, name: name});
         setEdit(false);
     };
 
     return (
         <div className={style.fieldWrapper}>
             <div>
-                <h4 className={style.author}>Author:</h4>
+                <h4 className={style.author}>Tag:</h4>
             </div>
             <div>
                 <div>
@@ -73,21 +61,8 @@ const Author = (props) => {
                 </div>
             </div>
             <div>
-                <div>
-                    <input
-                        type={"text"}
-                        value={surname}
-                        disabled={!isEdit}
-                        onChange={onSurnameChanged}
-                        className={style.surname}/>
-                </div>
-                <div className={style.error}>
-                    {surnameError}
-                </div>
-            </div>
-            <div>
                 {!isEdit && <button onClick={() => setEdit(true)}>Edit</button>}
-                {isEdit && <button disabled={nameError || surnameError} onClick={saveChanges}
+                {isEdit && <button disabled={nameError} onClick={saveChanges}
                 >Save changes</button>}
                 {isEdit && <button onClick={discardChanges}>Discard changes</button>}
             </div>
@@ -95,4 +70,4 @@ const Author = (props) => {
     );
 };
 
-export default Author;
+export default Tag;

@@ -36,3 +36,12 @@ input {
 .addAuthor {
     margin: 40px;
 }
+
+.fieldWrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.error {
+    color: red;
+}

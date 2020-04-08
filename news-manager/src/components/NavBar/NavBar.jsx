@@ -12,7 +12,9 @@ const NavBar = (props) => {
             <NavLink to={'/addNews'}>
                 <div className={style.item}>Add News</div>
             </NavLink>
-            <div className={style.item}>Add/Edit Tags</div>
+            <NavLink to={'/tags'}>
+                <div className={style.item}>Add/Edit Tags</div>
+            </NavLink>
         </div>
     )
 }

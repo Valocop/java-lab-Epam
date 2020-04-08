@@ -3,8 +3,9 @@ import style from './Author.module.css';
 import {compose} from "redux";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
-import {getAuthors} from "../../redux/authors-reducer";
+import {createAuthor, getAuthors, putAuthor} from "../../redux/authors-reducer";
 import Author from "./Author";
+import AddAuthor from "./AddAuthor";
 
 class AuthorContainer extends Component {
 
@@ -12,28 +13,27 @@ class AuthorContainer extends Component {
         this.props.getAuthors();
     }
 
+    onAddAuthor = (name, surname) => {
+        this.props.createAuthor({id: 0, name: name, surname: surname});
+    };
+
     render() {
         return (
             <div className={style.authorsContainer}>
                 <div>
-                    <h2>Add/Edit tags</h2>
+                    <h2>Add/Edit Authors</h2>
                 </div>
-                {/*{this.props.authors.map(author => (*/}
-                {/*    <div key={author.id} className={style.authorWrapper}>*/}
-                {/*        <Author*/}
-                {/*            author={author}*/}
-                {/*        />*/}
-                {/*    </div>*/}
-                {/*))}*/}
-
-                <Author authors={this.props.authors}/>
-
-                <div className={style.addAuthor}>
-                    <h4 className={style.author}>Add author:</h4>
-                    <input type={"text"} placeholder={"Name"} className={style.name}/>
-                    <input type={"text"} placeholder={"Surname"} className={style.surname}/>
-                    <button>Add</button>
-                </div>
+                {this.props.authors.map(author => (
+                    <div key={author.id} className={style.authorWrapper}>
+                        <Author
+                            author={author}
+                            updateAuthor={this.props.putAuthor}
+                        />
+                    </div>
+                ))}
+                <AddAuthor
+                    onAuthorAdd={this.onAddAuthor}
+                />
             </div>
         );
     }
@@ -45,4 +45,4 @@ let mapStateToProps = (state) => {
     }
 };
 
-export default compose(connect(mapStateToProps, {getAuthors})(withRouter(AuthorContainer)));
+export default compose(connect(mapStateToProps, {getAuthors, putAuthor, createAuthor})(withRouter(AuthorContainer)));

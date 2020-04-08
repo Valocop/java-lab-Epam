@@ -34,6 +34,12 @@ export const newsAPI = {
 export const tagsAPI = {
     getTags() {
         return instance.get('tags');
+    },
+    postTag(tag) {
+        return instance.post('tags', tag);
+    },
+    put(tag) {
+        return instance.put('tags', tag);
     }
 };
 
@@ -43,5 +49,11 @@ export const authorAPI = {
             .then(response => {
                 return response.data;
             });
+    },
+    putAuthor(author) {
+        return instance.put('authors', author);
+    },
+    postAuthor(author) {
+        return instance.post('authors', author);
     }
 };
