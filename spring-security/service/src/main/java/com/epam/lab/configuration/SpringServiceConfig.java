@@ -3,6 +3,7 @@ package com.epam.lab.configuration;
 import com.epam.lab.repository.AuthorRepository;
 import com.epam.lab.repository.NewsRepository;
 import com.epam.lab.repository.TagRepository;
+import com.epam.lab.repository.UserRepository;
 import com.epam.lab.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -35,4 +36,8 @@ public class SpringServiceConfig {
     public TagService tagService(TagRepository tagRepository) {
         return new TagServiceImpl(tagRepository);
     }
+
+    @Bean UserService userService(UserRepository userRepository) {
+        return new UserServiceImpl(userRepository);
+    };
 }
