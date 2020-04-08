@@ -56,7 +56,7 @@ public class AuthorController {
     }
 
     @GetMapping(produces = "application/json")
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     public List<AuthorDto> readAll() {
         return authorService.readAll();
     }

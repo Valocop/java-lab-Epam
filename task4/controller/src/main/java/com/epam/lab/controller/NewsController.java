@@ -46,7 +46,7 @@ public class NewsController {
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     public NewsDto read(@PathVariable("id") @Min(1) @Max(Long.MAX_VALUE) long id) {
         NewsDto newsDto = new NewsDto();
         newsDto.setId(id);
@@ -61,19 +61,19 @@ public class NewsController {
     }
 
     @GetMapping(produces = "application/json")
-    @ResponseStatus(HttpStatus.FOUND)
-    public ResponseEntity<Map<String, List<?>>> getNews(@RequestParam(name = "authors_name", required = false) List<String> authorsName,
-                                                        @RequestParam(name = "tags_name", required = false) List<String> tagsName,
-                                                        @RequestParam(name = "sort", required = false, defaultValue = "creation_date") List<String> sorts,
-                                                        @RequestParam(required = false, defaultValue = "10") Integer count,
-                                                        @RequestParam(required = false, defaultValue = "1") Integer page) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Map<String, Object>> getNews(@RequestParam(name = "authors_name", required = false) List<String> authorsName,
+                                                       @RequestParam(name = "tags_name", required = false) List<String> tagsName,
+                                                       @RequestParam(name = "sort", required = false, defaultValue = "creation_date") List<String> sorts,
+                                                       @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer count,
+                                                       @RequestParam(required = false, defaultValue = "1") @Min(1) Integer page) {
         List<NewsDto> news = newsService.findNews(authorsName, tagsName, sorts, count, page);
         long countOfNews = newsService.getCountOfNews(authorsName, tagsName);
 
-        Map<String, List<?>> body = new HashMap<>();
+        Map<String, Object> body = new HashMap<>();
         body.put("news", news);
-        body.put("count", Collections.singletonList(countOfNews));
-        return ResponseEntity.status(HttpStatus.FOUND)
+        body.put("count", countOfNews);
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(body);
     }
 

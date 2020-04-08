@@ -9,9 +9,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 public class AuthorDto {
-    @Min(value = 1,
+    @Min(value = 0,
             groups = UpdateValidation.class,
-            message = "id must be greater than 1")
+            message = "id must be positive")
     @Max(value = Long.MAX_VALUE,
             groups = UpdateValidation.class,
             message = "id must be less than " + Long.MAX_VALUE)

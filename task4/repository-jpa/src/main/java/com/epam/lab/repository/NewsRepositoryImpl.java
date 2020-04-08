@@ -79,7 +79,7 @@ public class NewsRepositoryImpl implements NewsRepository {
     }
 
     private List<News> getNews(Integer count, Integer page, TypedQuery<News> typedQuery, long totalCount) {
-        if (page < totalCount) {
+        if (page <= totalCount) {
             typedQuery.setFirstResult((page * count) - count);
             typedQuery.setMaxResults(count);
             return typedQuery.getResultList();

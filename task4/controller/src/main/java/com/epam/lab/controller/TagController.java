@@ -56,7 +56,7 @@ public class TagController {
     }
 
     @GetMapping(produces = "application/json")
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     public List<TagDto> readAll() {
         return tagService.readAll();
     }
