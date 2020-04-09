@@ -1,5 +1,6 @@
 package com.epam.lab.configuration;
 
+import org.springframework.core.annotation.Order;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -9,6 +10,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
+@Order(1)
 public class WebInitialization implements WebApplicationInitializer {
 
     @Override

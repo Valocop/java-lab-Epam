@@ -1,6 +1,6 @@
 package com.epam.lab.service;
 
-import com.epam.lab.model.User;
+import com.epam.lab.dto.UserDto;
 
-public interface UserService extends Service<User> {
+public interface UserService extends Service<UserDto> {
 }
