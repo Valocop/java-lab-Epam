@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.*;
 
 @RestController
-@RequestMapping("/news")
+@RequestMapping("/api/news")
 @Validated
 @CrossOrigin(origins = {"http://localhost:3000"})
 public class NewsController {

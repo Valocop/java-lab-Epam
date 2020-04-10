@@ -8,6 +8,7 @@ import com.epam.lab.repository.TagRepository;
 import com.epam.lab.specification.NewsSearchSpecification;
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -28,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(JUnit4.class)
+@Ignore
 public class NewsServiceImplTest {
     private NewsRepository newsRepositoryMock;
     private AuthorRepository authorRepository;

@@ -1,12 +1,5 @@
 package com.epam.lab.configuration;
 
-import com.epam.lab.controller.AuthorController;
-import com.epam.lab.controller.NewsController;
-import com.epam.lab.controller.TagController;
-import com.epam.lab.exception.ControllerExceptionHandler;
-import com.epam.lab.service.AuthorService;
-import com.epam.lab.service.NewsService;
-import com.epam.lab.service.TagService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -22,29 +15,9 @@ import java.text.SimpleDateFormat;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.epam.lab")
+@ComponentScan({"com.epam.lab.security", "com.epam.lab.controller"})
 @Import(SpringServiceConfig.class)
 public class SpringControllerConfig {
-
-    @Bean
-    public NewsController newsController(NewsService newsService) {
-        return new NewsController(newsService);
-    }
-
-    @Bean
-    public AuthorController authorController(AuthorService authorService) {
-        return new AuthorController(authorService);
-    }
-
-    @Bean
-    public TagController tagController(TagService tagService) {
-        return new TagController(tagService);
-    }
-
-    @Bean
-    public ControllerExceptionHandler newsExceptionHandler() {
-        return new ControllerExceptionHandler();
-    }
 
     @Bean
     public MappingJackson2HttpMessageConverter getJsonMessageConverter(ObjectMapper objectMapper) {

@@ -11,13 +11,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
     private long id;
-    @Column(name = "name")
+    @Column(name = "name", length = 30)
     private String name;
-    @Column(name = "surname")
+    @Column(name = "surname", length = 30)
     private String surname;
-    @Column(name = "username", unique = true, nullable = false)
+    @Column(name = "username", unique = true, nullable = false, length = 30)
     private String username;
-    @Column(name = "password")
+    @Column(name = "password", length = 100)
     private String password;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",

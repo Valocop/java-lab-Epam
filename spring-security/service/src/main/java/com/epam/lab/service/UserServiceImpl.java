@@ -4,7 +4,6 @@ import com.epam.lab.dto.UserDto;
 import com.epam.lab.model.User;
 import com.epam.lab.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    public UserDto loadUserByUsername(String s) throws UsernameNotFoundException {
         Optional<User> userOptional = userRepository.findByUsername(s);
         return userOptional.map(ServiceUtil::convertToDto)
                 .orElseThrow(() -> new EntityNotFoundException("User with username - " + s + "not found!"));

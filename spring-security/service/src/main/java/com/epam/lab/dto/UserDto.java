@@ -1,6 +1,5 @@
 package com.epam.lab.dto;
 
-import com.epam.lab.model.Role;
 import com.epam.lab.validation.CreateValidation;
 import com.epam.lab.validation.UpdateValidation;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,8 +41,8 @@ public class UserDto implements UserDetails {
     private String username;
     @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
             message = "password must not be empty")
-    @Min(groups = {CreateValidation.class, UpdateValidation.class},
-            value = 5, message = "password must be greater than 5 symbols")
+//    @Min(groups = {CreateValidation.class, UpdateValidation.class},
+//            value = 2, message = "password must be greater than 5 symbols")
     @Size(max = 30,
             groups = {CreateValidation.class, UpdateValidation.class},
             message = "password must be less than 30 symbols")
@@ -86,10 +85,6 @@ public class UserDto implements UserDetails {
         this.surname = surname;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public List<RoleDto> getRoles() {
         return roles;
     }
@@ -98,13 +93,13 @@ public class UserDto implements UserDetails {
         this.roles = roles;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     @Override
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
@@ -135,5 +130,9 @@ public class UserDto implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

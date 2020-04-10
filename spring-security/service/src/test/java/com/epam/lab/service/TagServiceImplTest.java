@@ -5,6 +5,7 @@ import com.epam.lab.model.Tag;
 import com.epam.lab.repository.TagRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -22,6 +23,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(JUnit4.class)
+@Ignore
 public class TagServiceImplTest {
     private TagService tagService;
     private TagRepository tagRepositoryMock;

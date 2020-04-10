@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/tags")
+@RequestMapping("/api/tags")
 @Validated
 @CrossOrigin(origins = {"http://localhost:3000"})
 public class TagController {
