@@ -20,7 +20,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers(HttpMethod.DELETE, "/api/users/*").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/api/news*").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/news/**").permitAll()
-                .antMatchers(HttpMethod.GET).hasRole("USER")
+                .antMatchers(HttpMethod.GET).hasAnyRole("ADMIN", "USER")
                 .antMatchers(HttpMethod.PUT).hasRole("USER")
                 .antMatchers(HttpMethod.DELETE).hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST).hasRole("USER")
