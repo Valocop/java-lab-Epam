@@ -28,7 +28,8 @@ public class NewsServiceImpl implements NewsService {
     private TagRepository tagRepository;
 
     @Autowired
-    public NewsServiceImpl(@Qualifier("newsRepository") NewsRepository newsRepository, AuthorRepository authorRepository, TagRepository tagRepository) {
+    public NewsServiceImpl(@Qualifier("newsRepository") NewsRepository newsRepository, AuthorRepository authorRepository,
+                           TagRepository tagRepository) {
         this.newsRepository = newsRepository;
         this.authorRepository = authorRepository;
         this.tagRepository = tagRepository;
