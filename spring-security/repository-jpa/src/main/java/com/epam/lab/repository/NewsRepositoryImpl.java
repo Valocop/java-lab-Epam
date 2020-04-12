@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import static com.epam.lab.specification.NewsSearchSpecification.NEWS_ID;
 
-@Repository
+@Repository("newsRepository")
 @Transactional
 public class NewsRepositoryImpl implements NewsRepository {
     @PersistenceUnit

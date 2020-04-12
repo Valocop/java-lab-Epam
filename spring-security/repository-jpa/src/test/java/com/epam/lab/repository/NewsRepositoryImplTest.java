@@ -27,7 +27,7 @@ import static com.epam.lab.specification.NewsSortSpecification.AUTHOR_NAME;
 @ContextConfiguration(classes = {SpringRepoConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("dev")
-@Transactional
+//@Transactional
 public class NewsRepositoryImplTest {
     @Resource
     private NewsRepository newsRepository;
@@ -212,6 +212,39 @@ public class NewsRepositoryImplTest {
         List<News> newsList = newsRepository.findAll(specification);
         Assert.assertNotNull(newsList);
         Assert.assertEquals(2, newsList.size());
+    }
+
+    @Test
+    public void shouldSearchAllNewsWithSort() {
+        News newsOne = getTestNews();
+        News newsTwo = getTestNews();
+        News newsThree = getTestNews();
+        Author authorOne = getTestAuthor();
+        Author authorTwo = getTestAuthor();
+        Author authorThree = getTestAuthor();
+        Set<Tag> tagSetOne = getTestTags();
+        Set<Tag> tagSetTwo = getTestTags();
+        Set<Tag> tagSetThree = getTestTags();
+        newsOne.setTags(tagSetOne);
+        newsTwo.setTags(tagSetTwo);
+        newsThree.setTags(tagSetThree);
+        newsOne.setAuthor(authorOne);
+        newsTwo.setAuthor(authorTwo);
+        newsThree.setAuthor(authorThree);
+        authorRepository.save(authorOne);
+        authorRepository.save(authorTwo);
+        authorRepository.save(authorThree);
+        tagSetOne.forEach(tag -> tagRepository.save(tag));
+        tagSetTwo.forEach(tag -> tagRepository.save(tag));
+        tagSetThree.forEach(tag -> tagRepository.save(tag));
+        newsRepository.save(newsOne);
+        newsRepository.save(newsTwo);
+        newsRepository.save(newsThree);
+        List<News> sortedTestList = Arrays.asList(newsOne, newsTwo, newsThree);
+        sortedTestList.sort(Comparator.comparing(o -> o.getAuthor().getName()));
+        NewsSortSpecification sortSpecification = new NewsSortSpecification(new SortCriteria(AUTHOR_NAME));
+        List<News> newsRepositoryList = newsRepository.findAll(sortSpecification, 10, 1);
+        Assert.assertEquals(sortedTestList, newsRepositoryList);
     }
 
     @Test

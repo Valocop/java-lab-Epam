@@ -12,6 +12,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static com.epam.lab.repository.TestUtil.getTestTag;
@@ -20,7 +22,7 @@ import static com.epam.lab.repository.TestUtil.getTestTag;
 @ContextConfiguration(classes = {SpringRepoConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("dev")
-@Transactional
+//@Transactional
 public class TagRepositoryImplTest {
     @Resource
     private TagRepository tagRepository;
@@ -56,5 +58,18 @@ public class TagRepositoryImplTest {
         tagRepository.delete(savedTag);
         Optional<Tag> optionalTag = tagRepository.findById(savedTag.getId());
         Assert.assertFalse(optionalTag.isPresent());
+    }
+
+    @Test
+    public void shouldReadAllTags() {
+        Tag tagOne = getTestTag();
+        Tag tagTwo = getTestTag();
+        Tag tagThree = getTestTag();
+        tagRepository.save(tagOne);
+        tagRepository.save(tagTwo);
+        tagRepository.save(tagThree);
+        List<Tag> testTagList = Arrays.asList(tagOne, tagTwo, tagThree);
+        List<Tag> tagList = tagRepository.readAll();
+        Assert.assertEquals(testTagList, tagList);
     }
 }

@@ -2,8 +2,6 @@ package com.epam.lab.repository;
 
 import com.epam.lab.configuration.SpringRepoConfig;
 import com.epam.lab.model.Author;
-import com.epam.lab.model.News;
-import com.epam.lab.model.Tag;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,11 +12,11 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static com.epam.lab.repository.TestUtil.*;
+import static com.epam.lab.repository.TestUtil.getTestAuthor;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {SpringRepoConfig.class},
@@ -62,5 +60,18 @@ public class AuthorRepositoryImplTest {
         authorRepository.delete(savedAuthor);
         Optional<Author> authorOptional = authorRepository.findById(savedAuthor.getId());
         Assert.assertFalse(authorOptional.isPresent());
+    }
+
+    @Test
+    public void readAllAuthors() {
+        Author authorOne = getTestAuthor();
+        Author authorTwo = getTestAuthor();
+        Author authorThree = getTestAuthor();
+        authorRepository.save(authorOne);
+        authorRepository.save(authorTwo);
+        authorRepository.save(authorThree);
+        List<Author> authorListTest = Arrays.asList(authorOne, authorTwo, authorThree);
+        List<Author> authorList = authorRepository.readAll();
+        Assert.assertEquals(authorListTest, authorList);
     }
 }

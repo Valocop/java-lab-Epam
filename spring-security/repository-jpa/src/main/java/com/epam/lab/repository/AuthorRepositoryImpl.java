@@ -1,13 +1,12 @@
 package com.epam.lab.repository;
 
 import com.epam.lab.model.Author;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -18,8 +17,6 @@ import java.util.Optional;
 @Repository
 @Transactional
 public class AuthorRepositoryImpl implements AuthorRepository {
-    @PersistenceUnit
-    private EntityManagerFactory entityManagerFactory;
     @PersistenceContext
     private EntityManager entityManager;
 

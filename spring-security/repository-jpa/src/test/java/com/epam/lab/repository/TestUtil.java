@@ -1,8 +1,6 @@
 package com.epam.lab.repository;
 
-import com.epam.lab.model.Author;
-import com.epam.lab.model.News;
-import com.epam.lab.model.Tag;
+import com.epam.lab.model.*;
 import com.epam.lab.specification.NewsSearchSpecification;
 import com.epam.lab.specification.NewsSpecificationBuilder;
 import com.epam.lab.specification.SearchCriteria;
@@ -33,6 +31,21 @@ public final class TestUtil {
         author.setName(RandomStringUtils.random(10, true, false));
         author.setSurname(RandomStringUtils.random(10, true, false));
         return author;
+    }
+
+    public static User getTestUser() {
+        User user = new User();
+        user.setName(RandomStringUtils.random(10, true, false));
+        user.setPassword(RandomStringUtils.random(10, true, false));
+        user.setSurname(RandomStringUtils.random(10, true, false));
+        user.setUsername(RandomStringUtils.random(10, true, false));
+        return user;
+    }
+
+    public static Role getTestRole() {
+        Role role = new Role();
+        role.setName(RandomStringUtils.random(10, true, false));
+        return role;
     }
 
     public static Set<Tag> getTestTags() {

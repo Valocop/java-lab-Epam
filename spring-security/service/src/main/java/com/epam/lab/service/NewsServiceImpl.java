@@ -11,6 +11,7 @@ import com.epam.lab.repository.NewsRepository;
 import com.epam.lab.repository.TagRepository;
 import com.epam.lab.specification.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,7 @@ public class NewsServiceImpl implements NewsService {
     private TagRepository tagRepository;
 
     @Autowired
-    public NewsServiceImpl(NewsRepository newsRepository, AuthorRepository authorRepository, TagRepository tagRepository) {
+    public NewsServiceImpl(@Qualifier("newsRepository") NewsRepository newsRepository, AuthorRepository authorRepository, TagRepository tagRepository) {
         this.newsRepository = newsRepository;
         this.authorRepository = authorRepository;
         this.tagRepository = tagRepository;

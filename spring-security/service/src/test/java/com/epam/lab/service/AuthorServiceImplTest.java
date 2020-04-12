@@ -1,37 +1,64 @@
 package com.epam.lab.service;
 
+import com.epam.lab.configuration.SpringRepoConfig;
 import com.epam.lab.dto.AuthorDto;
 import com.epam.lab.model.Author;
 import com.epam.lab.repository.AuthorRepository;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.mockito.AdditionalAnswers;
 import org.mockito.ArgumentCaptor;
-import org.modelmapper.ModelMapper;
-
-import java.util.Optional;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import static com.epam.lab.service.TestUtil.convertToEntity;
 import static com.epam.lab.service.TestUtil.getTestAuthorDto;
-import static org.apache.commons.lang3.RandomUtils.nextLong;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(JUnit4.class)
-@Ignore
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {SpringRepoConfig.class},
+        loader = AnnotationConfigContextLoader.class)
+@ActiveProfiles("dev")
 public class AuthorServiceImplTest {
-    private AuthorRepository authorRepositoryMock;
+    @Autowired
+    private AuthorRepository authorRepository;
     private AuthorService authorService;
+    private AuthorRepository spyAuthorRepository;
 
     @Before
     public void setUp() {
-        authorRepositoryMock = mock(AuthorRepository.class);
-        authorService = new AuthorServiceImpl(authorRepositoryMock);
+//        authorRepositoryMock = mock(AuthorRepository.class);
+//        spyAuthorRepository = Mockito.spy(authorRepository);
+        spyAuthorRepository = Mockito.mock(AuthorRepository.class, AdditionalAnswers.delegatesTo(authorRepository));
+        authorService = new AuthorServiceImpl(spyAuthorRepository);
+    }
+
+    @Test
+    public void shouldCreateAuthorDto() {
+        AuthorDto authorDto = getTestAuthorDto();
+        Author authorEntity = convertToEntity(authorDto);
+
+        Mockito.when(spyAuthorRepository.save(authorEntity)).thenReturn(authorEntity);
+
+        authorService.create(authorDto);
+
+        ArgumentCaptor<Author> argumentCaptor = ArgumentCaptor.forClass(Author.class);
+        verify(spyAuthorRepository, times(1)).save(argumentCaptor.capture());
+        verifyNoMoreInteractions(spyAuthorRepository);
+
+        Author author = argumentCaptor.getValue();
+
+        assertTrue(author.getId() > 0);
+        assertThat(author.getName(), is(authorDto.getName()));
+        assertThat(author.getSurname(), is(authorDto.getSurname()));
     }
 
 //    @Test

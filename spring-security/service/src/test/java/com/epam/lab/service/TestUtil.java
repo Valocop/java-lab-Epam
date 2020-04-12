@@ -29,6 +29,16 @@ public final class TestUtil {
         return tagDto;
     }
 
+    public static News getTestNews() {
+        News news = new News();
+        news.setTitle(RandomStringUtils.random(10, true, false));
+        news.setFullText(RandomStringUtils.random(10, true, false));
+        news.setShortText(RandomStringUtils.random(10, true, false));
+        news.setCreationDate(LocalDate.of(2019, 10, 10));
+        news.setModificationDate(LocalDate.of(2020, 11, 11));
+        return news;
+    }
+
     public static NewsDto getTestNewsDto() {
         NewsDto newsDto = new NewsDto();
         newsDto.setAuthor(getTestAuthorDto());
