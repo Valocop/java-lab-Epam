@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -20,8 +19,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
-//@Order(1)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -30,15 +27,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     @Primary
     public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration config = new CorsConfiguration();
-////        config.setAllowCredentials(true);
-////        config.setAllowedMethods(Collections.singletonList("*"));
-////        config.setAllowedHeaders(Collections.singletonList("*"));
-////        config.setAllowedOrigins(Collections.singletonList("*"));
-//////        config.setExposedHeaders(Collections.singletonList("Access-Control-Allow-Origin"));
-////        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-////        source.registerCorsConfiguration("/**", config);
-////        return source;
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
         return source;
@@ -73,20 +61,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated().and()
                 .formLogin().and()
                 .logout();
-////                .addFilterBefore(new CustomCorsFilter(), SessionManagementFilter.class)
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-//                .and()
-//                .authorizeRequests()
-//                .antMatchers("/oauth/token").permitAll()
-//                .antMatchers("/oauth/authorize").authenticated()
-//                .and()
-//                .formLogin()
-//                .and()
-//                .logout();
-//        http
-//                .csrf().disable()
-//                .anonymous().disable()
-//                .authorizeRequests()
-//                .antMatchers("/api-docs/**").permitAll();
     }
 }

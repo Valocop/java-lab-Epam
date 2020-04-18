@@ -21,21 +21,11 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-//        http
-//                .anonymous().disable()
-//                .authorizeRequests()
-//                .antMatchers("api/users/**").authenticated()
-//                .antMatchers("api/authors/**").authenticated()
-//                .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
         http
                 .cors(Customizer.withDefaults())
                 .csrf().disable()
                 .antMatcher("/api/**")
-//                .antMatcher("/**")
                 .authorizeRequests()
-//                .antMatchers("/oauth/**").permitAll()
-//                .antMatchers(HttpMethod.POST, "/oauth/**").permitAll()
-//                .antMatchers(HttpMethod.OPTIONS, "/oauth/*").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/users**").hasAnyRole("ADMIN", "USER")
                 .antMatchers(HttpMethod.POST, "/api/users").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/api/users/*").hasRole("ADMIN")
