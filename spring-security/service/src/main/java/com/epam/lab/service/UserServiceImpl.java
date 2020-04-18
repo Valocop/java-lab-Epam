@@ -52,4 +52,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void delete(UserDto dto) {
         userRepository.delete(convertToEntity(dto));
     }
+
+    @Override
+    public Optional<UserDto> getByUserName(String userName) {
+        try {
+            return Optional.of(this.loadUserByUsername(userName));
+        } catch (EntityNotFoundException e) {
+            return Optional.empty();
+        }
+    }
 }

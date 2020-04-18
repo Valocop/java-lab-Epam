@@ -15,9 +15,13 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableAuthorizationServer
+//@Order(2)
 public class OAuthConfiguration extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
@@ -44,7 +48,18 @@ public class OAuthConfiguration extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(final AuthorizationServerSecurityConfigurer oauthServer) {
-        oauthServer.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.applyPermitDefaultValues();
+        // Maybe there's a way to use config from AuthorizationServerEndpointsConfigurer endpoints?
+        source.registerCorsConfiguration("/oauth/token", config);
+        CorsFilter filter = new CorsFilter(source);
+//        security.addTokenEndpointAuthenticationFilter(filter);
+
+        oauthServer
+                .tokenKeyAccess("permitAll()")
+                .checkTokenAccess("isAuthenticated()")
+                .addTokenEndpointAuthenticationFilter(filter);
     }
 
     @Override
@@ -65,10 +80,19 @@ public class OAuthConfiguration extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints
-                .tokenStore(tokenStore())
+//        Map<String, CorsConfiguration> corsConfigMap = new HashMap<>();
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowCredentials(true);
+//        config.setAllowedOrigins(Collections.singletonList("*"));
+//        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+//        config.setAllowedHeaders(Collections.singletonList("*"));
+//        corsConfigMap.put("/oauth/token", config);
+
+        endpoints.tokenStore(tokenStore())
                 .authenticationManager(authenticationManager)
                 .accessTokenConverter(defaultAccessTokenConverter())
                 .userDetailsService(userDetailsService);
+//                .getFrameworkEndpointHandlerMapping()//config
+//                .setCorsConfigurations(corsConfigMap);//config
     }
 }

@@ -41,8 +41,8 @@ public class UserDto implements UserDetails {
     private String username;
     @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
             message = "password must not be empty")
-//    @Min(groups = {CreateValidation.class, UpdateValidation.class},
-//            value = 2, message = "password must be greater than 5 symbols")
+    @Min(groups = {CreateValidation.class, UpdateValidation.class},
+            value = 3, message = "password must be greater than 3 symbols")
     @Size(max = 30,
             groups = {CreateValidation.class, UpdateValidation.class},
             message = "password must be less than 30 symbols")

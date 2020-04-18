@@ -4,9 +4,13 @@ import com.epam.lab.dto.UserDto;
 import com.epam.lab.service.UserService;
 import com.epam.lab.validation.CreateValidation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import javax.validation.constraints.NotBlank;
 
 @RestController
 @RequestMapping("/api/users")
@@ -28,8 +32,10 @@ public class UserController {
         userService.create(userDto);
     }
 
-    public static void main(String[] args) {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        System.out.println(bCryptPasswordEncoder.encode("admin"));
+    @GetMapping(produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto getByUserName(@RequestParam(name = "username", required = true) @NotBlank String username) {
+        return userService.getByUserName(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user " + username + " not founded"));
     }
 }
