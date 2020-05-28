@@ -9,6 +9,7 @@
         <module>repository-jpa</module>
         <module>service</module>
         <module>controller</module>
+        <module>thread-utility</module>
     </modules>
 
     <groupId>com.epam.lab</groupId>
