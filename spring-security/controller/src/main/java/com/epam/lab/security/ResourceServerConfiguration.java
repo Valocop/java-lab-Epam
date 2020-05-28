@@ -6,18 +6,10 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
-
-    private static final String RESOURCE_ID = "resource_id";
-
-    @Override
-    public void configure(ResourceServerSecurityConfigurer resources) {
-        resources.resourceId(RESOURCE_ID).stateless(false);
-    }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -26,17 +18,13 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .csrf().disable()
                 .antMatcher("/api/**")
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/users**").hasAnyRole("ADMIN", "USER")
-                .antMatchers(HttpMethod.POST, "/api/users").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/api/users/*").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/api/news*").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/news/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/authors/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/tags/**").permitAll()
-                .antMatchers(HttpMethod.GET).hasAnyRole("ADMIN", "USER")
-                .antMatchers(HttpMethod.PUT).hasRole("USER")
-                .antMatchers(HttpMethod.DELETE).hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST).hasRole("USER")
+                .antMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole("ADMIN", "USER")
+                .antMatchers(HttpMethod.POST, "/api/users").anonymous()
+                .antMatchers(HttpMethod.GET, "/api/news/**", "/api/authors/**", "/api/tags/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/**").hasAnyRole("ADMIN", "USER")
+                .antMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("ADMIN", "USER")
+                .antMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/**").hasAnyRole("ADMIN", "USER")
                 .anyRequest().authenticated();
     }
 }
