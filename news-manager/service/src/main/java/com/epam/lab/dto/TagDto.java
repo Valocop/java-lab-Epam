@@ -1,7 +1,7 @@
 package com.epam.lab.dto;
 
-import com.epam.lab.validation.CreateValidation;
-import com.epam.lab.validation.UpdateValidation;
+import com.epam.lab.validation.CreatingValidation;
+import com.epam.lab.validation.UpdatingValidation;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -10,16 +10,16 @@ import javax.validation.constraints.Size;
 
 public class TagDto {
     @Min(value = 0,
-            groups = UpdateValidation.class,
+            groups = UpdatingValidation.class,
             message = "id must be positive")
     @Max(value = Long.MAX_VALUE,
-            groups = UpdateValidation.class,
+            groups = UpdatingValidation.class,
             message = "id must be less than " + Long.MAX_VALUE)
     private long id;
-    @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
+    @NotBlank(groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "name must not be empty")
     @Size(max = 30,
-            groups = {CreateValidation.class, UpdateValidation.class},
+            groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "name must be less than 30 symbols")
     private String name;
 

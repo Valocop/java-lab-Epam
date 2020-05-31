@@ -1,4 +1,4 @@
-package com.epam.lab;
+package com.epam.lab.random;
 
 import com.github.javafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;

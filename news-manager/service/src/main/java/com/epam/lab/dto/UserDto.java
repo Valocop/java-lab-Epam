@@ -1,7 +1,7 @@
 package com.epam.lab.dto;
 
-import com.epam.lab.validation.CreateValidation;
-import com.epam.lab.validation.UpdateValidation;
+import com.epam.lab.validation.CreatingValidation;
+import com.epam.lab.validation.UpdatingValidation;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,36 +15,36 @@ import java.util.List;
 
 public class UserDto implements UserDetails {
     @Min(value = 0,
-            groups = UpdateValidation.class,
+            groups = UpdatingValidation.class,
             message = "id must be positive")
     @Max(value = Long.MAX_VALUE,
-            groups = UpdateValidation.class,
+            groups = UpdatingValidation.class,
             message = "id must be less than " + Long.MAX_VALUE)
     private long id;
-    @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
+    @NotBlank(groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "name must not be empty")
     @Size(max = 30,
-            groups = {CreateValidation.class, UpdateValidation.class},
+            groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "name must be less than 30 symbols")
     private String name;
-    @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
+    @NotBlank(groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "surname must not be empty")
     @Size(max = 30,
-            groups = {CreateValidation.class, UpdateValidation.class},
+            groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "surname must be less than 30 symbols")
     private String surname;
-    @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
+    @NotBlank(groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "username must not be empty")
     @Size(max = 30,
-            groups = {CreateValidation.class, UpdateValidation.class},
+            groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "username must be less than 30 symbols")
     private String username;
-    @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
+    @NotBlank(groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "password must not be empty")
-    @Min(groups = {CreateValidation.class, UpdateValidation.class},
+    @Min(groups = {CreatingValidation.class, UpdatingValidation.class},
             value = 3, message = "password must be greater than 3 symbols")
     @Size(max = 30,
-            groups = {CreateValidation.class, UpdateValidation.class},
+            groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "password must be less than 30 symbols")
     private String password;
     private List<@Valid RoleDto> roles;

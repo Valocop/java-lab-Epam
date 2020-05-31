@@ -1,5 +1,5 @@
 package com.epam.lab.creator;
 
-public interface StringJsonCreator {
+public interface JsonStringCreator {
     String createStringJson();
 }

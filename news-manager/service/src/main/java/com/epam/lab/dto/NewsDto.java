@@ -1,7 +1,7 @@
 package com.epam.lab.dto;
 
-import com.epam.lab.validation.CreateValidation;
-import com.epam.lab.validation.UpdateValidation;
+import com.epam.lab.validation.CreatingValidation;
+import com.epam.lab.validation.UpdatingValidation;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.validation.Valid;
@@ -12,28 +12,28 @@ import java.util.Set;
 
 public class NewsDto {
     @Min(value = 1,
-            groups = UpdateValidation.class,
+            groups = UpdatingValidation.class,
             message = "id must be greater than 1")
     @Max(value = Long.MAX_VALUE,
-            groups = UpdateValidation.class,
+            groups = UpdatingValidation.class,
             message = "id must be less than " + Long.MAX_VALUE)
     private long id;
-    @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
+    @NotBlank(groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "title must not be empty")
     @Size(max = 30,
-            groups = {CreateValidation.class, UpdateValidation.class},
+            groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "title must be less than 30 symbols")
     private String title;
-    @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
+    @NotBlank(groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "shortText must not be empty")
     @Size(max = 100,
-            groups = {CreateValidation.class, UpdateValidation.class},
+            groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "shortText must be less than 100 symbols")
     private String shortText;
-    @NotBlank(groups = {CreateValidation.class, UpdateValidation.class},
+    @NotBlank(groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "fullText must not be empty")
     @Size(max = 2000,
-            groups = {CreateValidation.class, UpdateValidation.class},
+            groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "fullText must be less than 100 symbols")
     private String fullText;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -42,11 +42,11 @@ public class NewsDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull
     private LocalDate modificationDate;
-    @NotNull(groups = {CreateValidation.class, UpdateValidation.class},
+    @NotNull(groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "author field must be")
     @Valid
     private AuthorDto author;
-    @NotNull(groups = {CreateValidation.class, UpdateValidation.class},
+    @NotNull(groups = {CreatingValidation.class, UpdatingValidation.class},
             message = "tags field must be")
     private Set<@Valid TagDto> tags;
 

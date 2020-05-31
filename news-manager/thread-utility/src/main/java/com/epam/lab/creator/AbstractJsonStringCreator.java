@@ -6,13 +6,13 @@ import org.apache.log4j.Logger;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class AbstractStringJsonCreator extends Thread implements StringJsonCreator {
-    private static final Logger LOG = LogManager.getLogger(AbstractStringJsonCreator.class);
+public abstract class AbstractJsonStringCreator extends Thread implements JsonStringCreator {
+    private static final Logger LOG = LogManager.getLogger(AbstractJsonStringCreator.class);
     private static AtomicInteger createdJsonCount = new AtomicInteger(0);
     private BlockingQueue<String> queue;
     private int count;
 
-    AbstractStringJsonCreator(BlockingQueue<String> queue, int count) {
+    AbstractJsonStringCreator(BlockingQueue<String> queue, int count) {
         this.queue = queue;
         this.count = count;
     }

@@ -2,8 +2,8 @@ package com.epam.lab.controller;
 
 import com.epam.lab.dto.TagDto;
 import com.epam.lab.service.TagService;
-import com.epam.lab.validation.CreateValidation;
-import com.epam.lab.validation.UpdateValidation;
+import com.epam.lab.validation.CreatingValidation;
+import com.epam.lab.validation.UpdatingValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,7 +34,7 @@ public class TagController {
     @PostMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<TagDto> create(@Validated(CreateValidation.class) @RequestBody TagDto tagDto,
+    public ResponseEntity<TagDto> create(@Validated(CreatingValidation.class) @RequestBody TagDto tagDto,
                                          UriComponentsBuilder ucb) {
         TagDto tag = tagService.create(tagDto);
         HttpHeaders headers = new HttpHeaders();
@@ -64,7 +64,7 @@ public class TagController {
     @PutMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public TagDto update(@Validated(UpdateValidation.class) @RequestBody TagDto tagDto) {
+    public TagDto update(@Validated(UpdatingValidation.class) @RequestBody TagDto tagDto) {
         Optional<TagDto> tagDtoOptional = tagService.update(tagDto);
         return tagDtoOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found"));
     }

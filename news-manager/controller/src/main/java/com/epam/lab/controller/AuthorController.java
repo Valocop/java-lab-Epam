@@ -2,8 +2,8 @@ package com.epam.lab.controller;
 
 import com.epam.lab.dto.AuthorDto;
 import com.epam.lab.service.AuthorService;
-import com.epam.lab.validation.CreateValidation;
-import com.epam.lab.validation.UpdateValidation;
+import com.epam.lab.validation.CreatingValidation;
+import com.epam.lab.validation.UpdatingValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,7 +34,7 @@ public class AuthorController {
     @PostMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<AuthorDto> create(@RequestBody @Validated(CreateValidation.class) AuthorDto authorDto,
+    public ResponseEntity<AuthorDto> create(@RequestBody @Validated(CreatingValidation.class) AuthorDto authorDto,
                                             UriComponentsBuilder ucb) {
         AuthorDto author = authorService.create(authorDto);
         HttpHeaders headers = new HttpHeaders();
@@ -64,7 +64,7 @@ public class AuthorController {
     @PutMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public AuthorDto update(@RequestBody @Validated(UpdateValidation.class) AuthorDto authorDto) {
+    public AuthorDto update(@RequestBody @Validated(UpdatingValidation.class) AuthorDto authorDto) {
         Optional<AuthorDto> dtoOptional = authorService.update(authorDto);
         return dtoOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Author not found"));
     }

@@ -2,8 +2,8 @@ package com.epam.lab.controller;
 
 import com.epam.lab.dto.NewsDto;
 import com.epam.lab.service.NewsService;
-import com.epam.lab.validation.CreateValidation;
-import com.epam.lab.validation.UpdateValidation;
+import com.epam.lab.validation.CreatingValidation;
+import com.epam.lab.validation.UpdatingValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,7 +33,7 @@ public class NewsController {
     @PostMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<NewsDto> create(@Validated(CreateValidation.class) @RequestBody NewsDto newsDto,
+    public ResponseEntity<NewsDto> create(@Validated(CreatingValidation.class) @RequestBody NewsDto newsDto,
                                           UriComponentsBuilder ucb) {
         NewsDto news = newsService.create(newsDto);
         HttpHeaders headers = new HttpHeaders();
@@ -80,7 +80,7 @@ public class NewsController {
     @PutMapping(produces = "application/json",
             consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public NewsDto update(@Validated(UpdateValidation.class) @RequestBody NewsDto newsDto) {
+    public NewsDto update(@Validated(UpdatingValidation.class) @RequestBody NewsDto newsDto) {
         Optional<NewsDto> dtoOptional = newsService.update(newsDto);
         return dtoOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "News not found"));
     }

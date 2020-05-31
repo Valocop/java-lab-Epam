@@ -2,7 +2,7 @@ package com.epam.lab.controller;
 
 import com.epam.lab.dto.UserDto;
 import com.epam.lab.service.UserService;
-import com.epam.lab.validation.CreateValidation;
+import com.epam.lab.validation.CreatingValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping
-    public void registerUser(@Validated(CreateValidation.class) @RequestBody UserDto userDto) {
+    public void registerUser(@Validated(CreatingValidation.class) @RequestBody UserDto userDto) {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userService.create(userDto);
     }

@@ -1,17 +1,20 @@
 package com.epam.lab.creator;
 
-import com.epam.lab.RandomNews;
+import com.epam.lab.random.RandomNews;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 
-import static com.epam.lab.RandomNews.*;
+import static com.epam.lab.random.RandomNews.*;
 
-public class ViolatesDbConstraintsJsonStringCreator extends AbstractStringJsonCreator {
+@Component
+public class ViolatesDbConstraintsJsonStringCreator extends AbstractJsonStringCreator {
 
-    ViolatesDbConstraintsJsonStringCreator(BlockingQueue<String> queue, int count) {
-        super(queue, count);
+    ViolatesDbConstraintsJsonStringCreator(BlockingQueue<String> queue, @Value("${FILES_COUNT}") int count) {
+        super(queue, count / 20);
     }
 
     @Override
@@ -25,7 +28,11 @@ public class ViolatesDbConstraintsJsonStringCreator extends AbstractStringJsonCr
                 .append("\"creationDate\"").append(":").append("\"")
                 .append(dateFormat.format(randomCreationDate)).append("\"").append(",")
                 .append("\"modificationDate\"").append(":").append("\"")
-                .append(dateFormat.format(getRandomModificationDate(randomCreationDate))).append("\"")
-                .append("}").toString();
+                .append(dateFormat.format(getRandomModificationDate(randomCreationDate))).append(",")
+                .append("\"surname\"").append(":").append("\"Zdanov\"").append("}").append(",")
+                .append("\"tags\"").append(":").append("[")
+                .append("{").append("\"name\"").append(":").append("\"Tag1\"").append("}").append(",")
+                .append("{").append("\"name\"").append(":").append("\"Tag2\"").append("}")
+                .append("]").append("}").toString();
     }
 }
