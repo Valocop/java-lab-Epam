@@ -28,8 +28,9 @@ public class PathScanner implements Runnable {
 
                 for (WatchEvent<?> watchEvent : key.pollEvents()) {
                     Path context = (Path) watchEvent.context();
-                    queue.put(path.resolve(context));
-                    LOG.info(context + " was adding to reading queue by scanner " + Thread.currentThread().getName());
+                    Path resolvePath = path.resolve(context);
+                    queue.put(resolvePath);
+                    LOG.info(resolvePath + " was adding to reading queue by scanner " + Thread.currentThread().getName());
                 }
 
                 if (!key.reset()) break;

@@ -2,18 +2,14 @@ package com.epam.lab.creator;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public class MultipleJsonStringCreator {
     private static final Logger LOG = LogManager.getLogger(MultipleJsonStringCreator.class);
     private List<AbstractJsonStringCreator> jsonCreatorList = new ArrayList<>();
 
-    @Autowired
     public MultipleJsonStringCreator(List<AbstractJsonStringCreator> jsonCreatorList) {
         this.jsonCreatorList = jsonCreatorList;
     }

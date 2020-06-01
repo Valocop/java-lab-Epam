@@ -2,9 +2,6 @@ package com.epam.lab.creator;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,15 +12,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-@Component
 public class SubFolderCreatorImpl implements SubFolderCreator {
     private static final Logger LOG = LogManager.getLogger(SubFolderCreatorImpl.class);
     private List<Path> createdPaths = new ArrayList<>();
 
-    @Autowired
     @Override
-    public List<Path> create(@Value("${PATH}") Path rootPath,
-                             @Value("${SUBORDERS_COUNT}") int subFoldersCount, @Value("3") int deep) throws IOException {
+    public List<Path> create(Path rootPath, int subFoldersCount, int deep) throws IOException {
         int foldersCount = subFoldersCount - deep;
         clearPath(rootPath);
         List<Path> subFolderTree = createSubFolderTree(rootPath, deep);

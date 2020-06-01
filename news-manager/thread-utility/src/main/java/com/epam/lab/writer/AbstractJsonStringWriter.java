@@ -21,11 +21,11 @@ public abstract class AbstractJsonStringWriter extends Thread implements JsonStr
     private Path path;
     private int count;
 
-    public AbstractJsonStringWriter(BlockingQueue<String> queue, CyclicBarrier cyclicBarrier, Path path, int count) {
+    public AbstractJsonStringWriter(BlockingQueue<String> queue, CyclicBarrier cyclicBarrier, Path path, int newsPerFile) {
         this.queue = queue;
         this.cyclicBarrier = cyclicBarrier;
         this.path = path;
-        this.count = count;
+        this.count = newsPerFile;
     }
 
     @Override
@@ -35,9 +35,9 @@ public abstract class AbstractJsonStringWriter extends Thread implements JsonStr
 
     @Override
     public void run() {
-        List<String> strings = new ArrayList<>();
         try {
             while (true) {
+                List<String> strings = new ArrayList<>();
                 LOG.info("Writer " + Thread.currentThread().getName() + " is stopping on barrier.");
                 cyclicBarrier.await();
 

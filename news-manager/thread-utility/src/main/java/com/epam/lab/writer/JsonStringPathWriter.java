@@ -9,8 +9,8 @@ import java.util.concurrent.CyclicBarrier;
 
 public class JsonStringPathWriter extends AbstractJsonStringWriter {
 
-    public JsonStringPathWriter(BlockingQueue<String> queue, CyclicBarrier cyclicBarrier, Path path, int count) {
-        super(queue, cyclicBarrier, path, count);
+    public JsonStringPathWriter(BlockingQueue<String> queue, CyclicBarrier cyclicBarrier, Path path, int newsPerFile) {
+        super(queue, cyclicBarrier, path, newsPerFile);
     }
 
     @Override

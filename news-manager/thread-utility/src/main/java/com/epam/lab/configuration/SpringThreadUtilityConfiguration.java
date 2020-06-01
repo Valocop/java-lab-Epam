@@ -3,23 +3,36 @@ package com.epam.lab.configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.nio.file.Path;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.text.SimpleDateFormat;
 
 @Configuration
-@ComponentScan({"com.epam.lab"})
+@ComponentScan({"com.epam.lab.thread"})
 @PropertySource("classpath:app.properties")
 public class SpringThreadUtilityConfiguration {
+
+//    @Bean
+//    public MappingJackson2HttpMessageConverter getJsonMessageConverter(ObjectMapper objectMapper) {
+//        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter(objectMapper);
+//        converter.setPrettyPrint(true);
+//        return converter;
+//    }
+//
+    @Bean
+    public Jackson2ObjectMapperBuilder jacksonBuilder() {
+        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+        builder.indentOutput(true).dateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+        return builder;
+    }
 
     @Bean
     public ValidatorFactory validatorFactory() {
@@ -38,15 +51,5 @@ public class SpringThreadUtilityConfiguration {
         objectMapper.registerModule(javaTimeModule);
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         return objectMapper;
-    }
-
-    @Bean("writingQueue")
-    public BlockingQueue<String> getWritingQueue(@Value("${FILES_COUNT}") int capacity) {
-        return new ArrayBlockingQueue<>(capacity);
-    }
-
-    @Bean("readingQueue")
-    public BlockingQueue<Path> getReadingQueue(@Value("${FILES_COUNT}") int capacity) {
-        return new ArrayBlockingQueue<>(capacity);
     }
 }

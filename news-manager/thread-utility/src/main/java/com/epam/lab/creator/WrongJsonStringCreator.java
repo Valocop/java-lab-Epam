@@ -1,18 +1,14 @@
 package com.epam.lab.creator;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 
 import static com.epam.lab.random.RandomNews.*;
 
-@Component
 public class WrongJsonStringCreator extends AbstractJsonStringCreator {
 
-    WrongJsonStringCreator(BlockingQueue<String> queue, @Value("${FILES_COUNT}") int count) {
+    public WrongJsonStringCreator(BlockingQueue<String> queue, int count) {
         super(queue, count / 20);
     }
 

@@ -8,6 +8,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -41,18 +42,25 @@ public class JsonStringHandler implements Runnable {
                 }
 
                 Path takenPath = paths.take();
-                List<String> readerStrings = Files.readAllLines(takenPath);
-                LOG.info("Path " + takenPath + " was reading by JsonStringHandler " + Thread.currentThread().getName());
+                List<String> readerStrings = Files.readAllLines(takenPath, StandardCharsets.UTF_8);
+                LOG.info("File " + takenPath.toUri() + " was reading by JsonStringHandler " + Thread.currentThread().getName() + "\n" +
+                        readerStrings);
 
                 String jsonString = String.join("", readerStrings);
-                List<NewsDto> news = objectMapper.readValue(jsonString, new TypeReference<List<NewsDto>>() {
-                });
 
-                boolean isValid = jsonStringValidator.validate(news);
+                boolean isValid = false;
+                try {
+                    List<NewsDto> news = objectMapper.readValue(jsonString, new TypeReference<List<NewsDto>>() {
+                    });
+                    isValid = jsonStringValidator.validate(news);
+                } catch (IOException e) {
+                    LOG.error("Json file " + takenPath.getFileName() + " is not valid by exception:\n" + jsonString, e);
+                }
+
                 if (isValid) {
-                    LOG.info("File " + takenPath.toString() + " is valid");
+                    LOG.info("File " + takenPath.getFileName() + " is valid");
                 } else {
-                    LOG.info("File " + takenPath.toString() + " is not valid");
+                    LOG.info("File " + takenPath.getFileName() + " is not valid:\n" + jsonString);
                 }
             }
         } catch (InterruptedException | IOException e) {
