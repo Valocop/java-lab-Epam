@@ -9,7 +9,7 @@ import static com.epam.lab.random.RandomNews.*;
 public class WrongFieldNameJsonStringCreator extends AbstractJsonStringCreator {
 
     public WrongFieldNameJsonStringCreator(BlockingQueue<String> queue, int count) {
-        super(queue, count / 20);
+        super(queue, count * 3 / 20);
     }
 
     @Override

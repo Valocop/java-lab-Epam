@@ -9,7 +9,7 @@ import static com.epam.lab.random.RandomNews.*;
 public class NonValidBeanJsonStringCreator extends AbstractJsonStringCreator {
 
     public NonValidBeanJsonStringCreator(BlockingQueue<String> queue, int count) {
-        super(queue, count / 20);
+        super(queue, count * 3 / 20);
     }
 
     @Override

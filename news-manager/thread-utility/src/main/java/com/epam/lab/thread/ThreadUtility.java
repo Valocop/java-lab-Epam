@@ -23,7 +23,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-@Component
+@Component("threadUtility")
 public class ThreadUtility {
     private static final Logger LOG = LogManager.getLogger(ThreadUtility.class);
     @Value("${FILES_COUNT}")
@@ -32,6 +32,8 @@ public class ThreadUtility {
     private int threadCount;
     @Value("${JSON_ROOT_PATH}")
     private String path;
+    @Value("${JSON_REMOVED_PATH}")
+    private String removedPath;
     @Value("${SUBORDERS_COUNT}")
     private int subFolderCount;
     @Value("${PERIOD_TIME}")
@@ -79,11 +81,13 @@ public class ThreadUtility {
     public void startUtility() {
         SubFolderCreator subFolderCreator = new SubFolderCreatorImpl();
         try {
-            List<Path> paths = subFolderCreator.create(Paths.get(path), subFolderCount, foldersDeep);
+            List<Path> paths = subFolderCreator.create(
+                    Paths.get(path), Paths.get(removedPath), subFolderCount, foldersDeep);
             multipleJsonStringCreator.startCreating();
             multipleJsonStringWriter.startWriting(paths, readingQueue, newsPerFile, writePeriod, TimeUnit.MILLISECONDS);
             multipleScanner.startScan(paths, scanPeriod, TimeUnit.MICROSECONDS);
-            multipleJsonStringHandler.startJsonStringHandler(pathsQueue, scanPeriod, TimeUnit.MICROSECONDS);
+            multipleJsonStringHandler.startJsonStringHandler(
+                    pathsQueue, Paths.get(removedPath), scanPeriod, TimeUnit.MICROSECONDS);
             Thread.sleep(testTime);
             stopUtility();
         } catch (IOException | InterruptedException e) {

@@ -3,12 +3,11 @@ package com.epam.lab.creator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MultipleJsonStringCreator {
     private static final Logger LOG = LogManager.getLogger(MultipleJsonStringCreator.class);
-    private List<AbstractJsonStringCreator> jsonCreatorList = new ArrayList<>();
+    private List<AbstractJsonStringCreator> jsonCreatorList;
 
     public MultipleJsonStringCreator(List<AbstractJsonStringCreator> jsonCreatorList) {
         this.jsonCreatorList = jsonCreatorList;

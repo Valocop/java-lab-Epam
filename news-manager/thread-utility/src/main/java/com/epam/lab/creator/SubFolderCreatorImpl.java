@@ -17,10 +17,15 @@ public class SubFolderCreatorImpl implements SubFolderCreator {
     private List<Path> createdPaths = new ArrayList<>();
 
     @Override
-    public List<Path> create(Path rootPath, int subFoldersCount, int deep) throws IOException {
+    public List<Path> create(Path rootPath, Path removedPath, int subFoldersCount, int deep) throws IOException {
         int foldersCount = subFoldersCount - deep;
-        clearPath(rootPath);
+        if (!Files.exists(rootPath)) {
+            Files.createDirectory(rootPath);
+        } else {
+            clearPath(rootPath);
+        }
         List<Path> subFolderTree = createSubFolderTree(rootPath, deep);
+        Files.createDirectory(removedPath);
         LOG.info("SubFolderCreator creates folders " + subFolderTree.toString());
         List<Path> randomSubFolders = createRandomSubFolders(subFolderTree, foldersCount);
         createdPaths.addAll(randomSubFolders);

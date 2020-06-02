@@ -25,11 +25,11 @@ public class MultipleJsonStringHandler {
         this.jsonStringValidator = jsonStringValidator;
     }
 
-    public void startJsonStringHandler(BlockingQueue<Path> paths, int period, TimeUnit timeUnit) {
+    public void startJsonStringHandler(BlockingQueue<Path> paths, Path removedPath, int period, TimeUnit timeUnit) {
         LOG.info("MultipleJsonStringHandler stars JsonStringHandlers");
         for (int i = 0; i < threadCount; i++) {
             scheduledExecutorService.scheduleAtFixedRate(
-                    new JsonStringHandler(paths, objectMapper, jsonStringValidator), 0, period, timeUnit);
+                    new JsonStringHandler(paths, removedPath, objectMapper, jsonStringValidator), 0, period, timeUnit);
         }
     }
 

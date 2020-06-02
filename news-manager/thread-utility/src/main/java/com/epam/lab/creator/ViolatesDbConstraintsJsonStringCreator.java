@@ -11,7 +11,7 @@ import static com.epam.lab.random.RandomNews.*;
 public class ViolatesDbConstraintsJsonStringCreator extends AbstractJsonStringCreator {
 
     public ViolatesDbConstraintsJsonStringCreator(BlockingQueue<String> queue, int count) {
-        super(queue, count / 20);
+        super(queue, count * 3 / 20);
     }
 
     @Override

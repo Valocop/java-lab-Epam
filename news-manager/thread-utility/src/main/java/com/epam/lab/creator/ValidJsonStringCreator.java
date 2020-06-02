@@ -9,7 +9,7 @@ import static com.epam.lab.random.RandomNews.*;
 public class ValidJsonStringCreator extends AbstractJsonStringCreator {
 
     public ValidJsonStringCreator(BlockingQueue<String> queue, int count) {
-        super(queue, count * 16 / 20);
+        super(queue, count * 3 * 16 / 20);
     }
 
     @Override
