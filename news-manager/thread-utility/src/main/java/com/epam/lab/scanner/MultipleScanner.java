@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 public class MultipleScanner {
     private static final Logger LOG = LogManager.getLogger(MultipleScanner.class);
     private ScheduledExecutorService scheduledExecutorService;
-    private List<Path> paths;
     private BlockingQueue<Path> queue;
 
     public MultipleScanner(BlockingQueue<Path> queue) {

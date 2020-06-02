@@ -3,6 +3,7 @@ package com.epam.lab.scanner;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.concurrent.BlockingQueue;
@@ -21,7 +22,7 @@ public class PathScanner implements Runnable {
     public void run() {
         try {
             WatchService watchService = FileSystems.getDefault().newWatchService();
-            path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+            path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
 
             while (true) {
                 WatchKey key = watchService.take();
@@ -29,8 +30,14 @@ public class PathScanner implements Runnable {
                 for (WatchEvent<?> watchEvent : key.pollEvents()) {
                     Path context = (Path) watchEvent.context();
                     Path resolvePath = path.resolve(context);
-                    queue.put(resolvePath);
-                    LOG.info(resolvePath + " was adding to reading queue by scanner " + Thread.currentThread().getName());
+                    LOG.info(resolvePath + " has event " + watchEvent.kind());
+                    File file = resolvePath.toFile();
+                    if (file.isDirectory()) {
+                        LOG.info(resolvePath + " is directory, which scanned and get back");
+                    } else {
+                        queue.put(resolvePath);
+                        LOG.info(resolvePath + " was adding to reading queue by scanner " + Thread.currentThread().getName());
+                    }
                 }
 
                 if (!key.reset()) break;

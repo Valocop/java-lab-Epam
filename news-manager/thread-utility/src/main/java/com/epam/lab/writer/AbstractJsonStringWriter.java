@@ -51,11 +51,17 @@ public abstract class AbstractJsonStringWriter extends Thread implements JsonStr
                     String take = queue.take();
                     strings.add(take);
                 }
+
                 int fileNumber = AbstractJsonStringWriter.fileNumber.incrementAndGet();
-                write(path, "file" + fileNumber, strings);
-                LOG.info("Writer " + Thread.currentThread().getName() + " was write file " + fileNumber);
+                try {
+                    write(path, "file" + fileNumber, strings);
+                    LOG.info("Writer " + Thread.currentThread().getName() + " was write file" + fileNumber);
+                } catch (IOException e) {
+                    LOG.warn("Writer " + Thread.currentThread().getName() +
+                            " couldn't write a file" + fileNumber + " by exception", e);
+                }
             }
-        } catch (InterruptedException | BrokenBarrierException | IOException e) {
+        } catch (InterruptedException | BrokenBarrierException e) {
             LOG.warn("Writer " + Thread.currentThread().getName() + " was stopped by exception", e);
         }
     }

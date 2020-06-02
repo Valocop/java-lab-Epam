@@ -30,7 +30,7 @@ public class ThreadUtility {
     private int filesCount;
     @Value("${THREAD_COUNT}")
     private int threadCount;
-    @Value("${PATH}")
+    @Value("${JSON_ROOT_PATH}")
     private String path;
     @Value("${SUBORDERS_COUNT}")
     private int subFolderCount;
@@ -40,6 +40,10 @@ public class ThreadUtility {
     private int scanPeriod;
     @Value("${TEST_TIME}")
     private int testTime;
+    @Value("${FOLDERS_DEEP}")
+    private int foldersDeep;
+    @Value("${NEWS_PER_FILE}")
+    private int newsPerFile;
     private BlockingQueue<String> readingQueue;
     private BlockingQueue<Path> pathsQueue;
     private MultipleJsonStringCreator multipleJsonStringCreator;
@@ -60,11 +64,11 @@ public class ThreadUtility {
         readingQueue = new ArrayBlockingQueue<>(filesCount);
         pathsQueue = new ArrayBlockingQueue<>(filesCount);
         List<AbstractJsonStringCreator> jsonCreatorList = Arrays.asList(
-//                new NonValidBeanJsonStringCreator(readingQueue, filesCount),
-                new ValidJsonStringCreator(readingQueue, filesCount));
-//                new ViolatesDbConstraintsJsonStringCreator(readingQueue, filesCount),
-//                new WrongFieldNameJsonStringCreator(readingQueue, filesCount),
-//                new WrongJsonStringCreator(readingQueue, filesCount));
+                new NonValidBeanJsonStringCreator(readingQueue, filesCount),
+                new ValidJsonStringCreator(readingQueue, filesCount),
+                new ViolatesDbConstraintsJsonStringCreator(readingQueue, filesCount),
+                new WrongFieldNameJsonStringCreator(readingQueue, filesCount),
+                new WrongJsonStringCreator(readingQueue, filesCount));
         multipleJsonStringCreator = new MultipleJsonStringCreator(jsonCreatorList);
         multipleJsonStringWriter = new MultipleJsonStringWriter();
         multipleJsonStringHandler = new MultipleJsonStringHandler(objectMapper,
@@ -75,9 +79,9 @@ public class ThreadUtility {
     public void startUtility() {
         SubFolderCreator subFolderCreator = new SubFolderCreatorImpl();
         try {
-            List<Path> paths = subFolderCreator.create(Paths.get("C:\\Users\\Admin\\Desktop\\epam\\root"), subFolderCount, 3);
+            List<Path> paths = subFolderCreator.create(Paths.get(path), subFolderCount, foldersDeep);
             multipleJsonStringCreator.startCreating();
-            multipleJsonStringWriter.startWriting(paths, readingQueue, 3, writePeriod, TimeUnit.MILLISECONDS);
+            multipleJsonStringWriter.startWriting(paths, readingQueue, newsPerFile, writePeriod, TimeUnit.MILLISECONDS);
             multipleScanner.startScan(paths, scanPeriod, TimeUnit.MICROSECONDS);
             multipleJsonStringHandler.startJsonStringHandler(pathsQueue, scanPeriod, TimeUnit.MICROSECONDS);
             Thread.sleep(testTime);

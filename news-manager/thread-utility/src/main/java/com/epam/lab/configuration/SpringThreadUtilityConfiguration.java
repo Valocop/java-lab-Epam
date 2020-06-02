@@ -27,12 +27,12 @@ public class SpringThreadUtilityConfiguration {
 //        return converter;
 //    }
 //
-    @Bean
-    public Jackson2ObjectMapperBuilder jacksonBuilder() {
-        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-        builder.indentOutput(true).dateFormat(new SimpleDateFormat("yyyy-MM-dd"));
-        return builder;
-    }
+//    @Bean
+//    public Jackson2ObjectMapperBuilder jacksonBuilder() {
+//        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+//        builder.indentOutput(true).dateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+//        return builder;
+//    }
 
     @Bean
     public ValidatorFactory validatorFactory() {
