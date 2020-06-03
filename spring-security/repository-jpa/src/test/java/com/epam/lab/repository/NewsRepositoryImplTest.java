@@ -22,12 +22,13 @@ import java.util.stream.Collectors;
 import static com.epam.lab.repository.TestUtil.*;
 import static com.epam.lab.specification.NewsSearchSpecification.TAGS_NAME;
 import static com.epam.lab.specification.NewsSortSpecification.AUTHOR_NAME;
+import static org.hamcrest.core.Is.is;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {SpringRepoConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("dev")
-//@Transactional
+@Transactional
 public class NewsRepositoryImplTest {
     @Resource
     private NewsRepository newsRepository;
@@ -357,7 +358,7 @@ public class NewsRepositoryImplTest {
         List<News> expectedNews = new ArrayList<>();
         Collections.addAll(expectedNews, newsOne, newsTwo, newsThree);
         expectedNews.sort(Comparator.comparing(o -> o.getAuthor().getName()));
-        Assert.assertEquals(expectedNews, newsList);
+        Assert.assertArrayEquals(expectedNews.toArray(), newsList.toArray());
     }
 
     @Test(expected = RepositoryException.class)
