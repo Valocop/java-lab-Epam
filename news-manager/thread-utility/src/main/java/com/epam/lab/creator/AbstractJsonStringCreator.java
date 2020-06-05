@@ -29,7 +29,7 @@ public abstract class AbstractJsonStringCreator extends Thread implements JsonSt
                 LOG.info("Json string " + createdJsonCount.incrementAndGet() + " was added to queue by " + Thread.currentThread().getName());
             }
         } catch (InterruptedException e) {
-            LOG.warn("JsonCreator " + Thread.currentThread().getName() + " was stopped by InterruptedException", e);
+            LOG.warn("JsonCreator " + Thread.currentThread().getName() + " was stopped by InterruptedException");
         }
     }
 }

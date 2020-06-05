@@ -15,8 +15,8 @@ import java.text.SimpleDateFormat;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan({"com.epam.lab.security", "com.epam.lab.controller"})
-@Import({SpringServiceConfig.class})
+@ComponentScan({"com.epam.lab.security", "com.epam.lab.controller", "com.epam.lab.thread"})
+@Import({SpringServiceConfig.class, SpringThreadUtilityConfiguration.class})
 public class SpringControllerConfig {
 
     @Bean

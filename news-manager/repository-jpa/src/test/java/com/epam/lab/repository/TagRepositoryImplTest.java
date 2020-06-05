@@ -22,7 +22,7 @@ import static com.epam.lab.repository.TestUtil.getTestTag;
 @ContextConfiguration(classes = {SpringRepoConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("dev")
-//@Transactional
+@Transactional
 public class TagRepositoryImplTest {
     @Resource
     private TagRepository tagRepository;

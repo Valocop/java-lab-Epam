@@ -3,6 +3,7 @@ package com.epam.lab.thread;
 import com.epam.lab.creator.*;
 import com.epam.lab.handler.MultipleJsonStringHandler;
 import com.epam.lab.scanner.MultipleScanner;
+import com.epam.lab.service.NewsService;
 import com.epam.lab.validator.JsonStringValidatorImpl;
 import com.epam.lab.writer.MultipleJsonStringWriter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,11 +55,13 @@ public class ThreadUtility {
     private MultipleScanner multipleScanner;
     private ObjectMapper objectMapper;
     private Validator validator;
+    private NewsService newsService;
 
     @Autowired
-    public ThreadUtility(ObjectMapper objectMapper, Validator validator) {
+    public ThreadUtility(ObjectMapper objectMapper, Validator validator, NewsService newsService) {
         this.objectMapper = objectMapper;
         this.validator = validator;
+        this.newsService = newsService;
     }
 
     @PostConstruct
@@ -76,6 +79,9 @@ public class ThreadUtility {
         multipleJsonStringHandler = new MultipleJsonStringHandler(objectMapper,
                 new JsonStringValidatorImpl(validator), threadCount);
         multipleScanner = new MultipleScanner(pathsQueue);
+        long before = newsService.getCountOfNews();
+        startUtility();
+        checkResult(before);
     }
 
     public void startUtility() {
@@ -87,12 +93,23 @@ public class ThreadUtility {
             multipleJsonStringWriter.startWriting(paths, readingQueue, newsPerFile, writePeriod, TimeUnit.MILLISECONDS);
             multipleScanner.startScan(paths, scanPeriod, TimeUnit.MICROSECONDS);
             multipleJsonStringHandler.startJsonStringHandler(
-                    pathsQueue, Paths.get(removedPath), scanPeriod, TimeUnit.MICROSECONDS);
+                    pathsQueue, newsService, Paths.get(removedPath), scanPeriod, TimeUnit.MICROSECONDS);
             Thread.sleep(testTime);
             stopUtility();
+            Thread.sleep(500);
         } catch (IOException | InterruptedException e) {
             LOG.error("ThreadUtility was stopped by exception", e);
         }
+    }
+
+    public void checkResult(long before) {
+        long after = newsService.getCountOfNews();
+        long created = after - before;
+        List<Path> addedToDbPaths = multipleJsonStringHandler.getAddedToDbPaths();
+        List<Path> removedPaths = multipleJsonStringHandler.getRemovedPaths();
+        LOG.info("Count of probably added to database files: " + addedToDbPaths.size());
+        LOG.info("Count of not valid and removed files: " + removedPaths.size());
+        LOG.info("Count of added to database files: " + created);
     }
 
     private void stopUtility() {

@@ -11,13 +11,12 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CyclicBarrier;
 
 public class JsonStringPathWriter extends AbstractJsonStringWriter {
     private static final Logger LOG = LogManager.getLogger(JsonStringWriter.class);
 
-    public JsonStringPathWriter(BlockingQueue<String> queue, CyclicBarrier cyclicBarrier, Path path, int newsPerFile) {
-        super(queue, cyclicBarrier, path, newsPerFile);
+    public JsonStringPathWriter(BlockingQueue<String> queue, Path path, int newsPerFile) {
+        super(queue, path, newsPerFile);
     }
 
     @Override

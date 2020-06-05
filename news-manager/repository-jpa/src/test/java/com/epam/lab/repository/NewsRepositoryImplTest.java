@@ -27,7 +27,7 @@ import static com.epam.lab.specification.NewsSortSpecification.AUTHOR_NAME;
 @ContextConfiguration(classes = {SpringRepoConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("dev")
-//@Transactional
+@Transactional
 public class NewsRepositoryImplTest {
     @Resource
     private NewsRepository newsRepository;

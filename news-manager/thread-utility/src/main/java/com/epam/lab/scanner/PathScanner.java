@@ -43,7 +43,7 @@ public class PathScanner implements Runnable {
                 if (!key.reset()) break;
             }
         } catch (IOException | InterruptedException e) {
-            LOG.warn("Scanner " + Thread.currentThread().getName() + " was stopped by exception", e);
+            LOG.warn("Scanner " + Thread.currentThread().getName() + " was stopped by IOException | InterruptedException exception");
         }
     }
 }
