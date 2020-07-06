@@ -1,0 +1,35 @@
+.header {
+    display: block;
+    background-color: #4a76a8;
+    position: fixed;
+    height: 42px;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 120;
+    direction: ltr;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 50px;
+    height: 100%;
+    align-items: center;
+}
+
+.langContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.langContainer div {
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+.choiceContainer span {
+    margin-left: 15px;
+}

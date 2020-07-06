@@ -1,0 +1,17 @@
+.searchBar {
+    border: 2px dashed #81ff71;
+}
+
+.select {
+    flex-grow: 1;
+    margin-right: 5px;
+}
+
+.selectWrapper {
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.selectWrapper button {
+    width: 80px;
+}

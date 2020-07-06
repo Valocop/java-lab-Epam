@@ -1,0 +1,14 @@
+.footer {
+    display: block;
+    background-color: #4a76a8;
+    position: fixed;
+    height: 42px;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    z-index: 120;
+    direction: ltr;
+    text-align: center;
+    line-height: 42px;
+
+}

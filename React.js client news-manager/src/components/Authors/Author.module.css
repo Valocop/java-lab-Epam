@@ -1,0 +1,47 @@
+.authorsContainer {
+    width: 750px;
+    border: 2px dashed #8376ff;
+    padding: 0 10px;
+    margin-left: 5px;
+    text-align: center;
+}
+
+input {
+    padding: 8px 10px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    resize: none;
+}
+
+.authorWrapper {
+    margin: 10px;
+}
+
+.name {
+    margin-right: 10px;
+}
+
+.surname {
+    margin-right: 10px;
+}
+
+.author {
+    display: inline;
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.addAuthor {
+    margin: 40px;
+}
+
+.fieldWrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.error {
+    color: red;
+}
